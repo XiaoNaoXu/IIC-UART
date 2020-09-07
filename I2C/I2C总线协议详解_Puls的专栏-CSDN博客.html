@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/w89436838/article/details/38660631"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="report" content='{"pid": "blog", "spm":"1001.2101"}'>
+
+            <meta name="applicable-device" content="pc">
+        <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="referrer" content="always">
+    <link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+            <meta name="csdn-baidu-search"  content='{"autorun":true,"install":true,"keyword":"I2C总线协议详解"}'>
+    
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>I2C总线协议详解_Puls的专栏-CSDN博客</title>
+        <meta name="keywords" content="I2C总线协议详解">
+        <meta name="description" content="1.1 I2C总线知识1.1.1  I2C总线物理拓扑结构     I2C 总线在物理连接上非常简单，分别由SDA(串行数据线)和SCL(串行时钟线)及上拉电阻组成。通信原理是通过对SCL和SDA线高低电平时序的控制，来 产生I2C总线协议所需要的信号进行数据的传递。在总线空闲状态时，这两根线一般被上面所接的上拉电阻拉高，保持着高电平。1.1.2  I2C总线特征   ">
+    <script src='//g.csdnimg.cn/tingyun/1.8.3/blog.js' type='text/javascript'></script>
+        
+                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/new_css/detail_enter-54d3fd4be5.min.css">
+                            <script type="application/ld+json">{"@context":"https:\/\/ziyuan.baidu.com\/contexts\/cambrian.jsonld","@id":"https:\/\/blog.csdn.net\/w89436838\/java\/article\/details\/38660631","appid":1638831770136827,"title":"I2C\u603b\u7ebf\u534f\u8bae\u8be6\u89e3_Puls\u7684\u4e13\u680f-CSDN\u535a\u5ba2","pubDate":"2014-08-18T14:49:23","upDate":"2014-08-18T14:49:23"}</script>
+    
+            <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/themes_skin/skin3-template/skin3-template-3faf0f2897.min.css">
+    
+<!--    自定义皮肤样式-->
+    
+    <script type="text/javascript">
+        var username = "w89436838";
+        var blog_address = "https://blog.csdn.net/w89436838";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "";
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/w89436838/java/article/details/38660631"
+        var blogUrl = "https://blog.csdn.net/";
+
+        var curSkin = "skin3-template";
+        // 收藏所需数据
+        var articleTitle = "I2C总线协议详解";
+        var articleDesc = "1.1 I2C总线知识1.1.1  I2C总线物理拓扑结构     I2C 总线在物理连接上非常简单，分别由SDA(串行数据线)和SCL(串行时钟线)及上拉电阻组成。通信原理是通过对SCL和SDA线高低电平时序的控制，来 产生I2C总线协议所需要的信号进行数据的传递。在总线空闲状态时，这两根线一般被上面所接的上拉电阻拉高，保持着高电平。1.1.2  I2C总线特征   ";
+
+        var articleTitles = "I2C总线协议详解_Puls的专栏-CSDN博客";
+        
+        var nickName = "GeorgeWan";
+        var isCorporate = false;
+        var subDomainBlogUrl = "https://blog.csdn.net/"
+        var digg_base_url = "https://blog.csdn.net/w89436838";
+        var articleDetailUrl = "https://blog.csdn.net/w89436838/article/details/38660631";
+        var isShowThird = "1"
+        var skinStatus = "White"
+        var canRead = true;
+        
+        var sideToolbarVersion = 2.5;
+        // 百度搜索类型
+        var baiduSearchType = "title";
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <!--js引用-->
+            <script src="//g.csdnimg.cn/??fixed-sidebar/1.1.6/fixed-sidebar.js,report/1.5.6/report.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<body class="nodata " > 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/new_css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging-e040f0c7c8.css">
+
+<script type="text/javascript">
+	var NEWS_FEED = function(){}
+</script>
+
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/new_css/chart-3456820cac.css" />
+<div class="main_father clearfix d-flex justify-content-center" style="height:100%;"> 
+    <div class="container clearfix" id="mainBox">
+        <aside class="blog_container_aside">
+	<!--主页引入-->
+    
+    <div id="asideProfile" class="aside-box">
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/w89436838"  data-report-click='{"mod":"popu_379","spm":"1001.2101.3001.4121","dest":"https://blog.csdn.net/w89436838","ab":"new"}'>
+                <img src="https://profile.csdnimg.cn/1/A/D/3_w89436838" class="avatar_pic" username='w89436838'>
+            </a>
+        </div>
+        <div class="user-info d-flex flex-column profile-intro-name-box">
+            <div>
+                                <a href="https://blog.csdn.net/w89436838" class="" id="uid" title='GeorgeWan' data-report-click='{"mod":"popu_379","spm":"1001.2101.3001.4122","dest":"https://blog.csdn.net/w89436838","ab":"new"}' >
+                    <span class="name " username='w89436838'>
+                        GeorgeWan                    </span>
+                </a>
+                <span></span>
+                <span class="flag expert-blog"><span class="bubble">CSDN认证博客专家</span></span>
+                <span class="flag company-blog"><span class="bubble">CSDN认证企业博客</span></span>
+            </div>
+
+            <div class="profile-intro-name-boxFooter">
+                                    <span class="personal-home-page">码龄8年</span>
+                                            <span class="personal-home-page"><a class="personal-home-certification" href="https://me.csdn.net/w89436838?utm_source=14998968" target="_blank"><img src="https://csdnimg.cn/identity/nocErtification.png" alt="">暂无认证</a></span>
+                                                </div>
+        </div>
+    </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="22">
+                            <a data-report-click='{"mod":"1598321000_001","spm":"1001.2101.3001.4310"}' href="https://blog.csdn.net/w89436838" data-report-query="t=1">
+                    <dt><span class="count">22</span></dt>
+                    <dd class="font">原创</dd>
+                </a>
+                    </dl>
+        <dl class="text-center" title="187066">
+            <a data-report-click='{"mod":"1598321000_002","spm":"1001.2101.3001.4311"}' href="https://blog.csdn.net/rank/writing_rank" target="_blank">
+                <dt><span class="count">18万+</span></dt>
+                <dd class="font">周排名</dd>
+            </a>
+        </dl>
+        <dl class="text-center" title="73345">
+            <a data-report-click='{"mod":"1598321000_003","spm":"1001.2101.3001.4312"}' href="https://blog.csdn.net/rank/writing_rank_total" target="_blank">
+                <dt><span class="count">7万+</span></dt>
+                <dd class="font">总排名</dd>
+            </a>
+        </dl>
+        <dl class="text-center" style="min-width:58px" title="135576">  
+            <dt><span class="count">13万+</span></dt>
+            <dd>访问</dd>
+        </dl>
+        <dl class="text-center" title="4级,点击查看等级说明">
+            <dt><a href="https://blog.csdn.net/blogdevteam/article/details/103478461#博客等级"  target="_blank">
+                                    <img class="level" src="https://csdnimg.cn/identity/blog4.png"/>
+                                </a>
+            </dt>
+            <dd>等级</dd>
+        </dl>
+    </div>
+    <div class="item-rank"></div>
+    <div class="data-info d-flex item-tiling">
+        <dl class="text-center" title="1206">
+            <dt><span class="count">1206</span></dt>
+            <dd>积分</dd>
+        </dl>
+        <dl class="text-center" id="fanBox" title="52">
+            <dt><span class="count" id="fan">52</span></dt>
+            <dd>粉丝</dd>
+        </dl>
+        <dl class="text-center" title="50">
+            <dt><span class="count">50</span></dt>
+            <dd>获赞</dd>
+        </dl>
+        <dl class="text-center" title="17">
+            <dt><span class="count">17</span></dt>
+            <dd>评论</dd>
+        </dl>
+        <dl class="text-center" title="163">
+            <dt><span class="count">163</span></dt>
+            <dd>收藏</dd>
+        </dl>
+        
+        
+    </div>
+    <div class="aside-box-footer">
+                
+    </div>
+        <div class="profile-intro-name-boxOpration">
+        <div class='opt-letter-watch-box'>
+            <a class="bt-button personal-letter" href="https://me.csdn.net/w89436838" target="_blank" rel="noopener">TA的主页</a>
+        </div>
+        <div class='opt-letter-watch-box'>
+            <a class="bt-button personal-letter" href=https://im.csdn.net/chat/w89436838 target="_blank" rel="noopener">私信</a>
+        </div>
+        <div class="opt-letter-watch-box">
+                            <a class="personal-watch bt-button" id="btnAttent" >关注</a>
+                    </div>
+    </div>
+    </div>
+<div id="asideSearchArticle" class="aside-box">
+	<div class="aside-content search-comter">
+    <div class="aside-search aside-search-blog">         
+        <input type="text" class="input-serch-blog" name="" autocomplete="off" value="" id="search-blog-words" placeholder="搜博主文章">
+        <a class="btn-search-blog">
+                    <img src="//csdnimg.cn/cdn/content-toolbar/csdn-sou.png?v=1587021042">
+                </a>
+    </div>
+    </div>
+</div><script>
+    function watchBtnChange(flag, username) {
+        $('span.blog-expert-button-follow').each(function(index) {
+            if (flag) {
+                if ($(this).attr("data-name") == username) {
+                    $(this).html('<span class="hover-hide">已关注</span><span class="hover-show">取消</span>').removeClass('btn-red-follow').addClass('btn-gray-follow attented');
+                }
+            } else {
+                if ($(this).attr("data-name") == username) {
+                    $(this).html("关注").addClass('btn-red-follow').removeClass('btn-gray-follow attented');
+                }
+            }
+        })
+        if (username == $('p.csdn-tracking-statistics').attr("username")) {
+            if (flag) {
+                $('#btnAttent').addClass("attented").text("已关注").removeClass('btn-red-hollow').addClass('btn-gray-hollow');
+                changeFans(1)
+            } else {
+                $('#btnAttent').text("关注").addClass('btn-red-hollow').removeClass('btn-gray-hollow attented');
+                changeFans(-1)
+            }
+        }
+
+    }
+
+    function changeFans(num) {
+        if ($('#fan').text().indexOf('+') < 0) {
+            $('#fan').text(parseInt($('#fan').text()) + num);
+        } else {
+            $('#fanBox').attr('title', parseInt($('#fanBox').attr('title')) + num);
+        }
+    }
+    window.csdn = window.csdn ? window.csdn : {};
+    window.csdn.watchBtnChange = watchBtnChange;
+</script><div id="asideNewArticle" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix">
+                        <li class="clearfix">
+                <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/w89436838/article/details/53125646","ab":"new"}' href="https://blog.csdn.net/w89436838/article/details/53125646" target="_blank" >
+                                        apt-get常用命令                </a>
+            </li>
+                        <li class="clearfix">
+                <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/w89436838/article/details/44283021","ab":"new"}' href="https://blog.csdn.net/w89436838/article/details/44283021" target="_blank" >
+                                        tar.xz文件如何解压                </a>
+            </li>
+                        <li class="clearfix">
+                <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/w89436838/article/details/44036981","ab":"new"}' href="https://blog.csdn.net/w89436838/article/details/44036981" target="_blank" >
+                                        module_param和module_param_array的使用                </a>
+            </li>
+                        <li class="clearfix">
+                <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/w89436838/article/details/44034135","ab":"new"}' href="https://blog.csdn.net/w89436838/article/details/44034135" target="_blank" >
+                                        struct miscdevice,misc_register(),misc_deregister()                </a>
+            </li>
+                        <li class="clearfix">
+                <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/w89436838/article/details/44033709","ab":"new"}' href="https://blog.csdn.net/w89436838/article/details/44033709" target="_blank" >
+                                        copy_to_user和copy_from_user                </a>
+            </li>
+                    </ul>
+    </div>
+</div>
+    <div id="asideCategory" class="aside-box flexible-box"
+         style="">
+    <h3 class="aside-title">分类专栏</h3>
+    <div class="aside-content">
+        <ul>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494147.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2494147.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151026427.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">嵌入式系统</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">24篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494149.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2494149.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151053287.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">C语言</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">15篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494151.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2494151.html">
+                                                    <img src="https://img-blog.csdnimg.cn/2019092715111047.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">单片机</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">8篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494167.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2494167.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151101105.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">MCU</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">7篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494169.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2494169.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151117521.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">C++</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">1篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494171.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2494171.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151132530.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">Linux</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">15篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2496077.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2496077.html">
+                                                    <img src="https://img-blog.csdnimg.cn/2019091813595558.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">电子</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">3篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2540315.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2540315.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190918140129601.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">数据结构</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">1篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2574047.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2574047.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151026427.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">计算机</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">1篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680967.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2680967.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151132530.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">V模型</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680969.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2680969.html">
+                                                    <img src="https://img-blog.csdnimg.cn/2019091813595558.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">软件管理</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">1篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680971.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2680971.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190918140037908.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">ruanj</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680977.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2680977.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151026427.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">软件开发V模型</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">1篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680979.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2680979.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151053287.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">软件开发</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">1篇</span>
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2841037.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2841037.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151117521.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">LCD</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                            </a>
+                </li>
+                            <li class="">
+                                        <a class="clearfix" 
+                                                    data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2841039.html","ab":"new"}'
+                                               href="https://blog.csdn.net/w89436838/category_2841039.html">
+                                                    <img src="https://img-blog.csdnimg.cn/20190927151132530.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                <!--####是否付费-->
+                        <span class="title oneline"><span class="text">HT1621B</span>
+                                                    </span>
+                        <!--####是否付费-->
+                                                    <span class="count float-right">1篇</span>
+                                            </a>
+                </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="flexible-btn" data-fbox="aside-archive"><img class="look-more" src="https://csdnimg.cn/release/phoenix/template/new_img/arrowDownWhite.png" alt=""></a>
+    </p>
+    </div>
+<div id="asideArchive" class="aside-box">
+    <h3 class="aside-title">归档</h3>
+    <div class="aside-content">
+        <div class="archive-box">
+                        <div class="archive-title">2016</div>
+            <div class="archive-content">
+                                    <div class="archive-item">
+                        <a href="https://blog.csdn.net/w89436838/article/month/2016/11" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/w89436838/article/month/2016/11"}'>
+                        <span class="time">11月</span>
+                        <span class="count">1篇</span>
+                        </a>
+                    </div>
+                            </div>
+                        <div class="archive-title">2015</div>
+            <div class="archive-content">
+                                    <div class="archive-item">
+                        <a href="https://blog.csdn.net/w89436838/article/month/2015/03" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/w89436838/article/month/2015/03"}'>
+                        <span class="time">3月</span>
+                        <span class="count">6篇</span>
+                        </a>
+                    </div>
+                                    <div class="archive-item">
+                        <a href="https://blog.csdn.net/w89436838/article/month/2015/01" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/w89436838/article/month/2015/01"}'>
+                        <span class="time">1月</span>
+                        <span class="count">2篇</span>
+                        </a>
+                    </div>
+                            </div>
+                        <div class="archive-title">2014</div>
+            <div class="archive-content">
+                                    <div class="archive-item">
+                        <a href="https://blog.csdn.net/w89436838/article/month/2014/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/w89436838/article/month/2014/12"}'>
+                        <span class="time">12月</span>
+                        <span class="count">1篇</span>
+                        </a>
+                    </div>
+                                    <div class="archive-item">
+                        <a href="https://blog.csdn.net/w89436838/article/month/2014/11" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/w89436838/article/month/2014/11"}'>
+                        <span class="time">11月</span>
+                        <span class="count">1篇</span>
+                        </a>
+                    </div>
+                                    <div class="archive-item">
+                        <a href="https://blog.csdn.net/w89436838/article/month/2014/10" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/w89436838/article/month/2014/10"}'>
+                        <span class="time">10月</span>
+                        <span class="count">1篇</span>
+                        </a>
+                    </div>
+                                    <div class="archive-item">
+                        <a href="https://blog.csdn.net/w89436838/article/month/2014/09" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/w89436838/article/month/2014/09"}'>
+                        <span class="time">9月</span>
+                        <span class="count">8篇</span>
+                        </a>
+                    </div>
+                                    <div class="archive-item">
+                        <a href="https://blog.csdn.net/w89436838/article/month/2014/08" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/w89436838/article/month/2014/08"}'>
+                        <span class="time">8月</span>
+                        <span class="count">9篇</span>
+                        </a>
+                    </div>
+                            </div>
+                    </div>
+    </div>
+</div>
+<div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list">
+							<li>
+
+                    <a
+                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/w89436838/article/details/42778201","ab":"new"}' 
+                     href="https://blog.csdn.net/w89436838/article/details/42778201" >
+                                                HT1621B液晶驱动（附电路图）                        <img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt=""><span class="read">31534</span>
+                    </a>
+				</li>
+							<li>
+
+                    <a
+                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/w89436838/article/details/38660631","ab":"new"}' 
+                     href="https://blog.csdn.net/w89436838/article/details/38660631" >
+                                                I2C总线协议详解                        <img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt=""><span class="read">29148</span>
+                    </a>
+				</li>
+							<li>
+
+                    <a
+                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/w89436838/article/details/39081805","ab":"new"}' 
+                     href="https://blog.csdn.net/w89436838/article/details/39081805" >
+                                                CMOS门电路详解                        <img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt=""><span class="read">15405</span>
+                    </a>
+				</li>
+							<li>
+
+                    <a
+                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/w89436838/article/details/39051387","ab":"new"}' 
+                     href="https://blog.csdn.net/w89436838/article/details/39051387" >
+                                                C语言文件读写操作，写入数据到文件                        <img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt=""><span class="read">11955</span>
+                    </a>
+				</li>
+							<li>
+
+                    <a
+                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/w89436838/article/details/40716427","ab":"new"}' 
+                     href="https://blog.csdn.net/w89436838/article/details/40716427" >
+                                                软件开发V模型                        <img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt=""><span class="read">6394</span>
+                    </a>
+				</li>
+					</ul>
+	</div>
+</div>
+<div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+                        <li>
+                <a class="title text-truncate" data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/w89436838/article/details/38660631#comments_12314163","ab":"new"}'  target="_blank" href="https://blog.csdn.net/w89436838/article/details/38660631#comments_12314163">I2C总线协议详解</a>
+                <p class="comment ellipsis">
+                    <a href="https://my.csdn.net/wf_bluec001" class="user-name" target="_blank">wf_bluec001</a>
+                                        ：
+                                        写的很好，很容易理解。                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/w89436838/article/details/38660631#comments_10137997","ab":"new"}'  target="_blank" href="https://blog.csdn.net/w89436838/article/details/38660631#comments_10137997">I2C总线协议详解</a>
+                <p class="comment ellipsis">
+                    <a href="https://my.csdn.net/lizheng2017" class="user-name" target="_blank">lizheng2017</a>
+                                        ：
+                                        写得很易懂，详细，谢谢                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/w89436838/article/details/42778201#comments_9937746","ab":"new"}'  target="_blank" href="https://blog.csdn.net/w89436838/article/details/42778201#comments_9937746">HT1621B液晶驱动（附电路图）</a>
+                <p class="comment ellipsis">
+                    <a href="https://my.csdn.net/mochen_32" class="user-name" target="_blank">mochen_32</a>
+                                        ：
+                                        不错，很有参考价值                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/w89436838/article/details/38660631#comments_9903930","ab":"new"}'  target="_blank" href="https://blog.csdn.net/w89436838/article/details/38660631#comments_9903930">I2C总线协议详解</a>
+                <p class="comment ellipsis">
+                    <a href="https://my.csdn.net/qq_43413222" class="user-name" target="_blank">WM_12306</a>
+                                        ：
+                                        为什么图片都看不到呢？疑惑                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/w89436838/article/details/42778201#comments_9249949","ab":"new"}'  target="_blank" href="https://blog.csdn.net/w89436838/article/details/42778201#comments_9249949">HT1621B液晶驱动（附电路图）</a>
+                <p class="comment ellipsis">
+                    <a href="https://my.csdn.net/weixin_43106022" class="user-name" target="_blank">weixin_43106022</a>
+                                        ：
+                                        不错，有参考价值，最近正在搞这个                </p>
+            </li>
+                    </ul>
+    </div>
+</div>
+            <div id="footerRightAds">
+        <div class="aside-box">
+            <div id="kp_box_57" data-pid="57"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- PC-博客详情页-左下视窗（300*600） -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:600px"
+     data-ad-client="ca-pub-1076724771190722"
+     data-ad-slot="1173711872"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=57&a=2488&c=0&k=&d=1&t=3&u=8e71734740cd48afbd663ecd40d9dc07"></div>        </div>
+        </div>
+        <!-- 详情页显示目录 -->
+        <!--文章目录-->
+<div id="asidedirectory" class="aside-box">
+    <div class='groupfile' id="directory">
+        <h3 class="aside-title">目录</h3>
+        <div class="align-items-stretch group_item">
+            <div class="pos-box">
+            <div class="scroll-box">
+                <div class="toc-box"></div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+    	<!-- <div id="asideFooter">
+		<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+    </div> -->
+</aside>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).parents("p.text-center").remove();
+	})
+</script>
+<script type="text/javascript"  src="https://g.csdnimg.cn/user-tooltip/2.1/user-tooltip.js"></script>
+        <main>
+            <script type="text/javascript">
+    var blogSensitiveWords = "";
+</script>
+<div class="blog-content-box">
+    <div class="article-header-box">
+        <div class="article-header">
+            <div class="article-title-box">
+                <h1 class="title-article" id="articleContentId">I2C总线协议详解</h1>
+            </div>
+            <div class="article-info-box">
+                <div class="article-bar-top">
+                    <!--文章类型-->
+                                        <!--原创-->
+                                        <!--翻译-->
+                                        <!--转载-->
+                                        <img class="article-type-img" src="https://csdnimg.cn/release/phoenix/template/new_img/reprint.png" alt="">
+                                        <div class="bar-content">
+                                                                                                                                            <a class="follow-nickName" href="https://me.csdn.net/w89436838" target="_blank" rel="noopener">GeorgeWan</a>
+                    <span class="time">2014-08-18 14:49:23</span>
+                    <img class="article-read-img article-heard-img" src="https://csdnimg.cn/release/phoenix/template/new_img/articleReadEyes.png" alt="">
+                    <span class="read-count">29179</span>
+                    <a id='blog_detail_zk_collection' class="un-collection" data-report-click='{"mod":"popu_823","spm":"1001.2101.3001.4232","ab":"new"}'>
+                        <img class="article-collect-img article-heard-img un-collect-status" style="display:inline-block" src="https://csdnimg.cn/release/phoenix/template/new_img/tobarCollect.png" alt="">
+                        <img class="article-collect-img article-heard-img collect-status" style="display:none" src="https://csdnimg.cn/release/phoenix/template/new_img/tobarCollectionActive.png" alt="">
+                        <span class="name">收藏</span>
+                        <span class="get-collection">
+                                                66                                                </span>
+                    </a>
+                                        </div>
+                </div>
+                <div class="blog-tags-box">
+                <div class="tags-box artic-tag-box">
+                                           <span class="label">分类专栏：</span>
+                                                                                             <a class="tag-link" target="_blank" rel="noopener"
+                                      href="https://blog.csdn.net/w89436838/category_2494151.html">
+                                       单片机                                   </a>
+                                                                                                                            <a class="tag-link" target="_blank" rel="noopener"
+                                      href="https://blog.csdn.net/w89436838/category_2494147.html">
+                                       嵌入式系统                                   </a>
+                                                                                                                            <a class="tag-link" target="_blank" rel="noopener"
+                                      href="https://blog.csdn.net/w89436838/category_2494167.html">
+                                       MCU                                   </a>
+                                                                                                                                                  <span class="label">文章标签：</span>
+                                                                <a data-report-click='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"I2C","ab":"new"}' class="tag-link" href="https://so.csdn.net/so/search/s.do?q=I2C&t=blog&o=vip&s=&l=&f=&viparticle=" target="_blank" rel="noopener">I2C                                                                    <a data-report-click='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"单片机","ab":"new"}' class="tag-link" href="https://www.csdn.net/gather_27/MtTagg2sMzc0Ni1ibG9n.html" target="_blank" rel="noopener">单片机                                                                    <a data-report-click='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"嵌入式系统","ab":"new"}' class="tag-link" href="https://www.csdn.net/gather_24/MtTaEg1sMzkzODQtYmxvZwO0O0OO0O0O.html" target="_blank" rel="noopener">嵌入式系统                                                                    </a>
+                           
+                                         
+                </div>
+                </div>
+                                <div class="up-time"><span>最后发布：2014-08-18 14:49:23</span><span>首次发布：2014-08-18 14:49:23</span></div>
+                <div class="slide-content-box">
+                <div class="all-tags-box">
+                                    </div>
+                                                        </div>
+                <div class="operating">
+                                                        </div>
+            </div>
+        </div>
+    </div>
+    <!--python安装手册结束-->
+                    <article class="baidu_pl">
+                 <div id="article_content" class="article_content clearfix">
+            <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-3d4dc5c1de.css" />
+                            <div class="htmledit_views" id="content_views">
+                                            
+<p style="color:rgb(102,102,102);font-family:'宋体', Arial;font-size:16px;line-height:26px;">
+<span><span>1.1 I2C总线知识</span></span></p>
+<p style="color:rgb(102,102,102);font-family:'宋体', Arial;font-size:16px;line-height:26px;">
+1.1.1  I2C总线物理拓扑结构<br /><img src="http://www.embeddedlinux.org.cn/uploads/allimg/130317/1219450.png" alt="" style="border:0px;" /> <br />
+    I2C 总线在物理连接上非常简单，分别由SDA(串行数据线)和SCL(串行时钟线)及上拉电阻组成。通信原理是通过对SCL和SDA线高低电平时序的控制，来 产生I2C总线协议所需要的信号进行数据的传递。在总线空闲状态时，这两根线一般被上面所接的上拉电阻拉高，保持着高电平。</p>
+<p style="color:rgb(102,102,102);font-family:'宋体', Arial;font-size:16px;line-height:26px;">
+1.1.2  I2C总线特征<br />
+    I2C总线上的每一个设备都可以作为主设备或者从设备，而且每一个设备都会对应一个唯一的地址(可以从I2C器件的数据手册得知)，主从设备之间就通过这 个地址来确定与哪个器件进行通信，在通常的应用中，我们把CPU带I2C总线接口的模块作为主设备，把挂接在总线上的其他设备都作为从设备。<br />
+    I2C总线上可挂接的设备数量受总线的最大电容400pF 限制，如果所挂接的是相同型号的器件，则还受器件地址位的限制。<br />
+    I2C总线数据传输速率在标准模式下可达100kbit/s，快速模式下可达400kbit/s，高速模式下可达3.4Mbit/s。一般通过I2C总线接口可编程时钟来实现传输速率的调整，同时也跟所接的上拉电阻的阻值有关。<br />
+    I2C总线上的主设备与从设备之间以字节(8位)为单位进行双向的数据传输。</p>
+<p style="color:rgb(102,102,102);font-family:'宋体', Arial;font-size:16px;line-height:26px;">
+1.1.3  I2C总线协议<br />
+    I2C协议规定，总线上数据的传输必须以一个起始信号作为开始条件，以一个结束信号作为传输的停止条件。起始和结束信号总是由主设备产生。总线在空闲状态 时，SCL和SDA都保持着高电平，当SCL为高电平而SDA由高到低的跳变，表示产生一个起始条件；当SCL为高而SDA由低到高的跳变，表示产生一个 停止条件。在起始条件产生后，总线处于忙状态，由本次数据传输的主从设备独占，其他I2C器件无法访问总线；而在停止条件产生后，本次数据传输的主从设备 将释放总线，总线再次处于空闲状态。如图所示：<br /><img src="http://www.embeddedlinux.org.cn/uploads/allimg/130317/1219451.png" alt="" style="border:0px;" /></p>
+<p style="color:rgb(102,102,102);font-family:'宋体', Arial;font-size:16px;line-height:26px;">
+    在了解起始条件和停止条件后，我们再来看看在这个过程中数据的传输是如何进行的。前面我们已经提到过，数据传输以字节为单位。主设备在SCL线上产生每个 时钟脉冲的过程中将在SDA线上传输一个数据位，当一个字节按数据位从高位到低位的顺序传输完后，紧接着从设备将拉低SDA线，回传给主设备一个应答位， 此时才认为一个字节真正的被传输完成。当然，并不是所有的字节传输都必须有一个应答位，比如：当从设备不能再接收主设备发送的数据时，从设备将回传一个否 定应答位。数据传输的过程如图所示：<br /><img src="http://www.embeddedlinux.org.cn/uploads/allimg/130317/1219452.png" alt="" style="border:0px;" /> <br />
+    在前面我们还提到过，I2C总线上的每一个设备都对应一个唯一的地址，主从设备之间的数据传输是建立在地址的基础上，也就是说，主设备在传输有效数据之前 要先指定从设备的地址，地址指定的过程和上面数据传输的过程一样，只不过大多数从设备的地址是7位的，然后协议规定再给地址添加一个最低位用来表示接下来 数据传输的方向，0表示主设备向从设备写数据，1表示主设备向从设备读数据。如图所示：<br /><img src="http://www.embeddedlinux.org.cn/uploads/allimg/130317/1219453.png" alt="" style="border:0px;" /> <br />
+1.1.4  I2C总线操作<br />
+    对I2C总线的操作实际就是主从设备之间的读写操作。大致可分为以下三种操作情况：<br />
+    第一，主设备往从设备中写数据。数据传输格式如下：<br />
+   <img src="http://www.embeddedlinux.org.cn/uploads/allimg/130317/1219454.png" alt="" style="border:0px;" /> </p>
+<p style="color:rgb(102,102,102);font-family:'宋体', Arial;font-size:16px;line-height:26px;">
+<br />
+    第二，主设备从从设备中读数据。数据传输格式如下：<br />
+    <img src="http://www.embeddedlinux.org.cn/uploads/allimg/130317/1219455.png" alt="" style="border:0px;" /></p>
+<p style="color:rgb(102,102,102);font-family:'宋体', Arial;font-size:16px;line-height:26px;">
+    第三，主设备往从设备中写数据，然后重启起始条件，紧接着从从设备中读取数据；或者是主设备从从设备中读数据，然后重启起始条件，紧接着主设备往从设备中写数据。数据传输格式如下：<br /><img src="http://www.embeddedlinux.org.cn/uploads/allimg/130317/1219456.png" alt="" style="border:0px;" /></p>
+<p style="color:rgb(102,102,102);font-family:'宋体', Arial;font-size:16px;line-height:26px;">
+    第三种操作在单个主设备系统中，重复的开启起始条件机制要比用STOP终止传输后又再次开启总线更有效率。</p>
+                                    </div>
+                                </div>
+            </article>
+</div>
+<script>
+    // 敏感词替换
+    ~function(blogSensitiveWords){
+        if(blogSensitiveWords){   
+            var getContentViews = document.getElementById("content_views");
+            var getContentTitle = document.getElementById("articleContentId");
+            var contentViewsInnerHTML = getContentViews.innerHTML;
+            var contentTitleInnerHTML = getContentTitle.innerHTML;
+            var keyWordsJsonArr = [];
+            var keyWordsArr = blogSensitiveWords.split(',');
+            function repeatTimes(str, num){
+                return num > 1 ? str += repeatTimes(str, --num): str;
+            }
+            for(var i = 0; i < keyWordsArr.length; i++){
+                var keyWordsJson = {} ;
+                keyWordsJson.key = keyWordsArr[i];
+                keyWordsJson.value = repeatTimes("*",keyWordsArr[i].length);
+                keyWordsJsonArr.push(keyWordsJson);
+            }
+            var reg;
+            for(var i = 0; i < keyWordsJsonArr.length; i++){
+                var item = keyWordsJsonArr[i];
+                reg = new RegExp(item.key+"(?!([^<]*>)|([^<]*<\/a>))","ig");
+                contentViewsInnerHTML = contentViewsInnerHTML.replace(reg,item.value);
+                contentTitleInnerHTML = contentTitleInnerHTML.replace(reg,item.value);
+            }
+            getContentViews.innerHTML=contentViewsInnerHTML;
+            getContentTitle.innerHTML=contentTitleInnerHTML;
+        }
+    }(blogSensitiveWords)
+</script>
+            <!--         <div class="hide-article-box hide-article-pos text-center">
+            <a class="btn-readmore" id="btn-readmore-zk" data-report-view='{"mod":"popu_376","dest":"https://blog.csdn.net/w89436838/java/article/details/38660631","strategy":"readmore","ab":"new"}' data-report-click='{"mod":"popu_376","dest":"https://blog.csdn.net/w89436838/java/article/details/38660631","strategy":"readmore","ab":"new"}'>
+                展开阅读全文
+                <svg class="icon chevrondown" aria-hidden="true">
+                    <use xlink:href="#csdnc-chevrondown"></use>
+                </svg>
+            </a>
+        </div>
+         -->
+    
+<script>
+    $.get("https://blog.csdn.net/w89436838/article/uvc/38660631");
+</script>
+
+<div class="more-toolbox" id="toolBarBox">
+    <span id="fixedBar"></span>
+    <div class="left-toolbox">
+        <ul class="toolbox-list">
+            <li class="tool-item tool-active is-like" id="is-like"><a>
+            <img style="display:none;" id="is-like-imgactive" src="https://csdnimg.cn/release/phoenix/template/new_img/tobarThumbUpactive.png" alt="">
+            <img style="display:block;" id="is-like-img" src="https://csdnimg.cn/release/phoenix/template/new_img/tobarThumbUp.png" alt="">   
+            <span class="name" id="is-like-span">点赞</span>
+            <span id="spanCount" class="count">27</span>
+            </a></li>
+            <li class="tool-item tool-active tool-item-comment">
+                                <a href="#commentBox">
+                    <img src="https://csdnimg.cn/release/phoenix/template/new_img/tobarComment.png" alt="">
+                    <span class="name">评论</span>
+                    <span class="count">11</span>
+                </a>
+            </li>
+            <li class="tool-item tool-active tool-QRcode" id="tool-share">
+                <a href="javascript:;" data-report-click='{"mod":"1582594662_002","spm":"1001.2101.3001.4129","ab":"new"}'>
+                    <img src="https://csdnimg.cn/release/phoenix/template/new_img/tobarShare.png" alt="">
+                    <span class="name">分享</span>
+                </a>
+                <div class="QRcode" id="tool-QRcode" style="left:-92%;">
+                    <span id="QRcode-close">x</span>
+                    <p class="title">
+                    海报分享
+                    </p>
+                    <div id='shareCode'></div>
+                    <p>
+                    扫一扫，分享海报
+                    </p>
+                </div>
+            </li>
+            <li class="tool-item tool-active is-collection ">
+                <a href="javascript:;" data-report-click='{"mod":"popu_824","spm":"1001.2101.3001.4130","ab":"new"}'>
+                    <img id="is-collection-img" style="display:block;" src="https://csdnimg.cn/release/phoenix/template/new_img/tobarCollect.png" alt="">
+                    <img id="is-collection-imgactive" style="display:none;" src="https://csdnimg.cn/release/phoenix/template/new_img/tobarCollectionActive.png" alt="">
+                    <span class="name" id="is-collection">收藏</span>
+                    <span class="count get-collection">                    66                    </span>
+                </a>
+            </li>
+            <li class="tool-item tool-active tool-phong" id="tool-phong">
+                <a href="javascript:;" data-report-click='{"mod":"popu_831","spm":"1001.2101.3001.4131","dest":"","ab":"new"}'>
+                    <img src="https://csdnimg.cn/release/phoenix/template/new_img/tobarMobile.png" alt="">
+                    <span class="name">
+                        手机看
+                    </span>
+                </a>
+                <div class="QRcode" id="tool-QRcode-phong" style="left:-78%;">
+                    <p class="title">
+                    分享到微信朋友圈
+                    </p>
+                    <span id="QRcode-phong-close">x</span>
+                    <div id='shareQrCode'></div>
+                    <p>
+                    扫一扫，手机阅读 
+                    </p>
+                </div>
+            </li>
+            <!--打赏开始-->
+                                <!--打赏结束-->
+            <li class="tool-item tool-active tool-more">
+                <a>
+                <img class="tool-more-img" src="https://csdnimg.cn/release/phoenix/template/new_img/lookMore.png" alt="">
+                </a>
+                <ul class="more-box">
+                    <li class="item item-report"><a class="article-report">文章举报</a></li>
+                </ul>
+            </li>
+                                    <li class="tool-item">
+                                    <a class="tool-attend tool-bt-button tool-bt-attend" href="javascript:;">关注</a>
+                            </li>
+                    </ul>
+        <div style="display:flex">
+                        <!-- <a class="tool-mover-open" id="btn-readmore" style="display: none;"  data-type="0" data-report-view='{"mod":"popu_376","spm":"1001.2101.3001.4232","dest":"https://blog.csdn.net/w89436838/java/article/details/38660631","strategy":"packupbar","ab":"new"}' data-report-click='{"mod":"popu_376","spm":"1001.2101.3001.4232","dest":"https://blog.csdn.net/w89436838/java/article/details/38660631","strategy":"packupbar","ab":"new"}'>
+                <span>收起全文</span>
+                <img id="btn-close-img" style="display: block;" src="https://csdnimg.cn/release/phoenix/template/new_img/CommentArrow.png" alt="">
+            </a> -->
+         </div>
+    </div>  
+</div>
+<script type=text/javascript crossorigin src="https://csdnimg.cn/release/phoenix/production/qrcode-7c90a92189.min.js"></script>
+<script src="//g.csdnimg.cn/??sharewx/1.2.1/sharewx.js" type="text/javascript"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/collection-box/1.2.0/collection-box.js"></script>
+            <div class="recommend-box first-recommend-box">	<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-report-view='{"mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/lhp3385\/1761165","ab":"new"}'>
+		<div class="content clearfix">
+			<div class="">
+			<a href="https://download.csdn.net/download/lhp3385/1761165" target="_blank" rel="noopener" data-report-click='{"mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/lhp3385\/1761165","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight&depth_1-utm_source=distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight' >
+				<h4 class="text-truncate oneline clearfix">
+					<!-- <span class="recommend-article-type">下载</span> -->
+					<em>I</em><em>I</em><em>C</em><em>总线</em><em>协议</em>中文版.pdf				</h4>
+			</a>
+				<span class="data float-right">10-22</span>
+			</div>
+			<a href="https://download.csdn.net/download/lhp3385/1761165" target="_blank" rel="noopener" data-report-click='{"mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/lhp3385\/1761165","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight&depth_1-utm_source=distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight' >
+				<div class="desc oneline">
+					<em>I</em> <em>2</em> <em>C</em> <em>总线</em>支持任何 <em>I</em><em>C</em> 生产过程 NMOS <em>C</em>MOS 双极性 两线――串行数据 SDA 和串行时钟 S<em>C</em>L 线在连接到<em>总线</em>的器件间传递信息 每个器件都有一个唯一的地址识别 无论是微控制器 L<em>C</em>				</div>
+			</a>
+		</div>
+	</div>
+
+</div>                        <div class="recommend-box second-recommend-box">
+                	<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/yuanjungogogo\/5291689","ab":"new"}'>
+		<div class="content clearfix">
+			<div class="">
+			<a href="https://download.csdn.net/download/yuanjungogogo/5291689" target="_blank" rel="noopener" data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/yuanjungogogo\/5291689","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight' >
+				<h4 class="text-truncate oneline clearfix">
+					<!-- <span class="recommend-article-type">下载</span> -->
+					<em>i</em><em>2</em><em>c</em><em>总线</em><em>协议</em>(中文版pdf) 无水印				</h4>
+			</a>
+				<span class="data float-right">04-23</span>
+			</div>
+			<a href="https://download.csdn.net/download/yuanjungogogo/5291689" target="_blank" rel="noopener" data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/yuanjungogogo\/5291689","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-1.edu_weight' >
+				<div class="desc oneline">
+					<em>i</em><em>2</em><em>c</em><em>总线</em><em>协议</em>(中文版pdf) 去掉周立功的 标题水印版本 强烈推荐大家下载				</div>
+			</a>
+		</div>
+	</div>
+
+            </div>
+                        <a id="commentBox" name="commentBox"></a>
+<div class="comment-box">
+	<div class="comment-edit-box d-flex">
+		<a id="commentsedit"></a>
+		<div class="user-img">
+			<a href="javascript:void(0);"  rel="noopener">
+				<img class="show_loginbox" src="//g.csdnimg.cn/static/user-img/anonymous-User-img.png">
+			</a>
+		</div>
+		<form id="commentform">
+			<img class="comment-sofa-flag" src="https://csdnimg.cn/release/phoenix/template/new_img/commentFlag@2x.png">
+			<textarea class="comment-content" name="comment_content" id="comment_content" placeholder="优质评论可以帮助作者获得更高权重" maxlength="1000"></textarea>
+			<div class="opt-box"> <!-- d-flex -->
+				<div id="ubbtools" class="add_code">
+					<a href="#insertcode" code="code" target="_self"><i class="icon iconfont icon-daima"></i></a>
+				</div>
+				<input type="hidden" id="comment_replyId" name="comment_replyId">
+				<input type="hidden" id="article_id" name="article_id" value="38660631">
+				<input type="hidden" id="comment_userId" name="comment_userId" value="">
+				<input type="hidden" id="commentId" name="commentId" value="">
+				<div class="dropdown" id="myDrap">
+					<a class="dropdown-face d-flex align-items-center" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<div class="txt-selected text-truncate">添加代码片</div>
+					<svg class="icon d-block" aria-hidden="true">
+						<use xlink:href="#csdnc-triangledown"></use>
+					</svg>
+					</a>
+					<ul class="dropdown-menu" id="commentCode" aria-labelledby="drop4">
+						<li><a data-code="html">HTML/XML</a></li>
+						<li><a data-code="objc">objective-c</a></li>
+						<li><a data-code="ruby">Ruby</a></li>
+						<li><a data-code="php">PHP</a></li>
+						<li><a data-code="csharp">C</a></li>
+						<li><a data-code="cpp">C++</a></li>
+						<li><a data-code="javascript">JavaScript</a></li>
+						<li><a data-code="python">Python</a></li>
+						<li><a data-code="java">Java</a></li>
+						<li><a data-code="css">CSS</a></li>
+						<li><a data-code="sql">SQL</a></li>
+						<li><a data-code="plain">其它</a></li>
+					</ul>
+				</div>  
+				<div class="right-box">
+                                        <span id="tip_comment" class="tip">还能输入<em>1000</em>个字符</span>
+					<input type="button" class="btn btn-sm btn-cancel d-none" value="取消回复">
+					<a data-report-click='{"mod":"1582594662_003","spm":"1001.2101.3001.4227","ab":"new"}'><input type="submit" class="btn btn-sm btn-comment" value="发表评论"></a>
+				</div>
+			</div>
+		</form>
+		<input type="button" class="bt-comment-show" value="评论">
+	</div>
+
+	<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<div class="btn btn-sm btn-link-blue" id="btnMoreComment"></div>
+		</div>
+	</div>
+</div>
+            <div class="recommend-box insert-baidu-box">
+                                    	<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-2.edu_weight\"}","index":"2","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/luyao3038\/9860194","ab":"new"}'>
+		<div class="content clearfix">
+			<div class="">
+			<a href="https://download.csdn.net/download/luyao3038/9860194" target="_blank" rel="noopener" data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-2.edu_weight\"}","index":"2","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/luyao3038\/9860194","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-2.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-2.edu_weight' >
+				<h4 class="text-truncate oneline clearfix">
+					<!-- <span class="recommend-article-type">下载</span> -->
+					<em>I</em><em>2</em><em>C</em><em>协议</em>标准(中文版)				</h4>
+			</a>
+				<span class="data float-right">06-04</span>
+			</div>
+			<a href="https://download.csdn.net/download/luyao3038/9860194" target="_blank" rel="noopener" data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-2.edu_weight\"}","index":"2","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/luyao3038\/9860194","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-2.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-2.edu_weight' >
+				<div class="desc oneline">
+					<em>I</em><em>2</em><em>C</em><em>协议</em>标准(中文版).周立功				</div>
+			</a>
+		</div>
+	</div>
+
+<div class="recommend-item-box type_blog clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.edu_weight\"}","index":"3","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/chm880910\/article\/details\/80086052","ab":"new"}'>
+	<div class="content">
+		<div class="info-box d-flex align-content-center">
+			<p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener" href="https://blog.csdn.net/chm880910">
+					<span class="blog_title"> chm880910的专栏</span>
+					</a>
+									</span>
+		</p>
+		<p class="date-and-readNum oneline">
+						<span class="hover-show">04-25</span>
+			<span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt="">
+				7万+</span>
+						</p>
+		</div>
+		<h4 class="text-truncate oneline">
+			<a href="https://blog.csdn.net/chm880910/article/details/80086052" target="_blank"  rel="noopener" title="i2c时序图的详细讲解"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.edu_weight\"}","index":"3","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/chm880910\/article\/details\/80086052","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.edu_weight' >
+				<!-- <span class="recommend-article-type">博文</span> -->
+				<em>i</em><em>2</em><em>c</em>时序图的详细讲解			</a>
+		</h4>
+		<div class="desc">
+			<a href="https://blog.csdn.net/chm880910/article/details/80086052" target="_blank"  rel="noopener"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.edu_weight\"}","index":"3","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/chm880910\/article\/details\/80086052","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.edu_weight' >
+				　<em>i</em><em>2</em><em>c</em>简易时序图　　启动信号：　　S<em>C</em>L为高电平的时候，SDA由高电平向低电平跳变。结束信号：S<em>C</em>L为高电平的时候，SDA由低电平向高电平跳变。　　应答信号：　　<em>I</em><em>2</em><em>C</em><em>总线</em>上的所有数据都是以8位字节传送的，发送器每发送一个字节，就在时钟脉冲9期间释放数据线，由接收器反馈一个应答信号。应答信号为低电平时，规定为有效应答位（A<em>C</em>K简称应答位），表示接收器已经成功地接收了该字节；应答信号为高电平时，规......			</a>
+		</div>
+	</div>
+	</div>
+
+<div class="recommend-item-box type_blog clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.edu_weight\"}","index":"4","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/weixin_34217711\/article\/details\/85843314","ab":"new"}'>
+	<div class="content">
+		<div class="info-box d-flex align-content-center">
+			<p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_34217711">
+					<span class="blog_title"> weixin_34217711的博客</span>
+					</a>
+									</span>
+		</p>
+		<p class="date-and-readNum oneline">
+						<span class="hover-show">12-24</span>
+			<span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt="">
+				2254</span>
+						</p>
+		</div>
+		<h4 class="text-truncate oneline">
+			<a href="https://blog.csdn.net/weixin_34217711/article/details/85843314" target="_blank"  rel="noopener" title="[I2C]I2C总线协议图解"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.edu_weight\"}","index":"4","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/weixin_34217711\/article\/details\/85843314","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.edu_weight' >
+				<!-- <span class="recommend-article-type">博文</span> -->
+				[<em>I</em><em>2</em><em>C</em>]<em>I</em><em>2</em><em>C</em><em>总线</em><em>协议</em>图解			</a>
+		</h4>
+		<div class="desc">
+			<a href="https://blog.csdn.net/weixin_34217711/article/details/85843314" target="_blank"  rel="noopener"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.edu_weight\"}","index":"4","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/weixin_34217711\/article\/details\/85843314","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.edu_weight' >
+				转自：http://blog.<em>c</em>sdn.net/w89436838/art<em>i</em><em>c</em>le/deta<em>i</em>ls/386606311  <em>I</em><em>2</em><em>C</em><em>总线</em>物理拓扑结构     <em>I</em><em>2</em><em>C</em> <em>总线</em>在物理连接上非常简单，分别由SDA(串行数据线)和S<em>C</em>L(串行时钟线)及上拉电阻组成。通信原理是通过对S<em>C</em>L和SDA线高低电平时序的控制，来产生<em>I</em><em>2</em><em>C</em><em>总线</em><em>协议</em>所需要的信号进行数据的传递。在<em>总线</em>空闲状态时，这两根线一般被上面所接的上......			</a>
+		</div>
+	</div>
+	</div>
+
+<div class="recommend-item-box type_blog clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.edu_weight\"}","index":"5","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/shunfa888\/article\/details\/79494914","ab":"new"}'>
+	<div class="content">
+		<div class="info-box d-flex align-content-center">
+			<p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener" href="https://blog.csdn.net/shunfa888">
+					<span class="blog_title"> shunfa888的博客</span>
+					</a>
+									</span>
+		</p>
+		<p class="date-and-readNum oneline">
+						<span class="hover-show">03-09</span>
+			<span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt="">
+				1236</span>
+						</p>
+		</div>
+		<h4 class="text-truncate oneline">
+			<a href="https://blog.csdn.net/shunfa888/article/details/79494914" target="_blank"  rel="noopener" title="I2C总线通讯协议"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.edu_weight\"}","index":"5","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/shunfa888\/article\/details\/79494914","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.edu_weight' >
+				<!-- <span class="recommend-article-type">博文</span> -->
+				<em>I</em><em>2</em><em>C</em><em>总线</em>通讯<em>协议</em>			</a>
+		</h4>
+		<div class="desc">
+			<a href="https://blog.csdn.net/shunfa888/article/details/79494914" target="_blank"  rel="noopener"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.edu_weight\"}","index":"5","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/shunfa888\/article\/details\/79494914","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-5.edu_weight' >
+				1. <em>I</em><em>2</em><em>C</em><em>总线</em>简介<em>I</em><em>2</em><em>C</em>是<em>I</em>nter-<em>I</em>ntegrated <em>C</em><em>i</em>r<em>c</em>u<em>i</em>t的简称，读作：<em>I</em>-squared-<em>C</em>。由飞利浦公司于1980年代提出，为了让主板、嵌入式系统或手机用以连接低速周边外部设备而发展。1.1 物理接口<em>I</em><em>2</em><em>C</em><em>总线</em>只使用两条双向漏极开路的信号线（串行数据线：SDA，及串行时钟线：S<em>C</em>L），并利用电阻上拉。<em>I</em><em>2</em><em>C</em><em>总线</em>仅仅使用S<em>C</em>L、SDA两根信号线，就实现了设备间的数据交互，极大地......			</a>
+		</div>
+	</div>
+	</div>
+
+<div class="recommend-item-box type_blog clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-6.edu_weight\"}","index":"6","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/xx_0305401\/article\/details\/81914528","ab":"new"}'>
+	<div class="content">
+		<div class="info-box d-flex align-content-center">
+			<p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener" href="https://blog.csdn.net/xx_0305401">
+					<span class="blog_title"> 八婆的博客</span>
+					</a>
+									</span>
+		</p>
+		<p class="date-and-readNum oneline">
+						<span class="hover-show">08-21</span>
+			<span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt="">
+				3万+</span>
+						</p>
+		</div>
+		<h4 class="text-truncate oneline">
+			<a href="https://blog.csdn.net/xx_0305401/article/details/81914528" target="_blank"  rel="noopener" title="IIC总线协议详解"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-6.edu_weight\"}","index":"6","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/xx_0305401\/article\/details\/81914528","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-6.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-6.edu_weight' >
+				<!-- <span class="recommend-article-type">博文</span> -->
+				<em>I</em><em>I</em><em>C</em><em>总线</em><em>协议</em><em>详解</em>			</a>
+		</h4>
+		<div class="desc">
+			<a href="https://blog.csdn.net/xx_0305401/article/details/81914528" target="_blank"  rel="noopener"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-6.edu_weight\"}","index":"6","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/xx_0305401\/article\/details\/81914528","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-6.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-6.edu_weight' >
+				转自：https://www.<em>c</em>nblogs.<em>c</em>om/aaronL<em>i</em>nux/p/6<em>2</em>18660.html1  <em>I</em><em>2</em><em>C</em><em>总线</em>物理拓扑结构     <em>I</em><em>2</em><em>C</em> <em>总线</em>在物理连接上非常简单，分别由SDA(串行数据线)和S<em>C</em>L(串行时钟线)及上拉电阻组成。通信原理是通过对S<em>C</em>L和SDA线高低电平时序的控制，来产生<em>I</em><em>2</em><em>C</em><em>总线</em><em>协议</em>所需要的信号进行数据的传递。在<em>总线</em>空闲状态时，这两根线一般被上面所接的上拉电阻......			</a>
+		</div>
+	</div>
+	</div>
+
+<div class="recommend-item-box type_blog clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.edu_weight\"}","index":"7","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/qq_39759656\/article\/details\/81232909","ab":"new"}'>
+	<div class="content">
+		<div class="info-box d-flex align-content-center">
+			<p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39759656">
+					<span class="blog_title"> 瞌睡的洋葱的博客</span>
+					</a>
+									</span>
+		</p>
+		<p class="date-and-readNum oneline">
+						<span class="hover-show">07-27</span>
+			<span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt="">
+				2万+</span>
+						</p>
+		</div>
+		<h4 class="text-truncate oneline">
+			<a href="https://blog.csdn.net/qq_39759656/article/details/81232909" target="_blank"  rel="noopener" title="很清晰的解读i2c协议"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.edu_weight\"}","index":"7","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/qq_39759656\/article\/details\/81232909","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.edu_weight' >
+				<!-- <span class="recommend-article-type">博文</span> -->
+				很清晰的解读<em>i</em><em>2</em><em>c</em><em>协议</em>			</a>
+		</h4>
+		<div class="desc">
+			<a href="https://blog.csdn.net/qq_39759656/article/details/81232909" target="_blank"  rel="noopener"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.edu_weight\"}","index":"7","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/qq_39759656\/article\/details\/81232909","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.edu_weight' >
+				地址https://blog.<em>c</em>sdn.net/l<em>i</em>ngfeng5/art<em>i</em><em>c</em>le/deta<em>i</em>ls/733618331.what<em>i</em>s<em>I</em><em>2</em><em>C</em>?简单讲就是用来传输数据的两根线：一根数据线（SDA）一根时钟线（S<em>C</em>L）<em>2</em>.<em>I</em><em>2</em><em>C</em>怎么传输的？（1）基本过程：     1.主机发出开始信号     <em>2</em>.主机接着发出一字节的从机地址信息，其中最低位为读写控制码（1为读、0为写）......			</a>
+		</div>
+	</div>
+	</div>
+
+<div class="recommend-item-box type_blog clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-8.edu_weight\"}","index":"8","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/jasonchen_gbd\/article\/details\/77431951","ab":"new"}'>
+	<div class="content">
+		<div class="info-box d-flex align-content-center">
+			<p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener" href="https://blog.csdn.net/jasonchen_gbd">
+					<span class="blog_title"> 落尘纷扰的专栏</span>
+					</a>
+									</span>
+		</p>
+		<p class="date-and-readNum oneline">
+						<span class="hover-show">08-20</span>
+			<span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png" alt="">
+				4万+</span>
+						</p>
+		</div>
+		<h4 class="text-truncate oneline">
+			<a href="https://blog.csdn.net/jasonchen_gbd/article/details/77431951" target="_blank"  rel="noopener" title="I2C总线传输协议"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-8.edu_weight\"}","index":"8","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/jasonchen_gbd\/article\/details\/77431951","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-8.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-8.edu_weight' >
+				<!-- <span class="recommend-article-type">博文</span> -->
+				<em>I</em><em>2</em><em>C</em><em>总线</em>传输<em>协议</em>			</a>
+		</h4>
+		<div class="desc">
+			<a href="https://blog.csdn.net/jasonchen_gbd/article/details/77431951" target="_blank"  rel="noopener"  data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-8.edu_weight\"}","index":"8","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/jasonchen_gbd\/article\/details\/77431951","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-8.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-8.edu_weight' >
+				<em>I</em><em>2</em><em>C</em><em>总线</em>支持设备之间的短距离通信，它只需要两根信号线来完成信息交换。<em>I</em><em>2</em><em>C</em>最早是飞利浦在198<em>2</em>年开发设计并用于自己的芯片上，一开始只允许100kHz、7-b<em>i</em>t标准地址。199<em>2</em>年，<em>I</em><em>2</em><em>C</em>的第一个公共规范发行，增加了400kHz的快速模式以及10-b<em>i</em>t扩展地址。在<em>I</em><em>2</em><em>C</em>的基础上，1995年<em>I</em>ntel提出了“System Managemen...			</a>
+		</div>
+	</div>
+	</div>
+
+	<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.edu_weight\"}","index":"9","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/feixuepiaoa\/10309726","ab":"new"}'>
+		<div class="content clearfix">
+			<div class="">
+			<a href="https://download.csdn.net/download/feixuepiaoa/10309726" target="_blank" rel="noopener" data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.edu_weight\"}","index":"9","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/feixuepiaoa\/10309726","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.edu_weight' >
+				<h4 class="text-truncate oneline clearfix">
+					<!-- <span class="recommend-article-type">下载</span> -->
+					<em>I</em><em>2</em><em>C</em><em>协议</em>中文版				</h4>
+			</a>
+				<span class="data float-right">03-26</span>
+			</div>
+			<a href="https://download.csdn.net/download/feixuepiaoa/10309726" target="_blank" rel="noopener" data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.edu_weight\"}","index":"9","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/feixuepiaoa\/10309726","ab":"new"}' data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.edu_weight&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.edu_weight' >
+				<div class="desc oneline">
+					<em>I</em><em>2</em><em>C</em><em>协议</em>，中文版测试资料，仅供参考，<em>I</em><em>2</em><em>C</em><em>协议</em>，中文版测试资料，仅供参考，				</div>
+			</a>
+		</div>
+	</div>
+
+                    <!-- <div class="recommend-item-box type_hot_word">
+                    <div class="content clearfix">
+                        <div class="float-left">
+                                                                                <span>
+                                <a href="https://java.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://java.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://java.csdn.net/","index":"#"}'  target="_blank">
+                                Java</a>
+                            </span>
+                                                        <span>
+                                <a href="https://c1.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://c1.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://c1.csdn.net/","index":"#"}'  target="_blank">
+                                C语言</a>
+                            </span>
+                                                        <span>
+                                <a href="https://python.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://python.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://python.csdn.net/","index":"#"}'  target="_blank">
+                                Python</a>
+                            </span>
+                                                        <span>
+                                <a href="https://cplus.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://cplus.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://cplus.csdn.net/","index":"#"}'  target="_blank">
+                                C++</a>
+                            </span>
+                                                        <span>
+                                <a href="https://csharp.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://csharp.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://csharp.csdn.net/","index":"#"}'  target="_blank">
+                                C#</a>
+                            </span>
+                                                        <span>
+                                <a href="https://vbn.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://vbn.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://vbn.csdn.net/","index":"#"}'  target="_blank">
+                                Visual Basic .NET</a>
+                            </span>
+                                                        <span>
+                                <a href="https://js.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://js.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://js.csdn.net/","index":"#"}'  target="_blank">
+                                JavaScript</a>
+                            </span>
+                                                        <span>
+                                <a href="https://php.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://php.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://php.csdn.net/","index":"#"}'  target="_blank">
+                                PHP</a>
+                            </span>
+                                                        <span>
+                                <a href="https://sql.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://sql.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://sql.csdn.net/","index":"#"}'  target="_blank">
+                                SQL</a>
+                            </span>
+                                                        <span>
+                                <a href="https://go.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://go.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://go.csdn.net/","index":"#"}'  target="_blank">
+                                Go语言</a>
+                            </span>
+                                                        <span>
+                                <a href="https://r.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://r.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://r.csdn.net/","index":"#"}'  target="_blank">
+                                R语言</a>
+                            </span>
+                                                        <span>
+                                <a href="https://assembly.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://assembly.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://assembly.csdn.net/","index":"#"}'  target="_blank">
+                                Assembly language</a>
+                            </span>
+                                                        <span>
+                                <a href="https://swift.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://swift.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://swift.csdn.net/","index":"#"}'  target="_blank">
+                                Swift</a>
+                            </span>
+                                                        <span>
+                                <a href="https://ruby.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://ruby.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://ruby.csdn.net/","index":"#"}'  target="_blank">
+                                Ruby</a>
+                            </span>
+                                                        <span>
+                                <a href="https://matlab.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://matlab.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://matlab.csdn.net/","index":"#"}'  target="_blank">
+                                MATLAB</a>
+                            </span>
+                                                        <span>
+                                <a href="https://plsql.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://plsql.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://plsql.csdn.net/","index":"#"}'  target="_blank">
+                                PL/SQL</a>
+                            </span>
+                                                        <span>
+                                <a href="https://perl.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://perl.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://perl.csdn.net/","index":"#"}'  target="_blank">
+                                Perl</a>
+                            </span>
+                                                        <span>
+                                <a href="https://vb.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://vb.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://vb.csdn.net/","index":"#"}'  target="_blank">
+                                Visual Basic</a>
+                            </span>
+                                                        <span>
+                                <a href="https://obj.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://obj.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://obj.csdn.net/","index":"#"}'  target="_blank">
+                                Objective-C</a>
+                            </span>
+                                                        <span>
+                                <a href="https://delphi.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://delphi.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://delphi.csdn.net/","index":"#"}'  target="_blank">
+                                Delphi/Object Pascal</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/unity/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://www.csdn.net/unity/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://www.csdn.net/unity/","index":"#"}'  target="_blank">
+                                Unity3D</a>
+                            </span>
+                                                    
+                                                                                <span>
+                                <a href="https://www.csdn.net/gather_19/NtDaQg3sLWRvd25sb2Fk.html" target="_blank">
+                                c# 键盘钩子</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_19/NtDaQg4sLWRvd25sb2Fk.html" target="_blank">
+                                c# 左边轴十六进制负数</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_1f/NtDaUgwsLWRvd25sb2Fk.html" target="_blank">
+                                c# 生成随机数15位</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_19/NtDaUgxsLWRvd25sb2Fk.html" target="_blank">
+                                c# wpf不占用任务栏</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_19/NtDaUgysLWRvd25sb2Fk.html" target="_blank">
+                                c#查一行数据</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_14/NtDaUgzsLWRvd25sb2Fk.html" target="_blank">
+                                c# 替换字典中某个值</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_12/NtDaUg2sLWRvd25sb2Fk.html" target="_blank">
+                                c# rc4</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_1d/NtDaUg4sLWRvd25sb2Fk.html" target="_blank">
+                                c#中md5加密</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_17/NtDaUg5sLWRvd25sb2Fk.html" target="_blank">
+                                c# 新建mvc项目</a>
+                            </span>
+                                                        <span>
+                                <a href="https://www.csdn.net/gather_10/NtDaYgxsLWRvd25sb2Fk.html" target="_blank">
+                                c# 引用mysql</a>
+                            </span>
+                                                                            </div>
+                    </div>
+                    </div> -->
+                                    <div class="recommend-loading-box">
+                    <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+                </div>
+                <!-- <div class="recommend-end-box">
+                    <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+                </div> -->
+            </div>
+                            <div class="template-box">
+                    <span>©️2020 CSDN</span>
+                <span>皮肤主题: 大白</span>
+                <span> 设计师:
+                                            CSDN官方博客                                    </span>
+                <span>
+                    <a href="https://blog.csdn.net/" class="back-home c-blue c-blue-hover c-blue-focus">返回首页</a>
+                </span>
+                </div>
+                        <script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.4.js" data-isfootertrack="false" type="text/javascript"></script>
+        </main>
+    </div>
+        <div class="recommend-right  align-items-stretch clearfix" id="rightAside">
+      <aside class="recommend-right_aside">
+        <div id="recommend-right" style="height:100%;position:fixed;">
+          <div class='d-flex flex-column aside-box groupfile' id="groupfile">
+            <h3 class="aside-title">目录</h3>
+            <div class="align-items-stretch group_item">
+                <div class="pos-box">
+                    <div class="scroll-box">
+                        <div class="toc-box"></div>
+                    </div>
+                </div>
+            </div>
+          </div>
+                                  <div id="addAdBox" style="display:none">
+                  <div id="kp_box_479" data-pid="479"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- PC-博客详情页-右侧视窗300*600 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:600px"
+     data-ad-client="ca-pub-1076724771190722"
+     data-ad-slot="8441704093"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=479&a=2487&c=0&k=&d=1&t=3&u=5d16c38da5214128b45a61222d56f44f"></div>              </div>
+                              <div class='aside-box kind_person d-flex flex-column'>
+          <h3 class="aside-title">分类专栏</h3>
+              <div class="align-items-stretch kindof_item">
+                <div class="aside-content">
+                  <ul>
+                                        <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494147.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2494147.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151026427.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">嵌入式系统</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">24篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494149.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2494149.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151053287.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">C语言</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">15篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494151.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2494151.html">
+                                                                <img src="https://img-blog.csdnimg.cn/2019092715111047.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">单片机</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">8篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494167.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2494167.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151101105.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">MCU</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">7篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494169.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2494169.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151117521.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">C++</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">1篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2494171.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2494171.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151132530.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">Linux</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">15篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2496077.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2496077.html">
+                                                                <img src="https://img-blog.csdnimg.cn/2019091813595558.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">电子</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">3篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2540315.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2540315.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190918140129601.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">数据结构</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">1篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2574047.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2574047.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151026427.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">计算机</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">1篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680967.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2680967.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151132530.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">V模型</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680969.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2680969.html">
+                                                                <img src="https://img-blog.csdnimg.cn/2019091813595558.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">软件管理</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">1篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680971.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2680971.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190918140037908.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">ruanj</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680977.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2680977.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151026427.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">软件开发V模型</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">1篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2680979.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2680979.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151053287.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">软件开发</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">1篇</span>
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2841037.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2841037.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151117521.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">LCD</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                        </a>
+                      </li>
+                                          <li class="">
+                                                    <a class="clearfix"
+                                                        data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/w89436838/category_2841039.html","ab":"new"}'
+                                                      href="https://blog.csdn.net/w89436838/category_2841039.html">
+                                                                <img src="https://img-blog.csdnimg.cn/20190927151132530.png?x-oss-process=image/resize,m_fixed,h_224,w_224" alt="">
+                                                            <!--####是否付费-->
+                              <span class="title oneline"><span class="text">HT1621B</span>
+                                                                </span>
+                              <!--####是否付费-->
+                                                                <span class="count float-right">1篇</span>
+                                                        </a>
+                      </li>
+                                      </ul>
+              </div>
+              </div>
+
+          </div>
+      </div>
+      </aside>
+    </div>
+    
+</div>
+<div class="mask-dark"></div>
+<script>
+    var recommendCount = 8;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var ChannelId = 7;
+    var articleId = "38660631";
+    var commentscount = 11;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/w89436838/java/article/details/38660631";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "I2C总线协议详解_Puls的专栏-CSDN博客";
+    //是否插入百度推荐内容
+    var needInsertBaidu = true;
+    // 代码段样式
+    var codeStyle = '';
+	var highlight = ["I","2","C","\u603b\u7ebf","\u534f\u8bae","\u8be6\u89e3"];//高亮数组
+
+    var share_card_url = 'https://blog.csdn.net/w89436838/article/shareArticleCardPage?article_id=38660631'
+    var RecommendBlogExpertList = [];
+	var articleType = 2;
+	var CopyrightContent = '';
+            var recommendRegularDomainArr = ["blog.csdn.net\/.+\/article\/details\/","download.csdn.net\/download\/","edu.csdn.net\/course\/detail\/","ask.csdn.net\/questions\/","bbs.csdn.net\/topics\/","www.csdn.net\/gather_.+\/"];
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging-3d3b805766.js"></script>
+<div class="skin-boxshadow"></div>
+<div class="pay-code">
+        <div class="pay-money">实付<span class="pay-money-span" data-nowprice='0' data-oldprice='0.00'>0元</span></div>
+        <div class=content>
+        <div id="payCode" data-id="">
+                <div class="renovate">
+                    <img src="https://csdnimg.cn/release/phoenix/static_blog/images/pay-time-out.png">
+                    <span>点击重新获取</span>
+                </div>
+            </div>
+            <div class="pay-style"><span><img src="https://csdnimg.cn/release/phoenix/static_blog/images/wx.png"></span><span><img src="https://csdnimg.cn/release/phoenix/static_blog/images/zfb.png"></span><span><img src="https://csdnimg.cn/release/phoenix/static_blog/images/JD.png"></span><span class="text">扫码支付</span></div>
+        </div>
+        <div class="bt-close"><svg t="1567152543821" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10924" xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="12"><defs><style type="text/css"></style></defs><path d="M512 438.378667L806.506667 143.893333a52.032 52.032 0 1 1 73.6 73.621334L585.621333 512l294.485334 294.485333a52.074667 52.074667 0 0 1-73.6 73.642667L512 585.621333 217.514667 880.128a52.053333 52.053333 0 1 1-73.621334-73.642667L438.378667 512 143.893333 217.514667a52.053333 52.053333 0 1 1 73.621334-73.621334L512 438.378667z" fill="" p-id="10925"></path></svg></div>
+        <!-- <p style="margin-top: 8px;font-size: 14px;" class="text-center">支付成功即可阅读</p> -->
+        <div class="pay-balance">
+        <input type="radio" class="pay-code-radio" data-type="details"> 
+        <span class="span">钱包余额</span>
+        <span class="balance" style="color:#e33e33;font-size:14px;">0</span>  
+        <div class="pay-code-tile">
+            <img src="https://csdnimg.cn/release/phoenix/static_blog/images/pay-help.png" alt="">
+            <div class="pay-code-content">
+                <div class="span">
+                    <p class="title">抵扣说明：</p>
+                    <p> 1.余额是钱包充值的虚拟货币，按照1:1的比例进行支付金额的抵扣。<br> 2.余额无法直接购买下载，可以购买VIP、C币套餐、付费专栏及课程。</p>
+                </div>
+            </div>
+        </div>
+        </div>
+        <a class="pay-balance-con" href="https://i.csdn.net/#/wallet/balance/recharge" target="_blank"><img src="https://csdnimg.cn/release/phoenix/static_blog/images/recharge.png" alt=""><span  >余额充值</span></a>
+    </div>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+</body>
+    <!-- 高亮未与 markdown兼容 -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.0/ckeditor/plugins/chart/chart.css" />
+	<script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.6.0/ckeditor/plugins/chart/lib/chart.min.js"></script>
+    <script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.6.0/ckeditor/plugins/chart/widget2chart.js"></script>
+    <script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_highlight-db1e81323a.js"></script>
+<script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-ac9b004d59.js"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.0/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-light.css">
+<script>
+ // 全局声明
+ if (window.csdn === undefined) {
+      window.csdn = {};
+    }
+    window.csdn.sideToolbar = {
+        options: {
+            report:{
+                isShow: true,
+            },
+            qr: {
+                isShow: false,
+            }
+        }
+    }
+    $(function(){
+        $(document).on('click',"a.option-box[data-type='report']",function() {
+            window.csdn.userLogin.loadAjax(function(res){
+                showReport(false,articleTitles);
+            })
+        });
+    })
+</script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/iconfont/csdnc-c439e66521.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/new_js/common-8b5cf01a6b.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/new_js/detail-b9a46ff66a.min.js"></script>
+<script src="//csdnimg.cn/release/download/old_static/js/qrcode.js"></script>
+<script src="https://csdnimg.cn/release/cart/pub/1.0.4/cart_jsonp.js?v=2"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/new_js/column_pay-1d16e18aa0.min.js"></script>
+	
+<script src="https://g.csdnimg.cn/copyright/1.0.3/copyright.js" type="text/javascript"></script>
+<script>
+    $(".MathJax").remove();
+    if ($('div.markdown_views pre.prettyprint code.hljs').length > 0) {
+        $('div.markdown_views')[0].className = 'markdown_views';
+    }
+</script>
+<script type="text/javascript" src="https://csdnimg.cn/release/blog_mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+    <script src="//g.csdnimg.cn/baidu-search/1.0.3/baidu-search.js"  type="text/javascript"></script>
+</html>
