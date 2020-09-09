@@ -7,7 +7,7 @@ void I2C_GPIO_Init(void){
 	
 	/*Configure I2C GPIO pins : SDA -- PC4 */
   GPIO_InitStruct.Pin = I2C_SDA_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);									//Init SDA
@@ -16,7 +16,7 @@ void I2C_GPIO_Init(void){
 	
 	/*Configure I2C GPIO pins : SCL -- PC5 */
 	GPIO_InitStruct.Pin = I2C_SCL_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(I2C_SCL_PORT, &GPIO_InitStruct);               		//Init SCL
@@ -33,7 +33,7 @@ void I2C_GPIO_Init(void){
 */
 void delay_us(uint32_t us)
 {
-	__IO int i = us * 6;
+	__IO int i = us * 5;
 	while(i--);
 }
 
@@ -58,10 +58,9 @@ void delay_ms(uint32_t ms)
 void i2c_Start(){
 	I2C_SCL_1();
 	I2C_SDA_1();
-	delay_us(2);
+	delay_us(I2C_PD);
 	I2C_SDA_0();
-	I2C_SCL_0();
-	delay_us(12);
+	delay_us(I2C_PD);
 }
 
 /**
@@ -81,7 +80,7 @@ void i2c_Stop(){
 void i2c_SendAck(void){
 	I2C_SDA_0();
 	I2C_SCL_1();
-	delay_us(2);
+	delay_us(I2C_PD);
 	I2C_SCL_0();
 	I2C_SDA_1();
 }
@@ -93,7 +92,7 @@ void i2c_SendAck(void){
 void i2c_SendNAck(void){
 	I2C_SDA_1();
 	I2C_SCL_1();
-	delay_us(2);
+	delay_us(I2C_PD);
 	I2C_SCL_0();
 }
 
@@ -104,8 +103,9 @@ void i2c_SendNAck(void){
 */
 u8 i2c_WaitAck(){
 	u8 re_value;
+	//I2C_SDA_1();
 	I2C_SCL_1();
-	delay_us(2);
+	delay_us(I2C_PD);
 	re_value = I2C_SDA_READ();
 	I2C_SCL_0();
 	return re_value;
@@ -120,14 +120,21 @@ void I2C_SendByte(u8 data_byte){
 	__IO u8 i = 0, j = 0;
 	for(i = 0; i < 8; ++i){
 		//
-		j = (data_byte) & 0x80;
-		(j) ? (I2C_SDA_1()):(I2C_SDA_0());
+		I2C_SCL_0();
+		((data_byte) & 0x80) ? (I2C_SDA_11):(I2C_SDA_00);
 		I2C_SCL_1();
-		delay_us(2);
+		delay_us(I2C_PD);
 		I2C_SCL_0();
 		I2C_SDA_0();
 		data_byte <<= 1U;
 	}
+	
+//	SCL_L()
+//	sda_L/H
+//	delay_ms()
+//	SCL_H()
+//	delay_ms()
+	
 }
 
 
@@ -141,7 +148,7 @@ u8 I2C_ReadByte(){
 	for(i = 0; i < 8; ++i){
 		value <<= 1U;
 		I2C_SCL_1();
-		delay_us(2);
+		delay_us(I2C_PD);
 		value |= I2C_SDA_READ();
 		I2C_SCL_0();
 	}
@@ -166,12 +173,17 @@ u32 I2C_Write(u8 slave_addr, u8 *data, u32 data_length){
 	
 	//Wait and analyze for acknowledge
 	while(len){
-		if(i2c_WaitAck()){
-//			I2C_SendByte(pdata[--len]);
+		--len;
+		if(i2c_WaitAck() == 0){
+			I2C_SendByte(pdata[len]);
+			//
+		}
+		else{
 			break;
 		}
 	}
-
+	
+	i2c_WaitAck();
 	//Send end signal
 	i2c_Stop();		
 	return 0;
@@ -192,7 +204,7 @@ u32 I2C_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 	I2C_SendByte(slave_addr);
 	
 	//Wait and analyze for acknowledge
-	if(!i2c_WaitAck()){
+	if(i2c_WaitAck()){
 		while(len){
 			pdata[--len] = I2C_ReadByte();
 			if(!len){
@@ -217,13 +229,13 @@ void test(void){
 	__IO u8 i = I2C_SCL_READ();
 	if(I2C_SCL_READ()){
 		LED_ON;
-		delay_us(2);
+		delay_us(I2C_PD);
 	}
-	delay_us(2);
+	delay_us(I2C_PD);
 	I2C_SCL_0();
 	if(!I2C_SCL_READ()){
 		LED_OFF;
-		delay_us(2);
+		delay_us(I2C_PD);
 	}
 }
 

@@ -8,6 +8,7 @@ typedef uint32_t u32;
 typedef uint16_t u16;
 typedef uint8_t u8;
 
+#define I2C_PD 10
 
 //LED port select
 #define LED_GREEN_Pin GPIO_PIN_5
@@ -49,6 +50,8 @@ enum Unit_Of_Time{
 					s,
 };
 
+
+
 //SET SCL LEVEL
 //#define I2C_SCL_1() I2C_PORT_GPIO->BSRR = I2C_SCL_PIN											  						// SCL = 1 
 //#define I2C_SCL_0() I2C_PORT_GPIO->BSRR = (uint32_t)I2C_SCL_PIN << 16U  								// SCL = 0 
@@ -82,8 +85,13 @@ void delay_ms(u32);
 //GPIO Init
 void i2c_slave_SCL_Falling_Exti_Enable(void);
 void i2c_slave_SCL_Falling_Exti_Disable(void);
+void i2c_slave_SCL_Rising_Exti_Enable(void);
 void i2c_slave_SDA_GPIO_Input_Init(void);
 //void i2c_slave_SDA_GPIO_Init(void);
+
+//Send or Read a bit in Exti
+//void i2c_ReadBit(void);
+//void i2c_SenddBit(void);
 
 
 //Start and stop signal
@@ -100,8 +108,8 @@ u8 i2c_WaitAck(void);
 //Send and receive data
 void i2c_SendByte(u8 *data_byte);
 u32 i2c_ReadByte( void);
-u32 I2C_Write(u8 *data, u32 data_length);
-u32 I2C_Read(void);
+void I2C_Write(u8 *data, u32 data_length);
+void I2C_Read(void);
 
 
 //Test function

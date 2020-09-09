@@ -11,6 +11,8 @@
 
 
 void SystemClock_Config(void);
+void (* Execute_Address)(void);
+
 
 /**
   * @brief  The application entry point.
@@ -18,6 +20,7 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
+	//Execute_Address = &i2c_ReadBit;
 
   HAL_Init();																					//Init HAL
 
@@ -28,10 +31,12 @@ int main(void)
 	i2c_slave_SDA_GPIO_Input_Init();													//Init SDA GPIO       --- PC4
 	
 	i2c_slave_SCL_Falling_Exti_Enable();								//Enable SCL Falling exti
+	
 
+	
   while (1)
   {
-
+		
   }
 
 }
@@ -89,7 +94,6 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 		i2c_slave_SCL_Falling_Exti_Disable();
 		I2C_Read();
 	}
-	
 }
 
 /**
@@ -99,7 +103,7 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
 	if(is_i2c_Stop()){
-		callback();
+		Execute_Address();
 	}
 }
 

@@ -25,8 +25,8 @@ int main(void)
   MX_GPIO_Init();																//Init GREEN LED GPIO
   MX_USART2_UART_Init();												//Init UART2 GPIO
 	I2C_GPIO_Init();															//Init I2C GPIO
-	//I2C_Write(I2C_WRITE_ADDRESS, test, 2);        //test
-	I2C_Read(I2C_READ_ADDRESS, test, 4);        //test
+	I2C_Write(I2C_WRITE_ADDRESS, test, 6);        //test
+	//I2C_Read(I2C_READ_ADDRESS, test, 2);          //test
 	/**      LOOP      **/
   while (1)
   {
