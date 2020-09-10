@@ -3,7 +3,7 @@
 
 u32 buff_size = 10U;
 
-__IO u8 bit_register = 0;
+__IO u8 bit_register = 2;
 
 //the time delay function
 
@@ -57,8 +57,10 @@ u8 is_i2c_Stop(){
 * @retval void
 */
 void i2c_SendAck(void){
+	I2C_SDA_PORT->MODER |= 0x00010000;
 	I2C_SDA_0();
 	delay_us(I2C_PD);
+	I2C_SDA_PORT->MODER &= 0xFFFCFFFF;
 }
 
 /**
@@ -66,8 +68,10 @@ void i2c_SendAck(void){
 * @retval void
 */
 void i2c_SendNAck(void){
+	//i2c_slave_SDA_GPIO_Output_PP_Init();
 	I2C_SDA_1();
 	delay_us(I2C_PD);
+	//i2c_slave_SDA_GPIO_Input_Init();
 }
 
 /**
@@ -111,6 +115,7 @@ void I2C_SendByte(u8 *data_byte){
 u8 I2C_ReadByte(){
 	__IO u8 i, value = 0, j;
 	for(i = 0; i < 8; ++i){
+		delay_us(I2C_PD);
 		value <<= 1U;
 		while(1){
 			if(I2C_SCL_READ()){
@@ -164,14 +169,15 @@ void I2C_Read(){
 	else if(slave_addr == self_addr_read){
 		i2c_SendAck();
 		while(i){
-			rdata[i--] = I2C_ReadByte();
+			rdata[--i] = I2C_ReadByte();
 			if(i == 0){
 				i2c_SendNAck();
 			}
-			i2c_SendAck();
+			i2c_SendNAck();
 		}
 	}
 	free(rdata);
+	i2c_slave_SCL_Falling_Exti_Enable();
 }
 
 /**
@@ -231,12 +237,29 @@ void i2c_slave_SDA_GPIO_Input_Init(){
 	
 	// Configure I2C GPIO pins : SDA - PC4
   GPIO_InitStruct.Pin = I2C_SDA_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
+	I2C_SDA_PORT->MODER &= 0xFFFCFFFF;
+}
+
+void i2c_slave_SDA_GPIO_Output_PP_Init(){
+	
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	
+	// Configure I2C GPIO pins : SDA - PC4
+  GPIO_InitStruct.Pin = I2C_SDA_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
 }
 
+void i2c_ReadBit(){
+	
+}
+void i2c_SenddBit(void);
 
 ////Test function
 void LED(u32 up_time){

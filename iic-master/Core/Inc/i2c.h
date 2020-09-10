@@ -8,7 +8,9 @@ typedef uint32_t u32;
 typedef uint16_t u16;
 typedef uint8_t u8;
 
-#define I2C_PD 10
+
+
+#define I2C_PD 12
 
 //Slave write and read address: write(0), read(1)
 #define I2C_WRITE_ADDRESS 0xA0
@@ -18,14 +20,14 @@ typedef uint8_t u8;
 #define I2C_PORT_GPIO GPIOC
 #define I2C_SDA_PORT GPIOC
 #define I2C_SCL_PORT GPIOC
-#define I2C_SDA_PIN GPIO_PIN_4
-#define I2C_SCL_PIN GPIO_PIN_5
+#define I2C_SDA_PIN GPIO_PIN_8
+#define I2C_SCL_PIN GPIO_PIN_9
 
 //SCL
-#define I2C_SDA_11() I2C_SDA_PORT->ODR = GPIO_PIN_SET
-#define I2C_SDA_00() I2C_SDA_PORT->ODR = GPIO_PIN_RESET
+//#define I2C_SDA_11() I2C_SDA_PORT->ODR = I2C_SDA_PIN
+//#define I2C_SDA_00() I2C_SDA_PORT->ODR = I2C_SDA_PIN
 #define I2C_SCL_1() I2C_PORT_GPIO->BSRR = I2C_SCL_PIN											  						// SCL = 1 
-#define I2C_SCL_0() I2C_PORT_GPIO->BSRR = (uint32_t)I2C_SCL_PIN << 16U  								// SCL = 0 
+#define I2C_SCL_0() I2C_PORT_GPIO->BRR = I2C_SCL_PIN  																	// SCL = 0 
 //#define I2C_SCL_1() HAL_GPIO_WritePin(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_PIN_SET)						//Set SCL = high level
 //#define I2C_SCL_0() HAL_GPIO_WritePin(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_PIN_RESET)					//Set SCL = low level
 
@@ -73,6 +75,8 @@ void delay_ms(uint32_t ms);
 
 void LED(u32);
 void test(void);
+void test2(void);
+void test1(void);
 
 #endif
 

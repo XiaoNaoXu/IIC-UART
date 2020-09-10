@@ -8,7 +8,7 @@ typedef uint32_t u32;
 typedef uint16_t u16;
 typedef uint8_t u8;
 
-#define I2C_PD 10
+#define I2C_PD 12
 
 //LED port select
 #define LED_GREEN_Pin GPIO_PIN_5
@@ -27,8 +27,8 @@ typedef uint8_t u8;
 #define I2C_PORT_GPIO GPIOC
 #define I2C_SDA_PORT GPIOC
 #define I2C_SCL_PORT GPIOC
-#define I2C_SDA_PIN GPIO_PIN_4
-#define I2C_SCL_PIN GPIO_PIN_5
+#define I2C_SDA_PIN GPIO_PIN_8
+#define I2C_SCL_PIN GPIO_PIN_9
 
 
 //Command Set ----   Set the flicker frequency and duration of the Green LED 
@@ -60,10 +60,10 @@ enum Unit_Of_Time{
 
 
 //SET SDA LEVEL
-//#define I2C_SDA_1() I2C_PORT_GPIO->BSRR = I2C_SDA_PIN																		// SDA = 1
-//#define I2C_SDA_0() I2C_PORT_GPIO->BSRR = (uint32_t)I2C_SDA_PIN << 16U									// SDA = 0
-#define I2C_SDA_1() HAL_GPIO_WritePin(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_PIN_SET)						//Set SDA = high level
-#define I2C_SDA_0() HAL_GPIO_WritePin(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_PIN_RESET)					//Set SDA = low level
+#define I2C_SDA_1() I2C_SDA_PORT->BSRR = I2C_SDA_PIN																			// SDA = 1
+#define I2C_SDA_0() I2C_SDA_PORT->BRR = I2C_SDA_PIN																			// SDA = 0
+//#define I2C_SDA_1() HAL_GPIO_WritePin(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_PIN_SET)						//Set SDA = high level
+//#define I2C_SDA_0() HAL_GPIO_WritePin(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_PIN_RESET)					//Set SDA = low level
 
 
 //#define I2C_SDA_READ() (I2C_PORT_GPIO->IDR & I2C_SDA_PIN)																// read SDA status
@@ -87,11 +87,12 @@ void i2c_slave_SCL_Falling_Exti_Enable(void);
 void i2c_slave_SCL_Falling_Exti_Disable(void);
 void i2c_slave_SCL_Rising_Exti_Enable(void);
 void i2c_slave_SDA_GPIO_Input_Init(void);
+void i2c_slave_SDA_GPIO_Output_PP_Init(void);
 //void i2c_slave_SDA_GPIO_Init(void);
 
 //Send or Read a bit in Exti
-//void i2c_ReadBit(void);
-//void i2c_SenddBit(void);
+void i2c_ReadBit(void);
+void i2c_SenddBit(void);
 
 
 //Start and stop signal

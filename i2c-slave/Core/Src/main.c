@@ -20,7 +20,7 @@ void (* Execute_Address)(void);
   */
 int main(void)
 {
-	//Execute_Address = &i2c_ReadBit;
+	Execute_Address = &i2c_ReadBit;
 
   HAL_Init();																					//Init HAL
 
