@@ -232,6 +232,28 @@ u32 I2C_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 }
 
 
+//
+u8 UART_Process_Param(u8 *Buff, u8 length){
+	u8 *buff_point = Buff;
+	__IO u8 buff_length = length, re_value = 0U;
+	if(buff_point[2] == 0xFF && buff_length != 5){
+		return param_error;
+	}
+	if((buff_point[2] == 0xF0 || buff_point[2] == 0x0F) && buff_length != 4){
+		return param_error;
+	}
+	if(buff_point[0] == Slave_Get){
+		//I2C_Read();
+	}
+	else if(buff_point[0] == Slave_Set){
+		I2C_Write(buff_point[1], buff_point + 2, (buff_point[2] == 0xFF)?(2):(1));
+		//re_value = I2C_Read(buff_point[1] + 1U, );
+	}
+	else{
+	 return param_error;
+	}
+}
+
 
 /**
 *test function
@@ -241,7 +263,7 @@ void test1(){
 	
 	/*Configure I2C GPIO pins : SDA -- PC4 */
   GPIO_InitStruct.Pin = I2C_SDA_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);									//Init SDA

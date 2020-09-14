@@ -24,7 +24,7 @@ void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();					//GPIOA Ports Clock Enable
 	__HAL_RCC_GPIOC_CLK_ENABLE();					//GPIOC Ports Clock Enable
-	//__HAL_RCC_GPIOF_CLK_ENABLE();         //GPIOF Ports Clock Enable
+	//__HAL_RCC_GPIOB_CLK_ENABLE();         //GPIOF Ports Clock Enable
 
 
   /*Configure GPIO pin : PtPin */

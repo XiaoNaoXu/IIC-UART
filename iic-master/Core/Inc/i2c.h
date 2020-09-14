@@ -9,7 +9,22 @@ typedef uint16_t u16;
 typedef uint8_t u8;
 
 
+//UART
+#define UART_RX_BUFF_SIZE 255
 
+// Command Set or Get
+#define Slave_Set 0xFF
+#define Slave_Get 0x00
+
+
+// frequency and duration of the Green LED 
+#define LED_set_frequency 0x0F
+#define LED_duration 0xF0
+#define param_error 0x00
+#define success_set_frequency  0x0F
+#define success_set_duration 0xF0
+
+//pulse width
 #define I2C_PD 12
 
 //Slave write and read address: write(0), read(1)
@@ -20,8 +35,8 @@ typedef uint8_t u8;
 #define I2C_PORT_GPIO GPIOC
 #define I2C_SDA_PORT GPIOC
 #define I2C_SCL_PORT GPIOC
-#define I2C_SDA_PIN GPIO_PIN_8
-#define I2C_SCL_PIN GPIO_PIN_9
+#define I2C_SDA_PIN GPIO_PIN_4
+#define I2C_SCL_PIN GPIO_PIN_5
 
 //SCL
 //#define I2C_SDA_11() I2C_SDA_PORT->ODR = I2C_SDA_PIN
@@ -72,6 +87,9 @@ void I2C_GPIO_Init(void);
 //delay function
 void delay_us(uint32_t us);
 void delay_ms(uint32_t ms);
+
+//UART processing parameters
+u8 UART_Process_Param(u8 *, u8);
 
 void LED(u32);
 void test(void);

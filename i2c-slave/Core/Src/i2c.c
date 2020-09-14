@@ -57,10 +57,11 @@ u8 is_i2c_Stop(){
 * @retval void
 */
 void i2c_SendAck(void){
-	I2C_SDA_PORT->MODER |= 0x00010000;
+//	I2C_SDA_PORT->MODER |= 0x00010000;
+//	I2C_SDA_PORT->OTYPER &= 0xFEFF;
 	I2C_SDA_0();
 	delay_us(I2C_PD);
-	I2C_SDA_PORT->MODER &= 0xFFFCFFFF;
+	//I2C_SDA_PORT->MODER &= 0xFFFCFFFF;
 }
 
 /**
@@ -237,11 +238,11 @@ void i2c_slave_SDA_GPIO_Input_Init(){
 	
 	// Configure I2C GPIO pins : SDA - PC4
   GPIO_InitStruct.Pin = I2C_SDA_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
-	I2C_SDA_PORT->MODER &= 0xFFFCFFFF;
+	//I2C_SDA_PORT->MODER &= 0xFFFCFFFF;
 }
 
 void i2c_slave_SDA_GPIO_Output_PP_Init(){

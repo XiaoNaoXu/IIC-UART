@@ -27,20 +27,18 @@ typedef uint8_t u8;
 #define I2C_PORT_GPIO GPIOC
 #define I2C_SDA_PORT GPIOC
 #define I2C_SCL_PORT GPIOC
-#define I2C_SDA_PIN GPIO_PIN_8
-#define I2C_SCL_PIN GPIO_PIN_9
+#define I2C_SDA_PIN GPIO_PIN_4
+#define I2C_SCL_PIN GPIO_PIN_5
 
 
-//Command Set ----   Set the flicker frequency and duration of the Green LED 
-#define Set_Frq_And_Dura 0x03
-#define Set_Frq 0x01
-#define Set_Dura 0x02
+// Command Set or Get
+#define Set 0xFF
+#define Get 0x00
 
 
-//Command Set ----   Get the flicker frequency and duration of the Green LED 
-#define Get_Frq_And_Dura 0x30
-#define Get_Frq 0x20
-#define Get_Dura 0x10
+// frequency and duration of the Green LED 
+#define LED_frequency 0xF0
+#define LED_duration 0x0F
 
 
 //Unit of time   -----    s,  ms, us

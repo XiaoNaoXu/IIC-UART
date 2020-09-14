@@ -3,7 +3,7 @@
 <title>Static Call Graph - [i2c-slave\i2c-slave.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image i2c-slave\i2c-slave.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Sep 10 18:50:48 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Sep 14 17:49:38 2020
 <BR><P>
 <H3>Maximum Stack Usage =        152 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -389,7 +389,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_EXTI_Falling_Callback
 </UL>
 
-<P><STRONG><a name="[40]"></a>I2C_ReadByte</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, i2c.o(i.I2C_ReadByte))
+<P><STRONG><a name="[40]"></a>I2C_ReadByte</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, i2c.o(i.I2C_ReadByte))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = I2C_ReadByte &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -489,7 +489,7 @@ Global Symbols
 <P><STRONG><a name="[24]"></a>i2c_ReadBit</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, i2c.o(i.i2c_ReadBit))
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
-<P><STRONG><a name="[41]"></a>i2c_SendAck</STRONG> (Thumb, 44 bytes, Stack size 4 bytes, i2c.o(i.i2c_SendAck))
+<P><STRONG><a name="[41]"></a>i2c_SendAck</STRONG> (Thumb, 16 bytes, Stack size 4 bytes, i2c.o(i.i2c_SendAck))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = i2c_SendAck &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
@@ -497,7 +497,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Read
 </UL>
 
-<P><STRONG><a name="[43]"></a>i2c_SendNAck</STRONG> (Thumb, 18 bytes, Stack size 4 bytes, i2c.o(i.i2c_SendNAck))
+<P><STRONG><a name="[43]"></a>i2c_SendNAck</STRONG> (Thumb, 16 bytes, Stack size 4 bytes, i2c.o(i.i2c_SendNAck))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = i2c_SendNAck &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
@@ -505,7 +505,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Read
 </UL>
 
-<P><STRONG><a name="[4a]"></a>i2c_WaitAck</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, i2c.o(i.i2c_WaitAck))
+<P><STRONG><a name="[4a]"></a>i2c_WaitAck</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, i2c.o(i.i2c_WaitAck))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = i2c_WaitAck &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -522,7 +522,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_EXTI_Falling_Callback
 </UL>
 
-<P><STRONG><a name="[45]"></a>i2c_slave_SCL_Falling_Exti_Enable</STRONG> (Thumb, 58 bytes, Stack size 24 bytes, i2c.o(i.i2c_slave_SCL_Falling_Exti_Enable))
+<P><STRONG><a name="[45]"></a>i2c_slave_SCL_Falling_Exti_Enable</STRONG> (Thumb, 56 bytes, Stack size 24 bytes, i2c.o(i.i2c_slave_SCL_Falling_Exti_Enable))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = i2c_slave_SCL_Falling_Exti_Enable &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_NVIC_SetPriority
@@ -534,7 +534,7 @@ Global Symbols
 <LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[54]"></a>i2c_slave_SDA_GPIO_Input_Init</STRONG> (Thumb, 56 bytes, Stack size 24 bytes, i2c.o(i.i2c_slave_SDA_GPIO_Input_Init))
+<P><STRONG><a name="[54]"></a>i2c_slave_SDA_GPIO_Input_Init</STRONG> (Thumb, 54 bytes, Stack size 24 bytes, i2c.o(i.i2c_slave_SDA_GPIO_Input_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = i2c_slave_SDA_GPIO_Input_Init &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_Init
@@ -543,7 +543,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[2d]"></a>is_i2c_Start</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, i2c.o(i.is_i2c_Start))
+<P><STRONG><a name="[2d]"></a>is_i2c_Start</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, i2c.o(i.is_i2c_Start))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = is_i2c_Start
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -551,7 +551,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_EXTI_Falling_Callback
 </UL>
 
-<P><STRONG><a name="[31]"></a>is_i2c_Stop</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, i2c.o(i.is_i2c_Stop))
+<P><STRONG><a name="[31]"></a>is_i2c_Stop</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, i2c.o(i.is_i2c_Stop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = is_i2c_Stop
 </UL>
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin

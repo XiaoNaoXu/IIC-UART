@@ -33,3 +33,4 @@ iic-master\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h
 iic-master\main.o: ../Core/Inc/usart.h
 iic-master\main.o: ../Core/Inc/gpio.h
 iic-master\main.o: ../Core/Inc/i2c.h
+iic-master\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

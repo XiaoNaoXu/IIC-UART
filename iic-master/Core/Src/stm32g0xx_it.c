@@ -24,7 +24,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
-
+extern UART_HandleTypeDef huart2;
+extern uint8_t UART_Rx_Buffer[255];
+extern uint8_t Rx_Byte;
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
 
@@ -130,6 +132,16 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
+}
+void USART2_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART2_IRQn 0 */
+
+  /* USER CODE END USART2_IRQn 0 */
+  HAL_UART_IRQHandler(&huart2);
+  /* USER CODE BEGIN USART2_IRQn 1 */
+	HAL_UART_Receive_IT(&huart2, (uint8_t *)&Rx_Byte, 1);
+  /* USER CODE END USART2_IRQn 1 */
 }
 
 /******************************************************************************/

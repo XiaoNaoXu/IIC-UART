@@ -10,8 +10,13 @@
 #include "usart.h"
 #include "gpio.h"
 #include "i2c.h"
+#include <string.h>
 
 void SystemClock_Config(void);
+
+u8 UART_Rx_Buffer[UART_RX_BUFF_SIZE] = {0};
+u8 Rx_Byte = 0;
+u8 uart_rx_cnt = 0;
 
 /**
   * @brief  The application entry point.
@@ -28,7 +33,8 @@ int main(void)
 	I2C_Write(I2C_WRITE_ADDRESS, test, 6);        //test
 	//I2C_Read(I2C_READ_ADDRESS, test, 2);          //test
 	/**      LOOP      **/
-  while (1)
+  HAL_UART_Receive_IT(&huart2, (uint8_t *)&Rx_Byte, 1);
+	while (1)
   {
   }
 	
@@ -85,6 +91,36 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(huart);
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the HAL_UART_TxCpltCallback could be implemented in the user file
+   */
+	//HAL_UART_Transmit(huart,(u8 *)UART_Rx_Buffer, 5, 0xFFFF);
+	if(uart_rx_cnt >= 255)  //????
+	{
+		uart_rx_cnt = 0;
+		memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
+		HAL_UART_Transmit(huart, (uint8_t *)"FFFFFF", 10,0xFFFF); 	
+        
+	}
+	else
+	{
+		UART_Rx_Buffer[uart_rx_cnt++] = Rx_Byte;   
+		if((UART_Rx_Buffer[0] == 0xE0)&&(UART_Rx_Buffer[uart_rx_cnt-1] == 0xE1)) 
+		{
+			HAL_UART_Transmit(huart, (uint8_t *)UART_Rx_Buffer, uart_rx_cnt,0xFFFF);
+      while(HAL_UART_GetState(huart) == HAL_UART_STATE_BUSY_TX);
+			UART_Process_Param(UART_Rx_Buffer+1, uart_rx_cnt - 2);
+			uart_rx_cnt = 0;
+			memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer)); 
+		}
+	}
 }
 
 /**
