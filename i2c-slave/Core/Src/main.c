@@ -13,6 +13,13 @@
 void SystemClock_Config(void);
 void (* Execute_Address)(void);
 
+__IO u8 bit_location = 0U;
+__IO u8 a_bit_value = 0U;
+u8 receive_buff[DEFAULT_BUFF_SIZE] = {0};
+u8 sent_buff[DEFAULT_BUFF_SIZE] = {10,9,8,7};
+__IO u8 receive_cnt = 0;
+__IO u8 sent_cnt = 4;
+Option option = ret;
 
 /**
   * @brief  The application entry point.
@@ -28,12 +35,9 @@ int main(void)
 	
   MX_GPIO_Init();																			//Init Green LED GPIO --- PA5
 	
-	i2c_slave_SDA_GPIO_Input_Init();													//Init SDA GPIO       --- PC4
+	i2c_slave_SDA_GPIO_Input_Init();									  //Init SDA GPIO       --- PC4
 	
 	i2c_slave_SCL_Falling_Exti_Enable();								//Enable SCL Falling exti
-	
-
-	
   while (1)
   {
   }
@@ -90,8 +94,8 @@ void SystemClock_Config(void)
 void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
 	if(is_i2c_Start() && GPIO_Pin == GPIO_PIN_5){
-		i2c_slave_SCL_Falling_Exti_Disable();
-		I2C_Read();
+		i2c_slave_SCL_Rising_Exti_Enable();
+		//I2C_Read();
 	}
 }
 
@@ -101,9 +105,78 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
   */
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
-	if(is_i2c_Stop()){
-		Execute_Address();
+	//LED(0);
+	if(option == ret){
+		bit_location++;
+		if(bit_location < 9){
+			a_bit_value <<= 1U;
+			a_bit_value |= I2C_SDA_READ();
+		}
+		if(bit_location == 9){
+			if((a_bit_value & SELF_ADDRESS_READ) == SELF_ADDRESS_READ){
+				option = read;
+			}
+			else if((a_bit_value & SELF_ADDRESS_WRITE) == SELF_ADDRESS_WRITE){
+				option = write;
+				if(sent_cnt > 0){
+					a_bit_value = sent_buff[--sent_cnt];
+				}
+				else{
+					i2c_slave_SCL_Rising_Exti_Disable();
+					return;
+				}
+			}
+			else{
+				i2c_slave_SCL_Rising_Exti_Disable();
+				return;
+			}
+			i2c_SendAck();
+			//LED(I2C_PD);
+			bit_location = 0;
+			a_bit_value = 0;
+		}
 	}
+	else if(option == read){
+		bit_location++;
+		if(bit_location < 9){
+			a_bit_value <<= 1U;
+			a_bit_value |= I2C_SDA_READ();
+		}
+		if(bit_location == 9){
+			if(receive_cnt < DEFAULT_BUFF_SIZE){
+				i2c_SendAck();
+				receive_buff[receive_cnt++] = a_bit_value;
+			}
+			else{
+				i2c_SendNAck();
+			}
+			bit_location = 0;
+			a_bit_value = 0;
+		}
+	}
+	else if(option == write){
+		bit_location++;
+		if(bit_location < 9){
+			(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
+			a_bit_value <<= 1U;
+		}
+		if(bit_location == 9){
+			if(I2C_SDA_READ()){
+				i2c_slave_SCL_Rising_Exti_Disable();
+				return;
+			}
+			if(sent_cnt > 0){
+				a_bit_value = sent_buff[--sent_cnt];
+			}
+			else{
+				i2c_slave_SCL_Rising_Exti_Disable();
+				return;
+			}
+			bit_location = 0;
+			a_bit_value = 0;
+		}
+	}
+	
 }
 
 

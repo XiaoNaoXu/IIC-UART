@@ -9,6 +9,8 @@ typedef uint16_t u16;
 typedef uint8_t u8;
 
 #define I2C_PD 12
+#define ADDRESS_INDEX 0
+#define DEFAULT_BUFF_SIZE 10
 
 //LED port select
 #define LED_GREEN_Pin GPIO_PIN_5
@@ -18,6 +20,8 @@ typedef uint8_t u8;
 //Slave address
 #define I2C_WRITE_ADDRESS 0xA0
 #define I2C_READ_ADDRESS 0xA1
+#define SELF_ADDRESS_READ 0xA0
+#define SELF_ADDRESS_WRITE 0xA1
 #define self_addr_read 0xA0
 #define self_addr_write 0xA1
 
@@ -42,19 +46,12 @@ typedef uint8_t u8;
 
 
 //Unit of time   -----    s,  ms, us
-enum Unit_Of_Time{
-					us  = 0x05,
-					ms,
-					s,
-};
+typedef enum Option{
+					read  = 0x00,
+					write,
+					ret,
+}Option;
 
-
-
-//SET SCL LEVEL
-//#define I2C_SCL_1() I2C_PORT_GPIO->BSRR = I2C_SCL_PIN											  						// SCL = 1 
-//#define I2C_SCL_0() I2C_PORT_GPIO->BSRR = (uint32_t)I2C_SCL_PIN << 16U  								// SCL = 0 
-#define I2C_SCL_1() HAL_GPIO_WritePin(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_PIN_SET)						//Set SCL = high level
-#define I2C_SCL_0() HAL_GPIO_WritePin(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_PIN_RESET)					//Set SCL = low level
 
 
 //SET SDA LEVEL
@@ -82,7 +79,7 @@ void delay_ms(u32);
 
 //GPIO Init
 void i2c_slave_SCL_Falling_Exti_Enable(void);
-void i2c_slave_SCL_Falling_Exti_Disable(void);
+void i2c_slave_SCL_Rising_Exti_Disable(void);
 void i2c_slave_SCL_Rising_Exti_Enable(void);
 void i2c_slave_SDA_GPIO_Input_Init(void);
 void i2c_slave_SDA_GPIO_Output_PP_Init(void);

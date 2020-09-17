@@ -1,8 +1,6 @@
 #include "i2c.h"
 
 
-u32 buff_size = 10U;
-
 __IO u8 bit_register = 2;
 
 //the time delay function
@@ -57,11 +55,12 @@ u8 is_i2c_Stop(){
 * @retval void
 */
 void i2c_SendAck(void){
-//	I2C_SDA_PORT->MODER |= 0x00010000;
-//	I2C_SDA_PORT->OTYPER &= 0xFEFF;
+//	I2C_SDA_PORT->MODER |= 0x00000100;
+//	I2C_SDA_PORT->OTYPER &= 0x0000FFEF;
 	I2C_SDA_0();
 	delay_us(I2C_PD);
-	//I2C_SDA_PORT->MODER &= 0xFFFCFFFF;
+	I2C_SDA_1();
+//	I2C_SDA_PORT->MODER &= 0xFFFFFCFF;
 }
 
 /**
@@ -70,8 +69,12 @@ void i2c_SendAck(void){
 */
 void i2c_SendNAck(void){
 	//i2c_slave_SDA_GPIO_Output_PP_Init();
-	I2C_SDA_1();
-	delay_us(I2C_PD);
+//	while(I2C_SCL_READ()){
+//	I2C_SDA_1();
+//	delay_us(I2C_PD);
+//	I2C_SDA_0();
+//	}
+	//LED(12);
 	//i2c_slave_SDA_GPIO_Input_Init();
 }
 
@@ -120,6 +123,7 @@ u8 I2C_ReadByte(){
 		value <<= 1U;
 		while(1){
 			if(I2C_SCL_READ()){
+				//LED(0);
 			  value |= I2C_SDA_READ();
 			 break;
 			}
@@ -155,7 +159,7 @@ void I2C_Write(u8 *data, u32 data_length){
 * @retval uint32_t: It may be modified
 */
 void I2C_Read(){
-	u8 *rdata = (u8 *)malloc(sizeof(u8) * buff_size);
+	u8 *rdata = (u8 *)malloc(sizeof(u8) * DEFAULT_BUFF_SIZE);
 	u8 wdata[] = {4, 5, 6, 7, 8, 9};
 	u32 i = 6;
 	__IO u8 slave_addr = I2C_ReadByte();
@@ -174,7 +178,7 @@ void I2C_Read(){
 			if(i == 0){
 				i2c_SendNAck();
 			}
-			i2c_SendNAck();
+			i2c_SendAck();
 		}
 	}
 	free(rdata);
@@ -204,27 +208,15 @@ void i2c_slave_SCL_Falling_Exti_Enable(){
 * @retval void
 */
 void i2c_slave_SCL_Rising_Exti_Enable(){
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
-	
-	/*Configure I2C GPIO pins : SCL -- PC5 */
-  GPIO_InitStruct.Pin = I2C_SCL_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(I2C_SCL_PORT, &GPIO_InitStruct);
-	
-	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0, 0);								//Set Priority
-  HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);												//Enable EXTI 4-15
+	EXTI->RTSR1 |= 0x0020;
 }
 
 /**
 * @brief Disable SCL Falling exti
 * @retval void
 */
-void i2c_slave_SCL_Falling_Exti_Disable(){
-
-	HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
-	
+void i2c_slave_SCL_Rising_Exti_Disable(){
+	EXTI->RTSR1 &= 0xFFDF;
 }
 
 
@@ -238,24 +230,25 @@ void i2c_slave_SDA_GPIO_Input_Init(){
 	
 	// Configure I2C GPIO pins : SDA - PC4
   GPIO_InitStruct.Pin = I2C_SDA_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
-	//I2C_SDA_PORT->MODER &= 0xFFFCFFFF;
+	HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
+	I2C_SDA_1();
+	//I2C_SDA_PORT->MODER &= 0xFFFFFCFF;
 }
 
-void i2c_slave_SDA_GPIO_Output_PP_Init(){
-	
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
-	
-	// Configure I2C GPIO pins : SDA - PC4
-  GPIO_InitStruct.Pin = I2C_SDA_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
-}
+//void i2c_slave_SDA_GPIO_Output_PP_Init(){
+//	
+//	GPIO_InitTypeDef GPIO_InitStruct = {0};
+//	
+//	// Configure I2C GPIO pins : SDA - PC4
+//  GPIO_InitStruct.Pin = I2C_SDA_PIN;
+//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+//  GPIO_InitStruct.Pull = GPIO_NOPULL;
+//  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+//  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
+//}
 
 void i2c_ReadBit(){
 	
