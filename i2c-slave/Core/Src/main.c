@@ -12,11 +12,12 @@
 
 void SystemClock_Config(void);
 void (* Execute_Address)(void);
+void  flag_reset();
 
 __IO u8 bit_location = 0U;
 __IO u8 a_bit_value = 0U;
 u8 receive_buff[DEFAULT_BUFF_SIZE] = {0};
-u8 sent_buff[DEFAULT_BUFF_SIZE] = {10,9,8,7};
+u8 sent_buff[4] = {10,9,8,7};
 __IO u8 receive_cnt = 0;
 __IO u8 sent_cnt = 4;
 Option option = ret;
@@ -95,6 +96,8 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
 	if(is_i2c_Start() && GPIO_Pin == GPIO_PIN_5){
 		i2c_slave_SCL_Rising_Exti_Enable();
+		//option = ret;
+		//flag_reset();
 		//I2C_Read();
 	}
 }
@@ -113,13 +116,13 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			a_bit_value |= I2C_SDA_READ();
 		}
 		if(bit_location == 9){
-			if((a_bit_value & SELF_ADDRESS_READ) == SELF_ADDRESS_READ){
+			if((a_bit_value & SELF_ADDRESS_READ) == a_bit_value){
 				option = read;
 			}
-			else if((a_bit_value & SELF_ADDRESS_WRITE) == SELF_ADDRESS_WRITE){
+			else if((a_bit_value & SELF_ADDRESS_WRITE) == a_bit_value){
 				option = write;
 				if(sent_cnt > 0){
-					a_bit_value = sent_buff[--sent_cnt];
+					a_bit_value = sent_buff[0];
 				}
 				else{
 					i2c_slave_SCL_Rising_Exti_Disable();
@@ -132,8 +135,7 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			}
 			i2c_SendAck();
 			//LED(I2C_PD);
-			bit_location = 0;
-			a_bit_value = 0;
+			flag_reset();
 		}
 	}
 	else if(option == read){
@@ -150,8 +152,7 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			else{
 				i2c_SendNAck();
 			}
-			bit_location = 0;
-			a_bit_value = 0;
+			flag_reset();
 		}
 	}
 	else if(option == write){
@@ -172,13 +173,20 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				i2c_slave_SCL_Rising_Exti_Disable();
 				return;
 			}
-			bit_location = 0;
-			a_bit_value = 0;
+			flag_reset();
 		}
 	}
 	
 }
 
+void flag_reset(){
+	bit_location = 0;
+	//a_bit_value = 0;
+}
+
+void buff_reset(u8 *buff_ptr, u8 buff_length){
+
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

@@ -11,6 +11,7 @@ typedef uint8_t u8;
 
 //UART
 #define UART_RX_BUFF_SIZE 255
+#define BIT_LENGTH 8
 
 // Command Set or Get
 #define Slave_Set 0xFF

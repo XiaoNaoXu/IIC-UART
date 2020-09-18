@@ -33,7 +33,7 @@ I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart.h)(0x5F56F1A7)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h)(0x5F56F1A7)
 I (../Core/Inc/usart.h)(0x5F56F1A7)
 I (../Core/Inc/gpio.h)(0x5F56F1A7)
-I (../Core/Inc/i2c.h)(0x5F609BD1)
+I (../Core/Inc/i2c.h)(0x5F645458)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599EDB3C)
 F (../Core/Src/gpio.c)(0x5F56F1A7)(--c99 -c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_iic-master-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32G0xx_DFP\1.2.0\Drivers\CMSIS\Device\ST\STM32G0xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32G070xx -DUSE_HAL_DRIVER -DSTM32G070xx-o iic-master\gpio.o --omf_browse iic-master\gpio.crf --depend iic-master\gpio.d)
 I (../Core/Inc/gpio.h)(0x5F56F1A7)
@@ -162,8 +162,8 @@ I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr.h)(0x5F56F1A7)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h)(0x5F56F1A7)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart.h)(0x5F56F1A7)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h)(0x5F56F1A7)
-F (..\Core\Src\i2c.c)(0x5F633666)(--c99 -c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_iic-master-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32G0xx_DFP\1.2.0\Drivers\CMSIS\Device\ST\STM32G0xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32G070xx -DUSE_HAL_DRIVER -DSTM32G070xx-o iic-master\i2c.o --omf_browse iic-master\i2c.crf --depend iic-master\i2c.d)
-I (../Core/Inc/i2c.h)(0x5F609BD1)
+F (..\Core\Src\i2c.c)(0x5F64812B)(--c99 -c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_iic-master-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32G0xx_DFP\1.2.0\Drivers\CMSIS\Device\ST\STM32G0xx\Include-D__UVISION_VERSION="526" -D_RTE_ -DSTM32G070xx -DUSE_HAL_DRIVER -DSTM32G070xx-o iic-master\i2c.o --omf_browse iic-master\i2c.crf --depend iic-master\i2c.d)
+I (../Core/Inc/i2c.h)(0x5F645458)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h)(0x5F56F1A7)
 I (../Core/Inc/stm32g0xx_hal_conf.h)(0x5F56F1A7)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc.h)(0x5F56F1A7)

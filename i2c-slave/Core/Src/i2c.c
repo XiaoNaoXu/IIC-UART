@@ -55,12 +55,9 @@ u8 is_i2c_Stop(){
 * @retval void
 */
 void i2c_SendAck(void){
-//	I2C_SDA_PORT->MODER |= 0x00000100;
-//	I2C_SDA_PORT->OTYPER &= 0x0000FFEF;
 	I2C_SDA_0();
 	delay_us(I2C_PD);
 	I2C_SDA_1();
-//	I2C_SDA_PORT->MODER &= 0xFFFFFCFF;
 }
 
 /**
@@ -68,14 +65,8 @@ void i2c_SendAck(void){
 * @retval void
 */
 void i2c_SendNAck(void){
-	//i2c_slave_SDA_GPIO_Output_PP_Init();
-//	while(I2C_SCL_READ()){
-//	I2C_SDA_1();
-//	delay_us(I2C_PD);
-//	I2C_SDA_0();
-//	}
-	//LED(12);
-	//i2c_slave_SDA_GPIO_Input_Init();
+	I2C_SDA_1();
+	delay_us(I2C_PD);
 }
 
 /**
@@ -238,17 +229,6 @@ void i2c_slave_SDA_GPIO_Input_Init(){
 	//I2C_SDA_PORT->MODER &= 0xFFFFFCFF;
 }
 
-//void i2c_slave_SDA_GPIO_Output_PP_Init(){
-//	
-//	GPIO_InitTypeDef GPIO_InitStruct = {0};
-//	
-//	// Configure I2C GPIO pins : SDA - PC4
-//  GPIO_InitStruct.Pin = I2C_SDA_PIN;
-//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-//  GPIO_InitStruct.Pull = GPIO_NOPULL;
-//  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-//  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
-//}
 
 void i2c_ReadBit(){
 	
