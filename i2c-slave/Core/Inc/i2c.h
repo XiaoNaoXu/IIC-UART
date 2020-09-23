@@ -8,9 +8,23 @@ typedef uint32_t u32;
 typedef uint16_t u16;
 typedef uint8_t u8;
 
+
+#define base_addr 0x00
+#define offset 0x03
+
+//
 #define I2C_PD 12
 #define ADDRESS_INDEX 0
-#define DEFAULT_BUFF_SIZE 10
+#define DEFAULT_BUFF_SIZE 6
+#define I2C_S 0x00
+#define I2C_MS 0x01
+#define I2C_US 0x02
+#define I2C_S_TO_US 1000000
+#define I2C_MS_TO_US 1000
+
+//I2C RISING ENABLE AND DISABLE ADDR
+#define I2C_SCL_EXTI_ENABLE_ADDR 0x0020
+#define I2C_SCL_EXTI_DISABLE_ADDR ~(0x0020)
 
 //LED port select
 #define LED_GREEN_Pin GPIO_PIN_5
@@ -40,7 +54,7 @@ typedef uint8_t u8;
 #define Get 0x00
 
 
-// frequency and duration of the Green LED 
+// light on and light off frequency , duration of the Green LED 
 #define LED_frequency 0xF0
 #define LED_duration 0x0F
 
@@ -79,6 +93,8 @@ void delay_ms(u32);
 
 //GPIO Init
 void i2c_slave_SCL_Falling_Exti_Enable(void);
+void i2c_slave_SCL_Falling_Exti_Reable(void);
+void i2c_slave_SCL_Falling_Exti_Disable(void);
 void i2c_slave_SCL_Rising_Exti_Disable(void);
 void i2c_slave_SCL_Rising_Exti_Enable(void);
 void i2c_slave_SDA_GPIO_Input_Init(void);

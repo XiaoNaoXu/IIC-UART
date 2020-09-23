@@ -107,6 +107,7 @@ void i2c_SendNAck(void){
 u8 i2c_WaitAck(){
 	u8 re_value;
 	I2C_SCL_0();
+	//I2C_SDA_0();	
 	delay_us(I2C_PD);
 	I2C_SDA_1();
 	I2C_SCL_1();
@@ -124,6 +125,7 @@ void I2C_SendByte(u8 data_byte){
 	__IO u8 i = 0;
 	for(i = 0; i < BIT_LENGTH; ++i){
 		I2C_SCL_0();
+		//I2C_SDA_0();
 		delay_us(I2C_PD);		
 		if((data_byte) & 0x80)
 		{
@@ -155,6 +157,7 @@ u8 I2C_ReadByte(){
 	__IO u8 i, value = 0;
 	for(i = 0; i < BIT_LENGTH; ++i){
 		I2C_SCL_0();
+		//I2C_SDA_0();
 		delay_us(I2C_PD);
 		value <<= 1U;
 		I2C_SCL_1();
@@ -234,20 +237,20 @@ u32 I2C_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 
 //
 u8 UART_Process_Param(u8 *Buff, u8 length){
-	u8 *buff_point = Buff;
+	u8 *buff_ptr = Buff;
 	__IO u8 buff_length = length, re_value = 0U;
-	if(buff_point[2] == 0xFF && buff_length != 5){
+	if(buff_ptr[2] == 0xFF && buff_length != 5){
 		return param_error;
 	}
-	if((buff_point[2] == 0xF0 || buff_point[2] == 0x0F) && buff_length != 4){
+	if((buff_ptr[2] == 0xF0 || buff_ptr[2] == 0x0F) && buff_length != 4){
 		return param_error;
 	}
-	if(buff_point[0] == Slave_Get){
+	if(buff_ptr[0] == Slave_Get){
 		//I2C_Read();
 	}
-	else if(buff_point[0] == Slave_Set){
-		I2C_Write(buff_point[1], buff_point + 2, (buff_point[2] == 0xFF)?(2):(1));
-		//re_value = I2C_Read(buff_point[1] + 1U, );
+	else if(buff_ptr[0] == Slave_Set){
+		I2C_Write(buff_ptr[1], buff_ptr + 2, (buff_ptr[2] == 0xFF)?(2):(1));
+		//re_value = I2C_Read(buff_ptr[1] + 1U, );
 	}
 	else{
 	 return param_error;

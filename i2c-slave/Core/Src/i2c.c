@@ -97,7 +97,6 @@ void I2C_SendByte(u8 *data_byte){
 //		delay_us(I2C_PD);
 //		I2C_SDA_0();
 //		*data_byte <<= 1U;
-		LED(2);
 	}
 }
 
@@ -114,7 +113,6 @@ u8 I2C_ReadByte(){
 		value <<= 1U;
 		while(1){
 			if(I2C_SCL_READ()){
-				//LED(0);
 			  value |= I2C_SDA_READ();
 			 break;
 			}
@@ -159,7 +157,6 @@ void I2C_Read(){
 	}
 	if(slave_addr == self_addr_write){
 		i2c_SendAck();
-		//LED(2);
 		I2C_Write(wdata, 2);
 	}
 	else if(slave_addr == self_addr_read){
@@ -194,12 +191,30 @@ void i2c_slave_SCL_Falling_Exti_Enable(){
   HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);												//Enable EXTI 4-15
 }
 
+
+/**
+* @brief Reable SCL Falling exti
+* @retval void
+*/
+void i2c_slave_SCL_Falling_Exti_Reable(){
+	EXTI->FTSR1 |= I2C_SCL_EXTI_ENABLE_ADDR;
+}
+
+/**
+* @brief Disable SCL Falling exti
+* @retval void
+*/
+void i2c_slave_SCL_Falling_Exti_Disable(){
+	EXTI->FTSR1 &= I2C_SCL_EXTI_DISABLE_ADDR;
+}
+
+
 /**
 * @brief Enable SCL Rising exti
 * @retval void
 */
 void i2c_slave_SCL_Rising_Exti_Enable(){
-	EXTI->RTSR1 |= 0x0020;
+	EXTI->RTSR1 |= I2C_SCL_EXTI_ENABLE_ADDR;
 }
 
 /**
@@ -207,7 +222,7 @@ void i2c_slave_SCL_Rising_Exti_Enable(){
 * @retval void
 */
 void i2c_slave_SCL_Rising_Exti_Disable(){
-	EXTI->RTSR1 &= 0xFFDF;
+	EXTI->RTSR1 &= I2C_SCL_EXTI_DISABLE_ADDR;
 }
 
 
