@@ -21,7 +21,8 @@ __IO u8 a_bit_value = 0U;
 //u8 receive_buff[DEFAULT_BUFF_SIZE] = {0};
 u8 sent_buff[DEFAULT_BUFF_SIZE] = {1,0,1,0};
 __IO u8 receive_cnt = 0;
-__IO u8 sent_cnt = 4;
+__IO u8 receive_len = 1;
+__IO u8 sent_cnt = 5;
 Option option = ret;
 u32 led_frequency = 1000000;
 u32 led_duration = 1000000;
@@ -148,7 +149,7 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				return;
 			}
 			i2c_SendAck();
-			flag_reset();
+			bit_location = 0;
 		}
 	}
 	else if(option == read){
@@ -158,15 +159,24 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			a_bit_value |= I2C_SDA_READ();
 		}
 		if(bit_location == 9){
-			if(receive_cnt < DEFAULT_BUFF_SIZE){
+			receive_buff[receive_cnt++] = a_bit_value;
+			if(receive_len == 1 && receive_buff[0] == LED_duration_frequency){
+				receive_len += 4;
+			}
+			else if(receive_len == 1 && (receive_buff[0] == LED_frequency || receive_buff[0] == LED_duration)){
+				receive_len += 2;
+			}
+			if(receive_cnt < receive_len){
 				i2c_SendAck();
-				receive_buff[receive_cnt++] = a_bit_value;
 			}
-			else{
-				param_assert();
+			else if(receive_cnt == receive_len){
 				i2c_SendNAck();
+				sent_cnt = receive_len;
+				i2c_slave_SCL_Rising_Exti_Disable();
+				i2c_slave_SCL_Falling_Exti_Reable();				
+				param_assert();
 			}
-			flag_reset();
+			bit_location = 0;
 		}
 	}
 	else if(option == write){
@@ -184,7 +194,6 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				I2C_SDA_1();
 				i2c_slave_SCL_Falling_Exti_Reable();
 				i2c_slave_SCL_Rising_Exti_Disable();
-				return;
 			}
 			if(sent_cnt > 0){
 				a_bit_value = sent_buff[--sent_cnt];
@@ -192,42 +201,49 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			else{
 				i2c_slave_SCL_Falling_Exti_Reable();
 				i2c_slave_SCL_Rising_Exti_Disable();
-				return;
 			}
-			flag_reset();
+			bit_location = 0;
 		}
 	}
 	
 }
 
 void flag_reset(){
-	
+	option = ret;
 	bit_location = 0;
+	receive_cnt = 0;
+	receive_len = 1;
 	//a_bit_value = 0;
+}
+
+void set_led_frequency(u32 frequency){
+	led_frequency = frequency;
+}
+
+void set_led_duration(u32 duration){
+	led_duration = duration;
+}
+
+u32 get_units_mul(u8 units){
+	switch(units){
+		case I2C_S: return I2C_S_TO_US;
+		case I2C_MS: return I2C_MS_TO_US;
+		default: return I2C_US;
+	}
 }
 
 void param_assert(){
 	__IO u8 i = 0;
 	u32 addr_led_frequency = 0, addr_led_duration = 0;
-	if(receive_buff[base_addr] == LED_frequency){
-		addr_led_frequency = base_addr;
-		addr_led_duration = base_addr | offset;
+	if(receive_buff[base_addr] == LED_duration){
+		set_led_duration(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));
 	}
-	else{
-		addr_led_frequency = base_addr | offset;
-		addr_led_duration = base_addr;
+	else if(receive_buff[base_addr] == LED_frequency){
+		set_led_frequency(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));
 	}
-	switch(receive_buff[addr_led_frequency + 2]){
-			case I2C_S: led_frequency = receive_buff[addr_led_frequency+1] * I2C_S_TO_US; break;
-			case I2C_MS: led_frequency = receive_buff[addr_led_frequency+1] * I2C_MS_TO_US; break;
-			case I2C_US: led_frequency = receive_buff[addr_led_frequency+1]; break;
-			default: break;
-	}
-	switch(receive_buff[addr_led_duration + 2]){
-			case I2C_S: led_duration = receive_buff[addr_led_duration+1] * I2C_S_TO_US; break;
-			case I2C_MS: led_duration = receive_buff[addr_led_duration+1] * I2C_MS_TO_US; break;
-			case I2C_US: led_duration = receive_buff[addr_led_duration+1]; break;
-			default: break;
+	else if(receive_buff[base_addr] == LED_duration_frequency){
+		set_led_duration(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));
+		set_led_frequency(receive_buff[time_offset + 2] * get_units_mul(receive_buff[units_offset + 2]));
 	}
 }
 

@@ -10,7 +10,8 @@ typedef uint8_t u8;
 
 
 #define base_addr 0x00
-#define offset 0x03
+#define time_offset 0x01
+#define units_offset 0x02
 
 //
 #define I2C_PD 12
@@ -55,8 +56,9 @@ typedef uint8_t u8;
 
 
 // light on and light off frequency , duration of the Green LED 
-#define LED_frequency 0xF0
-#define LED_duration 0x0F
+#define LED_frequency 0x0F
+#define LED_duration 0xF0
+#define LED_duration_frequency 0xFF
 
 
 //Unit of time   -----    s,  ms, us

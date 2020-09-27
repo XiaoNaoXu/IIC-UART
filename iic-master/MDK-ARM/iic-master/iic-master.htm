@@ -3,7 +3,7 @@
 <title>Static Call Graph - [iic-master\iic-master.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image iic-master\iic-master.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Sep 21 10:52:22 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Sep 27 18:05:17 2020
 <BR><P>
 <H3>Maximum Stack Usage =        200 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -476,8 +476,8 @@ Global Symbols
 <LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[53]"></a>HAL_UART_RxCpltCallback</STRONG> (Thumb, 136 bytes, Stack size 8 bytes, main.o(i.HAL_UART_RxCpltCallback))
-<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = HAL_UART_RxCpltCallback &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
+<P><STRONG><a name="[53]"></a>HAL_UART_RxCpltCallback</STRONG> (Thumb, 140 bytes, Stack size 8 bytes, main.o(i.HAL_UART_RxCpltCallback))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Write &rArr; I2C_SendByte &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Process_Param
 <LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit
@@ -527,7 +527,7 @@ Global Symbols
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_SendByte
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_ReadByte
 </UL>
-<BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR>[Called By]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Process_Param
 </UL>
 
 <P><STRONG><a name="[5e]"></a>I2C_ReadByte</STRONG> (Thumb, 94 bytes, Stack size 16 bytes, i2c.o(i.I2C_ReadByte))
@@ -550,7 +550,7 @@ Global Symbols
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Read
 </UL>
 
-<P><STRONG><a name="[64]"></a>I2C_Write</STRONG> (Thumb, 56 bytes, Stack size 32 bytes, i2c.o(i.I2C_Write))
+<P><STRONG><a name="[64]"></a>I2C_Write</STRONG> (Thumb, 58 bytes, Stack size 32 bytes, i2c.o(i.I2C_Write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = I2C_Write &rArr; I2C_SendByte &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;i2c_WaitAck
@@ -628,10 +628,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Init
 </UL>
 
-<P><STRONG><a name="[56]"></a>UART_Process_Param</STRONG> (Thumb, 100 bytes, Stack size 24 bytes, i2c.o(i.UART_Process_Param))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = UART_Process_Param &rArr; I2C_Write &rArr; I2C_SendByte &rArr; delay_us
+<P><STRONG><a name="[56]"></a>UART_Process_Param</STRONG> (Thumb, 114 bytes, Stack size 32 bytes, i2c.o(i.UART_Process_Param))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = UART_Process_Param &rArr; I2C_Write &rArr; I2C_SendByte &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Write
+<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Read
 </UL>
 <BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
@@ -730,12 +731,11 @@ Global Symbols
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Read
 </UL>
 
-<P><STRONG><a name="[21]"></a>main</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, main.o(i.main))
+<P><STRONG><a name="[21]"></a>main</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = main &rArr; SystemClock_Config &rArr; HAL_RCC_OscConfig &rArr; HAL_InitTick &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
-<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Read
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_GPIO_Init
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Receive_IT
 <LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Init
@@ -766,7 +766,7 @@ Local Symbols
 </UL>
 
 <P><STRONG><a name="[27]"></a>UART_RxISR_16BIT</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, stm32g0xx_hal_uart.o(i.UART_RxISR_16BIT))
-<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = UART_RxISR_16BIT &rArr; HAL_UART_RxCpltCallback &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = UART_RxISR_16BIT &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Write &rArr; I2C_SendByte &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
@@ -774,14 +774,14 @@ Local Symbols
 <LI> stm32g0xx_hal_uart.o(i.UART_RxISR_16BIT_FIFOEN)
 </UL>
 <P><STRONG><a name="[25]"></a>UART_RxISR_16BIT_FIFOEN</STRONG> (Thumb, 178 bytes, Stack size 32 bytes, stm32g0xx_hal_uart.o(i.UART_RxISR_16BIT_FIFOEN))
-<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = UART_RxISR_16BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = UART_RxISR_16BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Write &rArr; I2C_SendByte &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> stm32g0xx_hal_uart.o(i.HAL_UART_Receive_IT)
 </UL>
 <P><STRONG><a name="[28]"></a>UART_RxISR_8BIT</STRONG> (Thumb, 112 bytes, Stack size 16 bytes, stm32g0xx_hal_uart.o(i.UART_RxISR_8BIT))
-<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = UART_RxISR_8BIT &rArr; HAL_UART_RxCpltCallback &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = UART_RxISR_8BIT &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Write &rArr; I2C_SendByte &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
@@ -789,7 +789,7 @@ Local Symbols
 <LI> stm32g0xx_hal_uart.o(i.UART_RxISR_8BIT_FIFOEN)
 </UL>
 <P><STRONG><a name="[26]"></a>UART_RxISR_8BIT_FIFOEN</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, stm32g0xx_hal_uart.o(i.UART_RxISR_8BIT_FIFOEN))
-<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = UART_RxISR_8BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = UART_RxISR_8BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Write &rArr; I2C_SendByte &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>

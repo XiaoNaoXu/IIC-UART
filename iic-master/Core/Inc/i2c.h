@@ -27,6 +27,21 @@ typedef uint8_t u8;
 
 //pulse width
 #define I2C_PD 12
+#define ADDRESS_INDEX 0
+#define DEFAULT_BUFF_SIZE 6
+#define I2C_S 0x00
+#define I2C_MS 0x01
+#define I2C_US 0x02
+#define I2C_S_TO_US 1000000
+#define I2C_MS_TO_US 1000
+
+
+#define DEFAULT_BUFF_SIZE 6
+#define I2C_S 0x00
+#define I2C_MS 0x01
+#define I2C_US 0x02
+#define I2C_S_TO_US 1000000
+#define I2C_MS_TO_US 1000
 
 //Slave write and read address: write(0), read(1)
 #define I2C_WRITE_ADDRESS 0xA0
@@ -90,7 +105,7 @@ void delay_us(uint32_t us);
 void delay_ms(uint32_t ms);
 
 //UART processing parameters
-u8 UART_Process_Param(u8 *, u8);
+u8 UART_Process_Param(u8 *, u8, u8 *, u8);
 
 void LED(u32);
 void test(void);
