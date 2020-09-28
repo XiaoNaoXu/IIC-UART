@@ -193,9 +193,6 @@ u32 I2C_Write(u8 slave_addr, u8 *data, u32 data_length){
 			break;
 		}
 	}
-	
-	//i2c_WaitAck();
-	//Send end signal
 	i2c_Stop();		
 	return 0;
 }
@@ -206,7 +203,7 @@ u32 I2C_Write(u8 slave_addr, u8 *data, u32 data_length){
 */
 u32 I2C_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 	u8 *pdata = buff;
-	u32 len = numByteToRead;
+	u32 len = 0;
 	
 	//Send start signal
 	i2c_Start();
@@ -216,9 +213,9 @@ u32 I2C_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 	
 	//Wait and analyze for acknowledge
 	if(!i2c_WaitAck()){
-		while(len){
-			pdata[--len] = I2C_ReadByte();
-			if(!len){
+		while(len < numByteToRead){
+			pdata[len++] = I2C_ReadByte();
+			if(len == numByteToRead){
 				i2c_SendNAck();
 				break;
 			}
@@ -248,8 +245,8 @@ u8 UART_Process_Param(u8 *UART_buff, u8 uart_buff_length, u8 *I2C_buff, u8 I2C_b
 	}
 	else if(buff_ptr[0] == Slave_Set){
 		I2C_Write(buff_ptr[1], buff_ptr + 2, (buff_ptr[2] == 0xFF)?(5):(3));
-		//re_value = I2C_Read(buff_ptr[1] + 1U, );
-		//I2C_Read(I2C_READ_ADDRESS, I2C_buff, 5);          //test
+		delay_ms(1);
+		I2C_Read(I2C_READ_ADDRESS, I2C_buff, 4);          //test
 	}
 	else{
 	 return param_error;

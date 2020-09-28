@@ -12,20 +12,19 @@
 #define receive_buff sent_buff
 
 void SystemClock_Config(void);
-void (* Execute_Address)(void);
 void  flag_reset(void);
 void param_assert(void);
 
 __IO u8 bit_location = 0U;
 __IO u8 a_bit_value = 0U;
 //u8 receive_buff[DEFAULT_BUFF_SIZE] = {0};
-u8 sent_buff[DEFAULT_BUFF_SIZE] = {1,0,1,0};
+u8 sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0,1,0};
 __IO u8 receive_cnt = 0;
-__IO u8 receive_len = 1;
-__IO u8 sent_cnt = 5;
+__IO u8 receive_len = 3;
+__IO u8 sent_cnt = 0;
 Option option = ret;
-u32 led_frequency = 1000000;
-u32 led_duration = 1000000;
+__IO u32 led_frequency = 0;
+__IO u32 led_duration = 0;
 
 /**
   * @brief  The application entry point.
@@ -33,7 +32,6 @@ u32 led_duration = 1000000;
   */
 int main(void)
 {
-	Execute_Address = &i2c_ReadBit;
 
   HAL_Init();																					//Init HAL
 
@@ -44,7 +42,9 @@ int main(void)
 	i2c_slave_SDA_GPIO_Input_Init();									  //Init SDA GPIO       --- PC4
 	
 	i2c_slave_SCL_Falling_Exti_Enable();								//Enable SCL Falling exti
-  while (1)
+	
+	param_assert();
+  while(1)
   {
 		if(led_duration){
 			LED(led_duration);
@@ -53,7 +53,6 @@ int main(void)
 			delay_us(led_frequency);
 		}
   }
-
 }
 
 /**
@@ -119,7 +118,6 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
   */
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
-	//LED(0);
 	if(option == ret){
 		bit_location++;
 		if(bit_location < 9){
@@ -127,20 +125,12 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			a_bit_value |= I2C_SDA_READ();
 		}
 		if(bit_location == 9){
-			if((a_bit_value & SELF_ADDRESS_READ) == a_bit_value){
+ 			if((a_bit_value & SELF_ADDRESS_READ) == a_bit_value){
 				option = read;
 			}
 			else if((a_bit_value & SELF_ADDRESS_WRITE) == a_bit_value){
 				option = write;
-				if(sent_cnt > 0){
-					a_bit_value = sent_buff[--sent_cnt];
-				}
-				else{
-					bit_location = 0;
-					i2c_slave_SCL_Falling_Exti_Reable();
-					i2c_slave_SCL_Rising_Exti_Disable();
-					return;
-				}
+				a_bit_value = sent_buff[++sent_cnt];
 			}
 			else{
 				bit_location = 0;
@@ -158,20 +148,30 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
 		}
-		if(bit_location == 9){
-			receive_buff[receive_cnt++] = a_bit_value;
-			if(receive_len == 1 && receive_buff[0] == LED_duration_frequency){
-				receive_len += 4;
+		else{
+			if(!receive_cnt){
+				receive_buff[base_addr] = a_bit_value;
 			}
-			else if(receive_len == 1 && (receive_buff[0] == LED_frequency || receive_buff[0] == LED_duration)){
-				receive_len += 2;
+			else{
+				if(receive_buff[base_addr] == LED_duration){
+					receive_buff[base_addr + receive_cnt] = a_bit_value;
+					receive_len = 3;
+				}
+				else if(receive_buff[base_addr] == LED_frequency){
+					receive_buff[base_addr + receive_cnt + addr_offet] = a_bit_value;
+					receive_len = 3;
+				}
+				else{
+					receive_buff[receive_cnt] = a_bit_value;
+					receive_len = 5;
+				}
 			}
+			receive_cnt++;
 			if(receive_cnt < receive_len){
 				i2c_SendAck();
 			}
-			else if(receive_cnt == receive_len){
+			else{
 				i2c_SendNAck();
-				sent_cnt = receive_len;
 				i2c_slave_SCL_Rising_Exti_Disable();
 				i2c_slave_SCL_Falling_Exti_Reable();				
 				param_assert();
@@ -189,14 +189,15 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				I2C_SDA_1();
 			}
 		}
-		if(bit_location == 9){
+		else{
 			if(I2C_SDA_READ()){
 				I2C_SDA_1();
 				i2c_slave_SCL_Falling_Exti_Reable();
 				i2c_slave_SCL_Rising_Exti_Disable();
+				return;
 			}
-			if(sent_cnt > 0){
-				a_bit_value = sent_buff[--sent_cnt];
+			if(sent_cnt < I2C_para_length){
+				a_bit_value = sent_buff[++sent_cnt];
 			}
 			else{
 				i2c_slave_SCL_Falling_Exti_Reable();
@@ -212,8 +213,8 @@ void flag_reset(){
 	option = ret;
 	bit_location = 0;
 	receive_cnt = 0;
-	receive_len = 1;
-	//a_bit_value = 0;
+	a_bit_value = 0;
+	sent_cnt = 0;
 }
 
 void set_led_frequency(u32 frequency){
@@ -233,17 +234,11 @@ u32 get_units_mul(u8 units){
 }
 
 void param_assert(){
-	__IO u8 i = 0;
-	u32 addr_led_frequency = 0, addr_led_duration = 0;
-	if(receive_buff[base_addr] == LED_duration){
+	if((receive_buff[base_addr] & LED_duration) == LED_duration){
 		set_led_duration(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));
 	}
-	else if(receive_buff[base_addr] == LED_frequency){
-		set_led_frequency(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));
-	}
-	else if(receive_buff[base_addr] == LED_duration_frequency){
-		set_led_duration(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));
-		set_led_frequency(receive_buff[time_offset + 2] * get_units_mul(receive_buff[units_offset + 2]));
+	if((receive_buff[base_addr] & LED_frequency) == LED_frequency){
+		set_led_frequency(receive_buff[time_offset + addr_offet] * get_units_mul(receive_buff[units_offset + addr_offet]));
 	}
 }
 

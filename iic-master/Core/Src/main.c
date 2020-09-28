@@ -111,9 +111,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		UART_Rx_Buffer[uart_rx_cnt++] = Rx_Byte;   
 		if((UART_Rx_Buffer[0] == 0xE0)&&(UART_Rx_Buffer[uart_rx_cnt-1] == 0xE1))
 		{
-			HAL_UART_Transmit(huart, (uint8_t *)UART_Rx_Buffer, uart_rx_cnt,0xFFFF);
       while(HAL_UART_GetState(huart) == HAL_UART_STATE_BUSY_TX);
 			UART_Process_Param(UART_Rx_Buffer+1, uart_rx_cnt - 2, I2C_buff, DEFAULT_BUFF_SIZE);
+			HAL_UART_Transmit(huart, (uint8_t *)I2C_buff, 4,0xFFFF);
 			uart_rx_cnt = 0;
 			memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
 		}
