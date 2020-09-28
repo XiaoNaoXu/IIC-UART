@@ -9,22 +9,21 @@
 #include "gpio.h"
 #include "i2c.h"
 
-#define receive_buff sent_buff
+#define receive_buff sent_buff    									// Receive and send use the same array
 
 void SystemClock_Config(void);
 void  flag_reset(void);
 void param_assert(void);
 
-__IO u8 bit_location = 0U;
-__IO u8 a_bit_value = 0U;
-//u8 receive_buff[DEFAULT_BUFF_SIZE] = {0};
-u8 sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0,1,0};
-__IO u8 receive_cnt = 0;
-__IO u8 receive_len = 3;
-__IO u8 sent_cnt = 0;
-Option option = ret;
-__IO u32 led_frequency = 0;
-__IO u32 led_duration = 0;
+__IO u8 bit_location = 0U;        									//Records the location of the bits received
+__IO u8 a_bit_value = 0U;														//Store a full byte received
+u8 sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0,1,0};		//Send array/buff
+__IO u8 receive_cnt = 0;														//The number that has been sent
+__IO u8 receive_len = 3;														//The number when need to send
+__IO u8 sent_cnt = 0;																//The number that has been received
+Option option = ret;																//Control read/write state
+__IO u32 led_frequency = 0;													//The frequency of the led
+__IO u32 led_duration = 0;													//The duration of the led
 
 /**
   * @brief  The application entry point.
@@ -118,13 +117,14 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
   */
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
+	/*receive first bit : its address and read/write bit.  */
 	if(option == ret){
 		bit_location++;
-		if(bit_location < 9){
+		if(bit_location < BIT_LENGTH + 1){
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
 		}
-		if(bit_location == 9){
+		else{
  			if((a_bit_value & SELF_ADDRESS_READ) == a_bit_value){
 				option = read;
 			}
@@ -142,31 +142,45 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			bit_location = 0;
 		}
 	}
+	
+	/*    Receive data    */
 	else if(option == read){
+		
+		/*  Receive a byte  */
 		bit_location++;
-		if(bit_location < 9){
+		if(bit_location < BIT_LENGTH + 1){
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
 		}
 		else{
+			/*            Store this byte and wait acknowledge              */
+			
+			/*   How to store first byte  */
 			if(!receive_cnt){
 				receive_buff[base_addr] = a_bit_value;
 			}
+			
+			/*   How to store next byte received   */
 			else{
+				/*   This byte use for duration only    */
 				if(receive_buff[base_addr] == LED_duration){
 					receive_buff[base_addr + receive_cnt] = a_bit_value;
-					receive_len = 3;
+					receive_len = I2C_para_length - 2;
 				}
+				/*   This byte use for frequency only   */
 				else if(receive_buff[base_addr] == LED_frequency){
 					receive_buff[base_addr + receive_cnt + addr_offet] = a_bit_value;
-					receive_len = 3;
+					receive_len = I2C_para_length - 2;
 				}
+				/*   This byte use for duration/frequency only   */
 				else{
 					receive_buff[receive_cnt] = a_bit_value;
-					receive_len = 5;
+					receive_len = I2C_para_length;
 				}
 			}
 			receive_cnt++;
+			
+			/*   Send acknowledge and reable/disable EXTI   */
 			if(receive_cnt < receive_len){
 				i2c_SendAck();
 			}
@@ -179,12 +193,13 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			bit_location = 0;
 		}
 	}
+	/*   To be confirmed   */
 	else if(option == write){
 		bit_location++;
-		if(bit_location < 9){
+		if(bit_location < BIT_LENGTH + 1){
 			(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
 			a_bit_value <<= 1U;
-			if(bit_location == 8){
+			if(bit_location == BIT_LENGTH){
 				delay_us(I2C_PD);
 				I2C_SDA_1();
 			}
@@ -209,6 +224,11 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 	
 }
 
+
+/**
+  * @brief  Reset flag.
+  * @retval None
+  */
 void flag_reset(){
 	option = ret;
 	bit_location = 0;
@@ -217,14 +237,27 @@ void flag_reset(){
 	sent_cnt = 0;
 }
 
+/**
+  * @brief  Set led frequency.
+  * @retval None
+  */
 void set_led_frequency(u32 frequency){
 	led_frequency = frequency;
 }
 
+/**
+  * @brief  Set led duration.
+  * @retval None
+  */
 void set_led_duration(u32 duration){
 	led_duration = duration;
 }
 
+
+/**
+  * @brief  Convert s/ms to us.
+  * @retval None
+  */
 u32 get_units_mul(u8 units){
 	switch(units){
 		case I2C_S: return I2C_S_TO_US;
@@ -233,6 +266,10 @@ u32 get_units_mul(u8 units){
 	}
 }
 
+/**
+  * @brief  Assert parameter.
+  * @retval None
+  */
 void param_assert(){
 	if((receive_buff[base_addr] & LED_duration) == LED_duration){
 		set_led_duration(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));

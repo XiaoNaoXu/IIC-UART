@@ -156,15 +156,10 @@ void i2c_slave_SDA_GPIO_Input_Init(){
 }
 
 
-////Test function
+////LED  function
 void LED(u32 up_time){
 	LED_ON;
 	delay_us(up_time);
-	LED_OFF;
-}
-void callback(){
-	LED_ON;
-	delay_us(I2C_PD);
 	LED_OFF;
 }
 
