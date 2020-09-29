@@ -6,24 +6,21 @@
 
 
 #include "main.h"
-#include "gpio.h"
-#include "i2c.h"
 
-#define receive_buff sent_buff    									// Receive and send use the same array
+
+
 
 void SystemClock_Config(void);
-void  flag_reset(void);
-void param_assert(void);
 
-__IO u8 bit_location = 0U;        									//Records the location of the bits received
-__IO u8 a_bit_value = 0U;														//Store a full byte received
-u8 sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0,1,0};		//Send array/buff
-__IO u8 receive_cnt = 0;														//The number that has been sent
-__IO u8 receive_len = 3;														//The number when need to send
-__IO u8 sent_cnt = 0;																//The number that has been received
-Option option = ret;																//Control read/write state
-__IO u32 led_frequency = 0;													//The frequency of the led
-__IO u32 led_duration = 0;													//The duration of the led
+
+char UART_Rx_Buffer[UART_RX_BUFF_SIZE] = {0};
+u8 Rx_Byte = 0;
+u8 uart_rx_cnt = 0;
+
+u8 I2C_buff[DEFAULT_BUFF_SIZE] = {0};
+
+void (* running)(void) = &master_start;
+
 
 /**
   * @brief  The application entry point.
@@ -32,27 +29,18 @@ __IO u32 led_duration = 0;													//The duration of the led
 int main(void)
 {
 
-  HAL_Init();																					//Init HAL
+  HAL_Init();																							//Init HAL
 
-  SystemClock_Config();																//Config System Clock
+  SystemClock_Config();																		//Config System Clock
 	
-  MX_GPIO_Init();																			//Init Green LED GPIO --- PA5
+	MX_USART2_UART_Init();																	//Init UART2 GPIO
 	
-	i2c_slave_SDA_GPIO_Input_Init();									  //Init SDA GPIO       --- PC4
+	//slave_start();
 	
-	i2c_slave_SCL_Falling_Exti_Enable();								//Enable SCL Falling exti
+	change_state: running();
 	
-	param_assert();
-  while(1)
-  {
-		if(led_duration){
-			LED(led_duration);
-		}
-		if(led_frequency){
-			delay_us(led_frequency);
-		}
-  }
 }
+
 
 /**
   * @brief System Clock Configuration
@@ -97,187 +85,8 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief  This function is falling exti callback.
-  * @retval None
-  */
-void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
-{
-	if(is_i2c_Start() && GPIO_Pin == I2C_SCL_PIN){
-		i2c_slave_SCL_Rising_Exti_Enable();
-		i2c_slave_SCL_Falling_Exti_Disable();
-		option = ret;
-		flag_reset();
-	}
-}
-
-/**
-  * @brief  This function is rising exti callback.
-  * @retval None
-  */
-void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
-{
-	/*receive first bit : its address and read/write bit.  */
-	if(option == ret){
-		bit_location++;
-		if(bit_location < BIT_LENGTH + 1){
-			a_bit_value <<= 1U;
-			a_bit_value |= I2C_SDA_READ();
-		}
-		else{
- 			if((a_bit_value & SELF_ADDRESS_READ) == a_bit_value){
-				option = read;
-			}
-			else if((a_bit_value & SELF_ADDRESS_WRITE) == a_bit_value){
-				option = write;
-				a_bit_value = sent_buff[++sent_cnt];
-			}
-			else{
-				bit_location = 0;
-				i2c_slave_SCL_Falling_Exti_Reable();
-				i2c_slave_SCL_Rising_Exti_Disable();
-				return;
-			}
-			i2c_SendAck();
-			bit_location = 0;
-		}
-	}
-	
-	/*    Receive data    */
-	else if(option == read){
-		
-		/*  Receive a byte  */
-		bit_location++;
-		if(bit_location < BIT_LENGTH + 1){
-			a_bit_value <<= 1U;
-			a_bit_value |= I2C_SDA_READ();
-		}
-		else{
-			/*            Store this byte and wait acknowledge              */
-			
-			/*   How to store first byte  */
-			if(!receive_cnt){
-				receive_buff[base_addr] = a_bit_value;
-			}
-			
-			/*   How to store next byte received   */
-			else{
-				/*   This byte use for duration only    */
-				if(receive_buff[base_addr] == LED_duration){
-					receive_buff[base_addr + receive_cnt] = a_bit_value;
-					receive_len = I2C_para_length - 2;
-				}
-				/*   This byte use for frequency only   */
-				else if(receive_buff[base_addr] == LED_frequency){
-					receive_buff[base_addr + receive_cnt + addr_offet] = a_bit_value;
-					receive_len = I2C_para_length - 2;
-				}
-				/*   This byte use for duration/frequency only   */
-				else{
-					receive_buff[receive_cnt] = a_bit_value;
-					receive_len = I2C_para_length;
-				}
-			}
-			receive_cnt++;
-			
-			/*   Send acknowledge and reable/disable EXTI   */
-			if(receive_cnt < receive_len){
-				i2c_SendAck();
-			}
-			else{
-				i2c_SendNAck();
-				i2c_slave_SCL_Rising_Exti_Disable();
-				i2c_slave_SCL_Falling_Exti_Reable();				
-				param_assert();
-			}
-			bit_location = 0;
-		}
-	}
-	/*   To be confirmed   */
-	else if(option == write){
-		bit_location++;
-		if(bit_location < BIT_LENGTH + 1){
-			(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
-			a_bit_value <<= 1U;
-			if(bit_location == BIT_LENGTH){
-				delay_us(I2C_PD);
-				I2C_SDA_1();
-			}
-		}
-		else{
-			if(I2C_SDA_READ()){
-				I2C_SDA_1();
-				i2c_slave_SCL_Falling_Exti_Reable();
-				i2c_slave_SCL_Rising_Exti_Disable();
-				return;
-			}
-			if(sent_cnt < I2C_para_length){
-				a_bit_value = sent_buff[++sent_cnt];
-			}
-			else{
-				i2c_slave_SCL_Falling_Exti_Reable();
-				i2c_slave_SCL_Rising_Exti_Disable();
-			}
-			bit_location = 0;
-		}
-	}
-	
-}
 
 
-/**
-  * @brief  Reset flag.
-  * @retval None
-  */
-void flag_reset(){
-	option = ret;
-	bit_location = 0;
-	receive_cnt = 0;
-	a_bit_value = 0;
-	sent_cnt = 0;
-}
-
-/**
-  * @brief  Set led frequency.
-  * @retval None
-  */
-void set_led_frequency(u32 frequency){
-	led_frequency = frequency;
-}
-
-/**
-  * @brief  Set led duration.
-  * @retval None
-  */
-void set_led_duration(u32 duration){
-	led_duration = duration;
-}
-
-
-/**
-  * @brief  Convert s/ms to us.
-  * @retval None
-  */
-u32 get_units_mul(u8 units){
-	switch(units){
-		case I2C_S: return I2C_S_TO_US;
-		case I2C_MS: return I2C_MS_TO_US;
-		default: return I2C_US;
-	}
-}
-
-/**
-  * @brief  Assert parameter.
-  * @retval None
-  */
-void param_assert(){
-	if((receive_buff[base_addr] & LED_duration) == LED_duration){
-		set_led_duration(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));
-	}
-	if((receive_buff[base_addr] & LED_frequency) == LED_frequency){
-		set_led_frequency(receive_buff[time_offset + addr_offet] * get_units_mul(receive_buff[units_offset + addr_offet]));
-	}
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.
@@ -286,5 +95,87 @@ void param_assert(){
 void Error_Handler(void)
 {
 
+}
+
+/**
+  * @brief  get end index of para.
+  * @retval None
+  */
+u8 get_para_location(char *begin_address){
+	__IO u8 i = 0;
+	while(begin_address[i] != ' '){
+		++i;
+	}
+	return i;
+}
+
+u8 UART_Process_Param(u8 *UART_buff, u8 uart_buff_length, u8 *I2C_buff, u8 I2C_buff_length){
+//	u8 *buff_ptr = UART_buff;
+//	__IO u8 buff_length = uart_buff_length, re_value = 0U;
+//	if(buff_ptr[2] == 0xFF && buff_length != 7){
+//		return param_error;
+//	}
+//	if((buff_ptr[2] == 0xF0 || buff_ptr[2] == 0x0F) && buff_length != 5){
+//		return param_error;
+//	}
+//	if(buff_ptr[0] == Slave_Get){
+//		I2C_Master_Read(I2C_READ_ADDRESS, I2C_buff, 5);
+//	}
+//	else if(buff_ptr[0] == Slave_Set){
+//		I2C_Master_Write(buff_ptr[1], buff_ptr + 2, (buff_ptr[2] == 0xFF)?(5):(3));
+//		delay_ms(1);
+//		I2C_Master_Read(I2C_READ_ADDRESS, I2C_buff, 4);
+//	}
+//	else{
+//	 return param_error;
+//	}
+	__IO u8 uart_buff_location = 0, command_buff_size = 0, command_buff_length = 0;
+	
+	char command[MAX_COMMAND_BUFF_SIZE][MAX_COMMAND_LENGH] = {'\0'};
+	//memset(command, '\0', MAX_COMMAND_BUFF_SIZE*MAX_COMMAND_LENGH);
+	while(uart_buff_location < (uart_rx_cnt - 2)){
+		if(UART_Rx_Buffer[uart_buff_location] == ' '){
+			command[command_buff_size][command_buff_length] = '\0';
+			command_buff_size++;
+			command_buff_length = 0;
+		}
+		else{
+			command[command_buff_size][command_buff_length++] = UART_Rx_Buffer[uart_buff_location];
+		}
+		++uart_buff_location;
+	}
+
+	if(!strcmp(GET_RUNNING_STATE, command[0])){
+		return 1;
+	}
+	else if(!strcmp(CHANGE_RUNNING_STATE, command[0])){
+		return 1;
+	}
+	return 0u;
+}
+
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  UNUSED(huart);
+	if(uart_rx_cnt >= 255)
+	{
+		uart_rx_cnt = 0;
+		memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
+		HAL_UART_Transmit(huart, (uint8_t *)"FFFFFF", 10,0xFFFF); 	
+        
+	}
+	else
+	{
+		UART_Rx_Buffer[uart_rx_cnt++] = Rx_Byte;   
+		if(UART_Rx_Buffer[uart_rx_cnt-1] == '\n')
+		{
+      while(HAL_UART_GetState(huart) == HAL_UART_STATE_BUSY_TX);
+			UART_Process_Param(UART_Rx_Buffer+1, uart_rx_cnt - 2, I2C_buff, DEFAULT_BUFF_SIZE);
+			HAL_UART_Transmit(huart, (char *)UART_Rx_Buffer, uart_rx_cnt,0xFFFF);
+			uart_rx_cnt = 0;
+			memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
+		}
+	}
 }
 

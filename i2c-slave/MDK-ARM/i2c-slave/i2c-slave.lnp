@@ -5,6 +5,9 @@
 "i2c-slave\stm32g0xx_it.o"
 "i2c-slave\stm32g0xx_hal_msp.o"
 "i2c-slave\i2c.o"
+"i2c-slave\slave.o"
+"i2c-slave\master.o"
+"i2c-slave\usart.o"
 "i2c-slave\stm32g0xx_hal_gpio.o"
 "i2c-slave\stm32g0xx_hal_tim.o"
 "i2c-slave\stm32g0xx_hal_tim_ex.o"
@@ -21,6 +24,8 @@
 "i2c-slave\stm32g0xx_hal_cortex.o"
 "i2c-slave\stm32g0xx_hal.o"
 "i2c-slave\stm32g0xx_hal_exti.o"
+"i2c-slave\stm32g0xx_hal_uart.o"
+"i2c-slave\stm32g0xx_hal_uart_ex.o"
 "i2c-slave\system_stm32g0xx.o"
 --library_type=microlib --strict --scatter "i2c-slave\i2c-slave.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols

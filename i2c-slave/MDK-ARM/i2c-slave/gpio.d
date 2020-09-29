@@ -29,5 +29,13 @@ i2c-slave\gpio.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash.h
 i2c-slave\gpio.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h
 i2c-slave\gpio.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr.h
 i2c-slave\gpio.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h
+i2c-slave\gpio.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart.h
+i2c-slave\gpio.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h
+i2c-slave\gpio.o: ../Core/Inc/gpio.h
+i2c-slave\gpio.o: ../Core/Inc/slave.h
 i2c-slave\gpio.o: ../Core/Inc/i2c.h
 i2c-slave\gpio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+i2c-slave\gpio.o: ../Core/Inc/master.h
+i2c-slave\gpio.o: ../Core/Inc/usart.h
+i2c-slave\gpio.o: ../Core/Inc/main.h
+i2c-slave\gpio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

@@ -1,7 +1,7 @@
 #include "i2c.h"
 
 
-void I2C_GPIO_Init(void){
+void I2C_Master_GPIO_Output_OD_Init(void){
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	__HAL_RCC_GPIOC_CLK_ENABLE();																		 
 	
