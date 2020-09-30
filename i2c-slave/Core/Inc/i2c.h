@@ -8,8 +8,19 @@ typedef		 uint32_t    u32;
 typedef		 uint16_t    u16;
 typedef		 uint8_t     u8;
 
+#define MASTER 											((uint8_t)0x00)  				 /*    Running state is master   */
+#define SLAVE 											((uint8_t)0x01)  				 /*    Running state is slave    */
+#define PROCESS_SUCCESS             ((uint8_t)0x00)					 /*    return a success          */
 
 
+/*     Record running state           */
+typedef enum Running_State {
+				master   =   MASTER,
+	      slave    =   SLAVE
+}Running_State;
+
+
+extern Running_State running_state;
 
 /**************************************************************************/
 /***********                    GPIO              ************************/
@@ -66,7 +77,7 @@ void 			LED_GPIO_Init(void);
 /*      Define length and size                        */
 #define BIT_LENGTH 					    		    ((u8)0x08)       // A bit length
 #define DEFAULT_BUFF_SIZE               ((u8)0x0A)	  	 // Receive/send buff length
-#define I2C_para_length 			    		  ((u8)0x05)	  	 // The number of arguments
+#define I2C_PARA_LENGTH 			    		  ((u8)0x05)	  	 // The number of arguments
 
 
 /*      Define address and offet                      */
@@ -95,10 +106,9 @@ void 			LED_GPIO_Init(void);
 #define LED_GREEN_GPIO_Port                GPIOA              // LED IOPORT
 
 
-// Slave address
+// I2C address
 #define I2C_ADDRESS                     ((u8)0xA0)          // As a slave address
-#define SELF_ADDRESS_READ				    		((u8)0xA0)          // The master's write is equal to slave's read
-#define SELF_ADDRESS_WRITE			    		((u8)0xA1)          // The master's read is equal to slave's write
+
 
 
 
@@ -168,8 +178,8 @@ u8 			 I2C_Slave_WaitAck(void);
 #define Slave_Get 								((u8)0x00)
 
 //Slave write and read address: write(0), read(1)
-#define I2C_WRITE_ADDRESS 0xA0
-#define I2C_READ_ADDRESS 0xA1
+#define I2C_WRITE 									((u8)0x00)
+#define I2C_READ 										((u8)0x01)
 
 
 //Send and receive data

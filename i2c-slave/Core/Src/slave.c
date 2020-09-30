@@ -14,7 +14,7 @@ __IO u32   led_duration = 0;										        			//The duration of the led
 
 
 u8         sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0,1,0};	   	//Send array/buff
-
+extern u8  I2C_buff[DEFAULT_BUFF_SIZE];
 
 
 
@@ -29,7 +29,7 @@ void slave_start(){
 	I2C_Slave_SCL_Falling_Exti_Enable();										//Enable SCL Falling exti
 	
 	param_assert();
-  while(1)
+  while(running_state == SLAVE)
   {
 		if(led_duration){
 			LED(led_duration);
@@ -128,10 +128,10 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			a_bit_value |= I2C_SDA_READ();
 		}
 		else{
- 			if((a_bit_value & SELF_ADDRESS_READ) == a_bit_value){
+ 			if((a_bit_value & (I2C_ADDRESS + I2C_WRITE)) == a_bit_value){
 				option = read;
 			}
-			else if((a_bit_value & SELF_ADDRESS_WRITE) == a_bit_value){
+			else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
 				option = write;
 				a_bit_value = sent_buff[++sent_cnt];
 			}
@@ -145,45 +145,47 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			bit_location = 0;
 		}
 	}
-	
-	/*    Receive data    */
+		
+	/*    		Receive data   						 	      	  */
 	else if(option == read){
 		
-		/*  Receive a byte  */
+		/* 			Receive a byte  		         	      	*/
 		bit_location++;
 		if(bit_location < BIT_LENGTH + 1){
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
 		}
 		else{
-			/*            Store this byte and wait acknowledge              */
-			
-			/*   How to store first byte  */
+			/*       Store this byte and wait acknowledge              */
+			/*       How to store first byte                           */
 			if(!receive_cnt){
 				receive_buff[base_addr] = a_bit_value;
 			}
 			
-			/*   How to store next byte received   */
+			/*       How to store next byte received                   */
 			else{
-				/*   This byte use for duration only    */
+				
+				/*     This byte use for duration only                   */
 				if(receive_buff[base_addr] == LED_duration){
 					receive_buff[base_addr + receive_cnt] = a_bit_value;
-					receive_len = I2C_para_length - 2;
+					receive_len = I2C_PARA_LENGTH - 2;
 				}
-				/*   This byte use for frequency only   */
+				
+				/*     This byte use for frequency only                  */
 				else if(receive_buff[base_addr] == LED_frequency){
 					receive_buff[base_addr + receive_cnt + addr_offet] = a_bit_value;
-					receive_len = I2C_para_length - 2;
+					receive_len = I2C_PARA_LENGTH - 2;
 				}
-				/*   This byte use for duration/frequency only   */
+				
+				/*    This byte use for duration/frequency only          */
 				else{
 					receive_buff[receive_cnt] = a_bit_value;
-					receive_len = I2C_para_length;
+					receive_len = I2C_PARA_LENGTH;
 				}
 			}
 			receive_cnt++;
 			
-			/*   Send acknowledge and reable/disable EXTI   */
+			/*      Send acknowledge and reable/disable EXTI            */
 			if(receive_cnt < receive_len){
 				I2C_Slave_SendAck();
 			}
@@ -214,7 +216,7 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				I2C_Slave_SCL_Rising_Exti_Disable();
 				return;
 			}
-			if(sent_cnt < I2C_para_length){
+			if(sent_cnt < I2C_PARA_LENGTH){
 				a_bit_value = sent_buff[++sent_cnt];
 			}
 			else{
@@ -225,3 +227,37 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 		}
 	}
 }
+
+
+/**
+  * @brief  This function is rising exti callback.
+  * @retval None
+  */
+u8 Date_To_I2CBuff(){
+	if((led_duration / I2C_S_TO_US) >= 0xFF ){
+		I2C_buff[0] = (u8)(led_duration/I2C_S_TO_US);
+		I2C_buff[1] = (u8)'s';
+	}
+	else if((led_duration / I2C_MS_TO_US) >= 0xFF){
+		I2C_buff[0] = (u8)(led_duration/I2C_MS_TO_US);
+		I2C_buff[1] = (u8)'m';
+	}
+	else{
+		I2C_buff[0] = (u8)(led_duration/I2C_MS_TO_US);
+		I2C_buff[1] = (u8)'u';
+	}
+	if((led_frequency / I2C_S_TO_US) >= 0xFF ){
+		I2C_buff[2] = (u8)(led_frequency/I2C_S_TO_US);
+		I2C_buff[3] = (u8)'s';
+	}
+	else if((led_frequency / I2C_MS_TO_US) >= 0xFF){
+		I2C_buff[2] = (u8)(led_frequency/I2C_MS_TO_US);
+		I2C_buff[3] = (u8)'m';
+	}
+	else{
+		I2C_buff[2] = (u8)(led_frequency/I2C_MS_TO_US);
+		I2C_buff[3] = (u8)'u';
+	}
+	return PROCESS_SUCCESS;
+}
+

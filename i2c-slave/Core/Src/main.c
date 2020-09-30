@@ -17,9 +17,13 @@ char UART_Rx_Buffer[UART_RX_BUFF_SIZE] = {0};
 u8 Rx_Byte = 0;
 u8 uart_rx_cnt = 0;
 
-u8 I2C_buff[DEFAULT_BUFF_SIZE] = {0};
+extern u8 I2C_buff[DEFAULT_BUFF_SIZE];
+
+Running_State running_state = MASTER;
 
 void (* running)(void) = &master_start;
+
+/*                    I2C ADDRESS                    */
 
 
 /**
@@ -36,9 +40,9 @@ int main(void)
 	MX_USART2_UART_Init();																	//Init UART2 GPIO
 	
 	//slave_start();
-	
-	change_state: running();
-	
+	while(1){
+		running();
+	}
 }
 
 
@@ -109,7 +113,7 @@ u8 get_para_location(char *begin_address){
 	return i;
 }
 
-u8 UART_Process_Param(u8 *UART_buff, u8 uart_buff_length, u8 *I2C_buff, u8 I2C_buff_length){
+u8 UART_Process_Param(UART_HandleTypeDef *huart){
 //	u8 *buff_ptr = UART_buff;
 //	__IO u8 buff_length = uart_buff_length, re_value = 0U;
 //	if(buff_ptr[2] == 0xFF && buff_length != 7){
@@ -131,8 +135,8 @@ u8 UART_Process_Param(u8 *UART_buff, u8 uart_buff_length, u8 *I2C_buff, u8 I2C_b
 //	}
 	__IO u8 uart_buff_location = 0, command_buff_size = 0, command_buff_length = 0;
 	
+	/*          Process parameter from UART                                    */
 	char command[MAX_COMMAND_BUFF_SIZE][MAX_COMMAND_LENGH] = {'\0'};
-	//memset(command, '\0', MAX_COMMAND_BUFF_SIZE*MAX_COMMAND_LENGH);
 	while(uart_buff_location < (uart_rx_cnt - 2)){
 		if(UART_Rx_Buffer[uart_buff_location] == ' '){
 			command[command_buff_size][command_buff_length] = '\0';
@@ -144,12 +148,85 @@ u8 UART_Process_Param(u8 *UART_buff, u8 uart_buff_length, u8 *I2C_buff, u8 I2C_b
 		}
 		++uart_buff_location;
 	}
-
+	
+	/*          Get running state                                                */
 	if(!strcmp(GET_RUNNING_STATE, command[0])){
+		if(running_state == MASTER){
+			HAL_UART_Transmit(huart, (u8 *)RUNSTAT_MASTER, strlen(RUNSTAT_MASTER),UART_TR_TIMEOUT);
+		}
+		else if(running_state == SLAVE){
+			HAL_UART_Transmit(huart, (u8 *)RUNSTAT_SLAVE, strlen(RUNSTAT_SLAVE),UART_TR_TIMEOUT);
+		}
+	}
+	
+	/*          Change running state                                              */
+	else if(!strcmp(CHANGE_RUNNING_STATE, command[0])){
+		if(!strcmp(command[1], "slave")){
+			if(running_state == SLAVE){
+				HAL_UART_Transmit(huart, (u8 *)RUNSTAT_SLAVE_TO_SLAVE, strlen(RUNSTAT_SLAVE_TO_SLAVE),UART_TR_TIMEOUT);
+			}
+			else{
+				running_state = SLAVE;
+				running = &slave_start;
+				HAL_UART_Transmit(huart, (u8 *)OK, strlen(OK),UART_TR_TIMEOUT);
+			}
+		}
+		else if(!strcmp(command[1], "master")){
+			if(running_state == MASTER){
+				HAL_UART_Transmit(huart, (u8 *)RUNSTAT_MASTER_TO_MASTER, strlen(RUNSTAT_MASTER_TO_MASTER), UART_TR_TIMEOUT);
+			}
+			else{
+				running_state = MASTER;
+				running = &master_start;
+				HAL_UART_Transmit(huart, (u8 *)OK, strlen(OK), UART_TR_TIMEOUT);
+			}
+		}
+	}
+	
+	/*        Get slave's light duration or frequency of led                       */
+	else if(!strcmp(GET_LED_DURATION, command[0]) || !strcmp(GET_LED_FREQUENCY, command[0]) || !strcmp(GET_LED_DURATION_FREQUENCY, command[0])){
+		
+		/*          This address is is self       										    					 */
+		if(!strcmp(command[1], (char *)I2C_ADDRESS)){
+			if(running_state == MASTER){
+				HAL_UART_Transmit(huart, (u8 *)MASTER_NO_LED, strlen(MASTER_NO_LED), UART_TR_TIMEOUT);
+			}
+			else if(running_state == SLAVE){
+				Date_To_I2CBuff();
+				HAL_UART_Transmit(huart, (u8 *)I2C_buff, DEFAULT_BUFF_SIZE - 1, UART_TR_TIMEOUT);
+			}
+		}
+		
+		/*         This address is another slave or master address        						*/
+		/*   Slave no permissions to read other device information       */
+		if(running_state == SLAVE){
+			HAL_UART_Transmit(huart, (u8 *)SLAVE_ERR_NO_READ, strlen(SLAVE_ERR_NO_READ), 0xFFFF);
+		}
+		
+		/*   Self running state is master, can read another slave info   */
+		I2C_Master_Read((u8)(command[1]) + I2C_READ, I2C_buff, I2C_PARA_LENGTH);
+		if(!strcmp(GET_LED_DURATION, command[0])){
+			HAL_UART_Transmit(huart, (u8 *)(I2C_buff), DEFAULT_BUFF_SIZE - 3, UART_TR_TIMEOUT);
+		}
+		else if(!strcmp(GET_LED_FREQUENCY, command[0])){
+			HAL_UART_Transmit(huart, (u8 *)(I2C_buff + 2), DEFAULT_BUFF_SIZE - 3, UART_TR_TIMEOUT);
+		}
+		else{
+			HAL_UART_Transmit(huart, (u8 *)I2C_buff, DEFAULT_BUFF_SIZE - 1, UART_TR_TIMEOUT);
+		}
+	}
+
+	else if(!strcmp(SET_LED_DURATION, command[0])){
 		return 1;
 	}
-	else if(!strcmp(CHANGE_RUNNING_STATE, command[0])){
+	else if(!strcmp(SET_LED_FREQUENCY, command[0])){
 		return 1;
+	}
+	else if(!strcmp(SET_LED_DURATION_FREQUENCY, command[0])){
+		return 1;
+	}
+	else{
+		HAL_UART_Transmit(huart, (u8 *)COMMAND_ERR, strlen(COMMAND_ERR), 0xFFFF);
 	}
 	return 0u;
 }
@@ -171,8 +248,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		if(UART_Rx_Buffer[uart_rx_cnt-1] == '\n')
 		{
       while(HAL_UART_GetState(huart) == HAL_UART_STATE_BUSY_TX);
-			UART_Process_Param(UART_Rx_Buffer+1, uart_rx_cnt - 2, I2C_buff, DEFAULT_BUFF_SIZE);
-			HAL_UART_Transmit(huart, (char *)UART_Rx_Buffer, uart_rx_cnt,0xFFFF);
+			UART_Process_Param(huart);
 			uart_rx_cnt = 0;
 			memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
 		}
