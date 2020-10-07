@@ -81,17 +81,17 @@ void 			LED_GPIO_Init(void);
 
 
 /*      Define address and offet                      */
-#define base_addr 					    	      ((u8)0x00)	     // Receive/send buff base index
-#define time_offset     	    		      ((u8)0x01)	  	 // Data byte offset
-#define units_offset                    ((u8)0x02)	  	 // Units byte offset
-#define addr_offet 				    			   	((u8)0x02)	  	 // Frequency address offset
+#define BASE_ADDR 					    	      ((u8)0x00)	     // Receive/send buff base index
+#define TIME_OFFSET     	    		      ((u8)0x01)	  	 // Data byte offset
+#define UNITS_OFFSET                    ((u8)0x02)	  	 // Units byte offset
+#define ADDR_OFFSET 				    			   	((u8)0x02)	  	 // Frequency address offset
 
 
 /*      Define the rate and unit of time of I2C        */
 #define I2C_PD                          ((u8)0x0C)	  	 // A pulse width
-#define I2C_S 				    						  ((u8)0x00)       // A second
-#define I2C_MS 				    							((u8)0x01)       // A millisecond
-#define I2C_US 													((u8)0x02)       // A microsecond
+#define I2C_S 				    						  ((u8)0x73)       // A second
+#define I2C_MS 				    							((u8)0x6D)       // A millisecond
+#define I2C_US 													((u8)0x75)       // A microsecond
 #define I2C_S_TO_US 				  				  ((u32)1000000)     // second = microsecond * 1000000
 #define I2C_MS_TO_US 								    ((u32)1000)		     // millisecond = microsecond * 1000
 
@@ -108,6 +108,7 @@ void 			LED_GPIO_Init(void);
 
 // I2C address
 #define I2C_ADDRESS                     ((u8)0xA0)          // As a slave address
+#define I2C_ADDRESS_LEN                 ((u8)0x02)					// A address length
 
 
 

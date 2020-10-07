@@ -13,7 +13,7 @@ __IO u32   led_frequency = 0;									        				//The frequency of the led
 __IO u32   led_duration = 0;										        			//The duration of the led
 
 
-u8         sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0,1,0};	   	//Send array/buff
+u8         sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0x73,1,0x73};	   	//Send array/buff
 extern u8  I2C_buff[DEFAULT_BUFF_SIZE];
 
 
@@ -89,11 +89,11 @@ u32 get_units_mul(u8 units){
   * @retval None
   */
 void param_assert(){
-	if((receive_buff[base_addr] & LED_duration) == LED_duration){
-		set_led_duration(receive_buff[time_offset] * get_units_mul(receive_buff[units_offset]));
+	if((receive_buff[BASE_ADDR] & LED_duration) == LED_duration){
+		set_led_duration(receive_buff[TIME_OFFSET] * get_units_mul(receive_buff[UNITS_OFFSET]));
 	}
-	if((receive_buff[base_addr] & LED_frequency) == LED_frequency){
-		set_led_frequency(receive_buff[time_offset + addr_offet] * get_units_mul(receive_buff[units_offset + addr_offet]));
+	if((receive_buff[BASE_ADDR] & LED_frequency) == LED_frequency){
+		set_led_frequency(receive_buff[TIME_OFFSET + ADDR_OFFSET] * get_units_mul(receive_buff[UNITS_OFFSET + ADDR_OFFSET]));
 	}
 }
 
@@ -159,21 +159,21 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			/*       Store this byte and wait acknowledge              */
 			/*       How to store first byte                           */
 			if(!receive_cnt){
-				receive_buff[base_addr] = a_bit_value;
+				receive_buff[BASE_ADDR] = a_bit_value;
 			}
 			
 			/*       How to store next byte received                   */
 			else{
 				
 				/*     This byte use for duration only                   */
-				if(receive_buff[base_addr] == LED_duration){
-					receive_buff[base_addr + receive_cnt] = a_bit_value;
+				if(receive_buff[BASE_ADDR] == LED_duration){
+					receive_buff[BASE_ADDR + receive_cnt] = a_bit_value;
 					receive_len = I2C_PARA_LENGTH - 2;
 				}
 				
 				/*     This byte use for frequency only                  */
-				else if(receive_buff[base_addr] == LED_frequency){
-					receive_buff[base_addr + receive_cnt + addr_offet] = a_bit_value;
+				else if(receive_buff[BASE_ADDR] == LED_frequency){
+					receive_buff[BASE_ADDR + receive_cnt + ADDR_OFFSET] = a_bit_value;
 					receive_len = I2C_PARA_LENGTH - 2;
 				}
 				
@@ -234,11 +234,11 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
   * @retval None
   */
 u8 Date_To_I2CBuff(){
-	if((led_duration / I2C_S_TO_US) >= 0xFF ){
+	if((led_duration / I2C_S_TO_US) <= 0xFF && (led_duration / I2C_S_TO_US) >= 0x01 ){
 		I2C_buff[0] = (u8)(led_duration/I2C_S_TO_US);
 		I2C_buff[1] = (u8)'s';
 	}
-	else if((led_duration / I2C_MS_TO_US) >= 0xFF){
+	else if((led_duration / I2C_MS_TO_US) <= 0xFF  && (led_duration / I2C_S_TO_US) >= 0x01 ){
 		I2C_buff[0] = (u8)(led_duration/I2C_MS_TO_US);
 		I2C_buff[1] = (u8)'m';
 	}
@@ -246,11 +246,11 @@ u8 Date_To_I2CBuff(){
 		I2C_buff[0] = (u8)(led_duration/I2C_MS_TO_US);
 		I2C_buff[1] = (u8)'u';
 	}
-	if((led_frequency / I2C_S_TO_US) >= 0xFF ){
+	if((led_frequency / I2C_S_TO_US) <= 0xFF  && (led_frequency / I2C_S_TO_US) >= 0x01 ){
 		I2C_buff[2] = (u8)(led_frequency/I2C_S_TO_US);
 		I2C_buff[3] = (u8)'s';
 	}
-	else if((led_frequency / I2C_MS_TO_US) >= 0xFF){
+	else if((led_frequency / I2C_MS_TO_US) >= 0xFF && (led_frequency / I2C_S_TO_US) >= 0x01 ){
 		I2C_buff[2] = (u8)(led_frequency/I2C_MS_TO_US);
 		I2C_buff[3] = (u8)'m';
 	}

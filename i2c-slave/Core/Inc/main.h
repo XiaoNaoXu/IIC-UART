@@ -31,14 +31,14 @@ extern "C" {
 
 
 /*      UART command                                                            */
-#define GET_RUNNING_STATE 							    "get_state"          /*    Get running state         */
-#define CHANGE_RUNNING_STATE 						    "change_state"       /*    Change running state      */
-#define SET_LED_DURATION 								    "set_dura"					 /*    Set led duration          */
-#define SET_LED_FREQUENCY 						      "set_freq"					 /*    Set led frequency         */
-#define GET_LED_DURATION 								    "get_dura"					 /*    Get led duration          */
-#define GET_LED_FREQUENCY 						      "get_freq"					 /*    Get led frequency         */
-#define SET_LED_DURATION_FREQUENCY 				  "set_dura_freq"			 /*    Set led frequency         */
-#define GET_LED_DURATION_FREQUENCY 					"get_dura_freq"			 /*    Get led duration          */
+
+
+#define RUNNING_STATE 						   			  "state"      				 /*    Running state      								*/
+#define GET 								 						    "get"								 /*    Get                    				    */
+#define SET 						  							    "set"								 /*    Set     					      				    */
+#define LED_DURA 								   			 		"dura"							 /*    Led duration         				      */
+#define LED_FREQ 						    			  		"freq"							 /*    Led frequency        				      */
+#define LED_DURA_FREQ  								  		"dura_freq"			     /*    Led frequency and  frequency       */
 
 
 /*      UART return information                                                  */
@@ -52,7 +52,6 @@ extern "C" {
 #define OK 																	 "OK."
 #define MASTER_NO_LED 											 "Master no LED."
 #define SLAVE_ERR_NO_READ 									 "Slave no permissions to read other device information."
-
 
 
 
