@@ -49,7 +49,8 @@ extern "C" {
 #define COMMAND_ERR              						 "Command error: please check the command."
 #define RUNSTAT_MASTER_TO_MASTER             "Can't change master to master of the running state."
 #define RUNSTAT_SLAVE_TO_SLAVE               "Can't change slave to slave of the running state."
-#define OK 																	 "OK."
+#define OK 																	 "Success."
+#define DEFAULT 														 "Dfault."
 #define MASTER_NO_LED 											 "Master no LED."
 #define SLAVE_ERR_NO_READ 									 "Slave no permissions to read other device information."
 

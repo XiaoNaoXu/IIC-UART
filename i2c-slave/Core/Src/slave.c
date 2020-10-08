@@ -49,6 +49,7 @@ void flag_reset(){
 	bit_location = 0;
 	receive_cnt = 0;
 	a_bit_value = 0;
+	receive_len = 3;
 	sent_cnt = 0;
 }
 
@@ -123,9 +124,14 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 	/*receive first bit : its address and read/write bit.  */
 	if(option == ret){
 		bit_location++;
-		if(bit_location < BIT_LENGTH + 1){
+		if(bit_location <= BIT_LENGTH){
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
+			
+			if(bit_location == BIT_LENGTH){
+				delay_us(I2C_PD);
+				I2C_SDA_0();
+			}
 		}
 		else{
  			if((a_bit_value & (I2C_ADDRESS + I2C_WRITE)) == a_bit_value){
@@ -142,6 +148,10 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				return;
 			}
 			I2C_Slave_SendAck();
+			if(option == write){
+				(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
+				a_bit_value <<= 1U;
+			}
 			bit_location = 0;
 		}
 	}
@@ -151,9 +161,19 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 		
 		/* 			Receive a byte  		         	      	*/
 		bit_location++;
-		if(bit_location < BIT_LENGTH + 1){
+		if(bit_location <= BIT_LENGTH){
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
+			
+			if(bit_location == BIT_LENGTH){
+				delay_us(I2C_PD);
+				if(receive_cnt + 1 < receive_len){
+					I2C_SDA_0();
+				}
+				else{
+					I2C_SDA_1();
+				}
+			}
 		}
 		else{
 			/*       Store this byte and wait acknowledge              */
@@ -201,13 +221,14 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 	/*   To be confirmed   */
 	else if(option == write){
 		bit_location++;
-		if(bit_location < BIT_LENGTH + 1){
+		if(bit_location <= BIT_LENGTH){
+			delay_us(I2C_PD);
+			if(bit_location == BIT_LENGTH){
+				I2C_SDA_1();
+				return;
+			}
 			(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
 			a_bit_value <<= 1U;
-			if(bit_location == BIT_LENGTH){
-				delay_us(I2C_PD);
-				I2C_SDA_1();
-			}
 		}
 		else{
 			if(I2C_SDA_READ()){
@@ -218,6 +239,9 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			}
 			if(sent_cnt < I2C_PARA_LENGTH){
 				a_bit_value = sent_buff[++sent_cnt];
+				delay_us(I2C_PD);
+				(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
+				a_bit_value <<= 1U;
 			}
 			else{
 				I2C_Slave_SCL_Falling_Exti_Reable();

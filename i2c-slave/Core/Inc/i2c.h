@@ -88,7 +88,7 @@ void 			LED_GPIO_Init(void);
 
 
 /*      Define the rate and unit of time of I2C        */
-#define I2C_PD                          ((u8)0x0C)	  	 // A pulse width
+#define I2C_PD                          ((u8)0x0E)	  	 // A pulse width
 #define I2C_S 				    						  ((u8)0x73)       // A second
 #define I2C_MS 				    							((u8)0x6D)       // A millisecond
 #define I2C_US 													((u8)0x75)       // A microsecond
@@ -97,7 +97,7 @@ void 			LED_GPIO_Init(void);
 
 
 // I2C RISING ENABLE AND DISABLE ADDR
-#define I2C_SCL_EXTI_ENABLE_ADDR 	         	((u8)0x20)      // SCL EXTI enable register
+#define I2C_SCL_EXTI_ENABLE_ADDR 	         	((u8)0x20)       // SCL EXTI enable register
 #define I2C_SCL_EXTI_DISABLE_ADDR           ~((u8)0x020)     // SCL EXTI disable register
 
 
@@ -107,7 +107,7 @@ void 			LED_GPIO_Init(void);
 
 
 // I2C address
-#define I2C_ADDRESS                     ((u8)0xA0)          // As a slave address
+#define I2C_ADDRESS                     ((u8)0xB0)          // As a slave address
 #define I2C_ADDRESS_LEN                 ((u8)0x02)					// A address length
 
 

@@ -288,9 +288,9 @@ void I2C_Master_SendNAck(void){
 u8 I2C_Master_WaitAck(){
 	u8 re_value;
 	I2C_SCL_0();
+	I2C_SDA_1();
 	//I2C_SDA_0();	
 	delay_us(I2C_PD);
-	I2C_SDA_1();
 	I2C_SCL_1();
 	delay_us(I2C_PD);
 	re_value = I2C_SDA_READ();
@@ -306,7 +306,6 @@ void I2C_Master_SendByte(u8 data_byte){
 	__IO u8 i = 0;
 	for(i = 0; i < BIT_LENGTH; ++i){
 		I2C_SCL_0();
-		//I2C_SDA_0();
 		delay_us(I2C_PD);		
 		if((data_byte) & 0x80)
 		{
@@ -339,10 +338,11 @@ u8 I2C_Master_ReadByte(){
 	for(i = 0; i < BIT_LENGTH; ++i){
 		I2C_SCL_0();
 		//I2C_SDA_0();
+		
 		delay_us(I2C_PD);
 		value <<= 1U;
 		I2C_SCL_1();
-		I2C_SDA_1();
+		
 		delay_us(I2C_PD);
 		value |= I2C_SDA_READ();
 	}
