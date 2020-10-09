@@ -12,8 +12,8 @@ void 			set_led_duration(u32);
 
 u32 			get_units_mul(u8);
 
-void 			HAL_GPIO_EXTI_Rising_Callback(u16);
-void			HAL_GPIO_EXTI_Falling_Callback(u16);
+void 			Slave_EXTI_Rising_Callback(u16);
+void			Slave_EXTI_Falling_Callback(u16);
 
 u8 				Date_To_I2CBuff(void);
 

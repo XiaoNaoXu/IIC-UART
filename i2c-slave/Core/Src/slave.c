@@ -100,12 +100,12 @@ void param_assert(){
 
 
 /**
-  * @brief  This function is falling exti callback.
+  * @brief  This function is slave's falling exti callback.
   * @retval None
   */
-void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
+void Slave_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
-	if(is_I2C_Slave_Start() && GPIO_Pin == I2C_SCL_PIN){
+	if(is_I2C_Slave_Start()){
 		
 		I2C_Slave_SCL_Rising_Exti_Enable();
 		I2C_Slave_SCL_Falling_Exti_Disable();
@@ -116,10 +116,10 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 
 
 /**
-  * @brief  This function is rising exti callback.
+  * @brief  This function is slave's rising exti callback.
   * @retval None
   */
-void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
+void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
 	/*receive first bit : its address and read/write bit.  */
 	if(option == ret){

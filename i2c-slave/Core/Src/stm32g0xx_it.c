@@ -28,6 +28,7 @@
 extern UART_HandleTypeDef huart2;
 extern uint8_t UART_Rx_Buffer[255];
 extern uint8_t Rx_Byte;
+extern Running_State running_state;
 
 /******************************************************************************/
 /* STM32G0xx Peripheral Interrupt Handlers                                    */
@@ -39,7 +40,12 @@ extern uint8_t Rx_Byte;
 /* USER CODE BEGIN 1 */
 void EXTI4_15_IRQHandler(void)
 {
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
+	if(running_state == MASTER){
+		HAL_GPIO_EXTI_IRQHandler(MASTER_EXTI_PIN);
+	}
+	else{
+		HAL_GPIO_EXTI_IRQHandler(SLAVE_EXTI_PIN);
+	}
 }
 
 /**

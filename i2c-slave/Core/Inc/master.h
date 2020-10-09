@@ -15,6 +15,8 @@
 extern u8 Rx_Byte;
 
 
-void master_start(void);
+void		 master_start(void);
+void 		 Master_EXTI_Rising_Callback(u16);
+void		 Master_EXTI_Falling_Callback(u16);
 
 #endif

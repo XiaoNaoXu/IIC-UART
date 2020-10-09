@@ -50,9 +50,10 @@ extern "C" {
 #define RUNSTAT_MASTER_TO_MASTER             "Can't change master to master of the running state."
 #define RUNSTAT_SLAVE_TO_SLAVE               "Can't change slave to slave of the running state."
 #define OK 																	 "Success."
-#define DEFAULT 														 "Dfault."
+#define FAILED 															 "Failed."
 #define MASTER_NO_LED 											 "Master no LED."
 #define SLAVE_ERR_NO_READ 									 "Slave no permissions to read other device information."
+#define BUS_BUSY                             "The bus is in a busy state."
 
 
 
@@ -65,6 +66,7 @@ u8 			UART_Process_Param(UART_HandleTypeDef *);
 u8 			get_para_location(char *);
 
 void		Error_Handler(void);
+void 		SystemClock_Config(void);
 
 
 
