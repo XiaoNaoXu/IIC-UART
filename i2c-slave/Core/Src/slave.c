@@ -1,3 +1,9 @@
+/**
+  ******************************************************************************
+  * @file           : slave.c
+  * @brief          : Slave related code
+  */
+
 #include "slave.h"
 
 
@@ -8,10 +14,9 @@ __IO u8    a_bit_value = 0U;																	//Store a full byte received
 __IO u8    receive_cnt = 0;																		//The number that has been sent
 __IO u8    receive_len = 3;															   		//The number when need to send
 __IO u8    sent_cnt = 0;												      				//The number that has been received
-Option     option = ret;												      				//Control read/write state
 __IO u32   led_frequency = 0;									        				//The frequency of the led
 __IO u32   led_duration = 0;										        			//The duration of the led
-
+Option     option = ret;												      				//Control read/write state
 
 u8         sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0x73,1,0x73};	   	//Send array/buff
 extern u8  I2C_buff[DEFAULT_BUFF_SIZE];
@@ -19,7 +24,10 @@ extern u8  I2C_buff[DEFAULT_BUFF_SIZE];
 
 
 
-/* */
+/**
+  * @brief  Slave entry point.
+  * @retval None
+  */
 void slave_start(){
 	
 	LED_GPIO_Init();																				//Init Green LED GPIO --- PA5
@@ -39,6 +47,7 @@ void slave_start(){
 		}
   }
 }
+
 
 /**
   * @brief  Reset flag.
@@ -254,7 +263,8 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 
 
 /**
-  * @brief  This function is rising exti callback.
+  * @brief  This function is get LED duration and frequency 
+	* 				when running state is slave but receive a get command.
   * @retval None
   */
 u8 Date_To_I2CBuff(){

@@ -6,7 +6,6 @@
 
   ******************************************************************************
   */
-/* USER CODE END Header */
 
 
 #ifndef __MAIN_H
@@ -31,8 +30,6 @@ extern "C" {
 
 
 /*      UART command                                                            */
-
-
 #define RUNNING_STATE 						   			  "state"      				 /*    Running state      								*/
 #define GET 								 						    "get"								 /*    Get                    				    */
 #define SET 						  							    "set"								 /*    Set     					      				    */
@@ -42,18 +39,19 @@ extern "C" {
 
 
 /*      UART return information                                                  */
-#define RUNSTAT_SLAVE_TO_MASTER              "Running state from slave to master."
-#define RUNSTAT_MASTER_TO_SLAVE              "Running state from master to slave."
-#define RUNSTAT_SLAVE              					 "Running state is slave."
-#define RUNSTAT_MASTER             					 "Running state is master."
-#define COMMAND_ERR              						 "Command error: please check the command."
-#define RUNSTAT_MASTER_TO_MASTER             "Can't change master to master of the running state."
-#define RUNSTAT_SLAVE_TO_SLAVE               "Can't change slave to slave of the running state."
-#define OK 																	 "Success."
-#define FAILED 															 "Failed."
-#define MASTER_NO_LED 											 "Master no LED."
-#define SLAVE_ERR_NO_READ 									 "Slave no permissions to read other device information."
-#define BUS_BUSY                             "The bus is in a busy state."
+#define RUNSTAT_SLAVE_TO_MASTER              "Running state from slave to master.\n"
+#define RUNSTAT_MASTER_TO_SLAVE              "Running state from master to slave.\n"
+#define RUNSTAT_SLAVE              					 "Running state is slave.\n"
+#define RUNSTAT_MASTER             					 "Running state is master.\n"
+#define COMMAND_ERR              						 "Command error: please check the command.\n"
+#define RUNSTAT_MASTER_TO_MASTER             "Can't change master to master of the running state.\n"
+#define RUNSTAT_SLAVE_TO_SLAVE               "Can't change slave to slave of the running state.\n"
+#define OK 																	 "Success.\n"
+#define FAILED 															 "Failed.\n"
+#define MASTER_NO_LED 											 "Master no LED.\n"
+#define SLAVE_ERR_NO_READ 									 "Slave no permissions to read other device information.\n"
+#define BUS_BUSY                             "The bus is in a busy state.\n"
+#define PARA_LENGTH_ERR											 "Parameter more than 255 bytes.\n"
 
 
 
@@ -63,12 +61,12 @@ u8 			Get_Running_state(u8);
 
 /*      UART processing parameters																							 */
 u8 			UART_Process_Param(UART_HandleTypeDef *);
-u8 			get_para_location(char *);
+u32 		String_To_Hex_Of_Units(char);
+u32 		String_To_Hex_Of_Data(char *, u32);
 
+/*			MCU Initial																															*/
 void		Error_Handler(void);
 void 		SystemClock_Config(void);
-
-
 
 
 #ifdef __cplusplus

@@ -1,16 +1,25 @@
+/**
+  ******************************************************************************
+  * @file           : master.c
+  * @brief          : Master related code
+  */
+
 #include "master.h"
 
 
 u8 							I2C_receive_buff[DEFAULT_BUFF_SIZE] = {0};
 extern u8 			I2C_Bus_state;
 
+
+/**
+  * @brief  Master entry point.
+  * @retval None
+  */
 void master_start(){
 	
 	I2C_Master_SCL_Output_OD_Init();
 	
 	I2C_Master_SDA_Rising_Falling_Init();
-	
-	//HAL_UART_Receive_IT(&huart2, (uint8_t *)&Rx_Byte, 1);
 	
 	while(running_state == MASTER);
 	

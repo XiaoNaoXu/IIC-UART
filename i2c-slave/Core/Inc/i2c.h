@@ -1,3 +1,11 @@
+/**
+  ******************************************************************************
+  * @file           : main.h
+  * @brief          : Header for i2c.c file.
+
+  ******************************************************************************
+  */
+
 #ifndef I2C_H
 #define I2C_H
 
@@ -8,9 +16,15 @@ typedef		 uint32_t    u32;
 typedef		 uint16_t    u16;
 typedef		 uint8_t     u8;
 
-#define MASTER 											((uint8_t)0x00)  				 /*    Running state is master   */
-#define SLAVE 											((uint8_t)0x01)  				 /*    Running state is slave    */
-#define PROCESS_SUCCESS             ((uint8_t)0x00)					 /*    return a success          */
+
+
+/**************************************************************************/
+/***********                 State Control         ************************/
+/**************************************************************************/
+
+#define MASTER 											((u8)0x00)  				 /*    Running state is master   */
+#define SLAVE 											((u8)0x01)  				 /*    Running state is slave    */
+#define PROCESS_SUCCESS             ((u8)0x00)					 /*    return a success          */
 
 
 /*     Record running state           */
@@ -19,9 +33,7 @@ typedef enum Running_State {
 	      slave    =   SLAVE
 }Running_State;
 
-
 extern Running_State running_state;
-
 
 
 
@@ -70,8 +82,7 @@ extern Running_State running_state;
 #define LED_OFF HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET)     // LED4 DOWN, PA5 = low level
 
 
-void		 I2C_GPIO_Slave_To_Master(void);
-void		 I2C_GPIO_Master_To_Slave(void);
+/*   		 Set SCL = high level														    */
 void 		 I2C_SCL_1(void);
 
 
@@ -82,9 +93,11 @@ void 		 I2C_SCL_1(void);
 /***********                    LED              **************************/
 /**************************************************************************/
 
+/*        Define LED GPIO															*/
 #define LED_GREEN_Pin               GPIO_PIN_5            
 #define LED_GREEN_GPIO_Port         GPIOA
 
+/*        LED control																  */
 void		  LED(u32);
 void 			LED_GPIO_Init(void);
 
@@ -111,7 +124,7 @@ void 			LED_GPIO_Init(void);
 
 
 /*      Define the rate and unit of time of I2C        */
-#define I2C_PD                          ((u8)0x0A)	  	 // A pulse width
+#define I2C_PD                          ((u8)0x05)	  	 // A pulse width
 #define I2C_S 				    						  ((u8)0x73)       // A second
 #define I2C_MS 				    							((u8)0x6D)       // A millisecond
 #define I2C_US 													((u8)0x75)       // A microsecond
@@ -119,34 +132,34 @@ void 			LED_GPIO_Init(void);
 #define I2C_MS_TO_US 								    ((u32)1000)		     // millisecond = microsecond * 1000
 
 
-// I2C RISING ENABLE AND DISABLE ADDR
+/*			  I2C RISING ENABLE AND DISABLE ADDR					*/
 #define I2C_SCL_EXTI_ENABLE_ADDR 	         	((u16)0x0020)       // SCL EXTI enable register
 #define I2C_SCL_EXTI_DISABLE_ADDR           ~((u16)0x0020)     // SCL EXTI disable register
 
 
-// LED port select
+/*			  LED port select 								            */
 #define LED_GREEN_Pin 				  			     GPIO_PIN_5         // LED GPIO
 #define LED_GREEN_GPIO_Port                GPIOA              // LED IOPORT
 
 
-// I2C address
+/* 			I2C address																	*/
 #define I2C_ADDRESS                     ((u8)0xA0)          // As a slave address
 #define I2C_ADDRESS_LEN                 ((u8)0x02)					// A address length
 
 
 
-// Command Set or Get
+/*      Command Set or Get   																		     */
 #define Set 											 ((u8)0xFF)           // Set the frequency and duration of the LED
 #define Get 											 ((u8)0x00)           // Get the frequency and duration of the LED
 
 
-// light on and light off frequency , duration of the Green LED 
+/*		  light on and light off frequency , duration of the Green LED */
 #define LED_frequency							    ((u8)0x0F)        // LED frequency command
 #define LED_duration 							    ((u8)0xF0)        // LED duration command
 #define LED_duration_frequency				((u8)0xFF)        // LED frequency and duration command
 
 
-//Unit of time   -----    s,  ms, us
+/*			Unit of time   -----    s,  ms, us     											 */
 typedef enum Option{
 					read   =    ((u8)0x0000),             /*          Receive data state          */
 					write,														 	  /*          Write data  state           */
@@ -156,12 +169,12 @@ typedef enum Option{
 
 
 
-//The time delay function
+/*				The time delay function  																   */
 void 			delay_us(u32);
 void 			delay_ms(u32);
 
 
-//GPIO Init
+/*			 GPIO Init																 	  								*/
 void 		 I2C_Slave_SCL_Falling_Exti_Enable(void);
 void		 I2C_Slave_SCL_Falling_Exti_Reable(void);
 void		 I2C_Slave_SCL_Falling_Exti_Disable(void);
@@ -170,12 +183,12 @@ void		 I2C_Slave_SCL_Rising_Exti_Enable(void);
 void		 I2C_Slave_SDA_GPIO_Output_OD_Init(void);
 
 
-//Start and stop signal
+/*			 Start and stop signal																				*/
 u8 			 is_I2C_Slave_Start(void);
 u8 			 is_I2C_Slave_Stop(void);
 
 
-//Acknowledge
+/*			 Acknowledge																							    */
 void 		 I2C_Slave_SendAck(void);
 void 		 I2C_Slave_SendNAck(void);
 u8 			 I2C_Slave_WaitAck(void);
@@ -187,32 +200,32 @@ u8 			 I2C_Slave_WaitAck(void);
 /***********                    MASTER              ***********************/
 /**************************************************************************/
 
-/*                   I2C Bus Status                     */
+/*                   I2C Bus Status                    				 			  */
 #define I2C_BUS_FREE 															((u8)0x00)
 #define I2C_BUS_BUSY															((u8)0xFF)
 
 
-// Command Set or Get
+/*		  Command Set or Get  												 	 				        */
 #define Slave_Set            			((u8)0xFF)
 #define Slave_Get 								((u8)0x00)
 
-//Slave write and read address: write(0), read(1)
+/*			Slave write and read address: write(0), read(1)								*/
 #define I2C_WRITE 									((u8)0x00)
 #define I2C_READ 										((u8)0x01)
 
 
-/*      I2C SDA RISING ENABLE AND DISABLE ADDR               */
+/*      I2C SDA RISING ENABLE AND DISABLE ADDR          	    			  */
 #define I2C_SDA_EXTI_ENABLE_ADDR 	         	((u16)0x0008)       // SCL EXTI enable register
 #define I2C_SDA_EXTI_DISABLE_ADDR           ~((u16)0x0008)     // SCL EXTI disable register
 
 
-//Send and receive data
+/*			 Send and receive data																	  		*/
 u8	 	   I2C_Master_SendByte(u8);
 u32		   I2C_Master_Write(u8, u8 *, u32);
 u32		   I2C_Master_Read(u8, u8 *, u8);
 
 
-//Acknowledge
+/*			 Acknowledge																									*/
 void 		 I2C_Master_SendAck(void);
 void 		 I2C_Master_SendNAck(void);
 
@@ -221,6 +234,8 @@ void 		 I2C_Master_SendNAck(void);
 void		 I2C_Master_Start(void);
 void		 I2C_Master_Stop(void);
 
+
+/*			 Master GPIO Init and EXTI Init																*/
 void 		 I2C_Master_SCL_Output_OD_Init(void);
 void 		 I2C_Master_SDA_Output_OD_Init(void);
 void 		 I2C_Master_SDA_Rising_Falling_Init(void);

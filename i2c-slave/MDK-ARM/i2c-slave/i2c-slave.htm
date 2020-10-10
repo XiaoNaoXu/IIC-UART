@@ -3,11 +3,11 @@
 <title>Static Call Graph - [i2c-slave\i2c-slave.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image i2c-slave\i2c-slave.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Oct 09 18:01:45 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Oct 10 17:33:15 2020
 <BR><P>
 <H3>Maximum Stack Usage =        568 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-UART_RxISR_16BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Read &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
+UART_RxISR_16BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Write &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 <P>
 <H3>
 Mutually Recursive functions
@@ -64,8 +64,8 @@ Function Pointers
  <LI><a href="#[6]">WWDG_IRQHandler</a> from startup_stm32g070xx.o(.text) referenced from startup_stm32g070xx.o(RESET)
  <LI><a href="#[23]">__main</a> from entry.o(.ARM.Collect$$$$00000000) referenced from startup_stm32g070xx.o(.text)
  <LI><a href="#[21]">main</a> from main.o(i.main) referenced from entry9a.o(.ARM.Collect$$$$0000000B)
- <LI><a href="#[2a]">master_start</a> from master.o(i.master_start) referenced from main.o(.data)
  <LI><a href="#[2a]">master_start</a> from master.o(i.master_start) referenced from main.o(i.UART_Process_Param)
+ <LI><a href="#[29]">slave_start</a> from slave.o(i.slave_start) referenced from main.o(.data)
  <LI><a href="#[29]">slave_start</a> from slave.o(i.slave_start) referenced from main.o(i.UART_Process_Param)
 </UL>
 <P>
@@ -569,7 +569,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[5c]"></a>HAL_UART_RxCpltCallback</STRONG> (Thumb, 108 bytes, Stack size 8 bytes, main.o(i.HAL_UART_RxCpltCallback))
-<BR><BR>[Stack]<UL><LI>Max Depth = 536<LI>Call Chain = HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Read &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
+<BR><BR>[Stack]<UL><LI>Max Depth = 536<LI>Call Chain = HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Write &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_GetState
@@ -596,7 +596,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_EndTransmit_IT
 </UL>
 
-<P><STRONG><a name="[61]"></a>I2C_Master_Read</STRONG> (Thumb, 144 bytes, Stack size 40 bytes, i2c.o(i.I2C_Master_Read))
+<P><STRONG><a name="[61]"></a>I2C_Master_Read</STRONG> (Thumb, 150 bytes, Stack size 40 bytes, i2c.o(i.I2C_Master_Read))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = I2C_Master_Read &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -645,7 +645,7 @@ Global Symbols
 <LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
 </UL>
 
-<P><STRONG><a name="[6c]"></a>I2C_Master_SDA_Rising_Falling_Init</STRONG> (Thumb, 80 bytes, Stack size 32 bytes, i2c.o(i.I2C_Master_SDA_Rising_Falling_Init))
+<P><STRONG><a name="[6c]"></a>I2C_Master_SDA_Rising_Falling_Init</STRONG> (Thumb, 88 bytes, Stack size 32 bytes, i2c.o(i.I2C_Master_SDA_Rising_Falling_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_NVIC_SetPriority
@@ -654,6 +654,7 @@ Global Symbols
 <LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;master_start
+<LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Write
 <LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
 </UL>
 
@@ -673,7 +674,8 @@ Global Symbols
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_SCL_1
 </UL>
-<BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
+<BR>[Called By]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Write
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
 </UL>
 
 <P><STRONG><a name="[69]"></a>I2C_Master_SendNAck</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, i2c.o(i.I2C_Master_SendNAck))
@@ -701,7 +703,8 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_SCL_1
 </UL>
-<BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
+<BR>[Called By]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Write
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
 </UL>
 
 <P><STRONG><a name="[67]"></a>I2C_Master_WaitAck</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, i2c.o(i.I2C_Master_WaitAck))
@@ -711,15 +714,20 @@ Global Symbols
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_SCL_1
 </UL>
-<BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
+<BR>[Called By]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Write
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
 </UL>
 
-<P><STRONG><a name="[70]"></a>I2C_Master_Write</STRONG> (Thumb, 70 bytes, Stack size 24 bytes, i2c.o(i.I2C_Master_Write))
-<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = I2C_Master_Write &rArr; I2C_Master_SDA_Output_OD_Init &rArr; HAL_GPIO_Init
+<P><STRONG><a name="[70]"></a>I2C_Master_Write</STRONG> (Thumb, 148 bytes, Stack size 40 bytes, i2c.o(i.I2C_Master_Write))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = I2C_Master_Write &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_WaitAck
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Stop
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Start
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_SendByte
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_SDA_Rising_Falling_Init
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_SDA_Output_OD_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Process_Param
@@ -907,8 +915,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Init
 </UL>
 
-<P><STRONG><a name="[5f]"></a>UART_Process_Param</STRONG> (Thumb, 1910 bytes, Stack size 432 bytes, main.o(i.UART_Process_Param))
-<BR><BR>[Stack]<UL><LI>Max Depth = 528<LI>Call Chain = UART_Process_Param &rArr; I2C_Master_Read &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
+<P><STRONG><a name="[5f]"></a>UART_Process_Param</STRONG> (Thumb, 2028 bytes, Stack size 432 bytes, main.o(i.UART_Process_Param))
+<BR><BR>[Stack]<UL><LI>Max Depth = 528<LI>Call Chain = UART_Process_Param &rArr; I2C_Master_Write &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led_frequency
 <LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led_duration
@@ -1022,8 +1030,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_SDA_Rising_Falling_Init
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_SCL_Output_OD_Init
 </UL>
-<BR>[Address Reference Count : 2]<UL><LI> main.o(i.UART_Process_Param)
-<LI> main.o(.data)
+<BR>[Address Reference Count : 1]<UL><LI> main.o(i.UART_Process_Param)
 </UL>
 <P><STRONG><a name="[80]"></a>param_assert</STRONG> (Thumb, 68 bytes, Stack size 4 bytes, slave.o(i.param_assert))
 <BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = param_assert
@@ -1056,7 +1063,8 @@ Global Symbols
 <LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Slave_SDA_GPIO_Output_OD_Init
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Slave_SCL_Falling_Exti_Enable
 </UL>
-<BR>[Address Reference Count : 1]<UL><LI> main.o(i.UART_Process_Param)
+<BR>[Address Reference Count : 2]<UL><LI> main.o(i.UART_Process_Param)
+<LI> main.o(.data)
 </UL><P>
 <H3>
 Local Symbols
@@ -1088,7 +1096,7 @@ Local Symbols
 </UL>
 
 <P><STRONG><a name="[27]"></a>UART_RxISR_16BIT</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, stm32g0xx_hal_uart.o(i.UART_RxISR_16BIT))
-<BR><BR>[Stack]<UL><LI>Max Depth = 560<LI>Call Chain = UART_RxISR_16BIT &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Read &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
+<BR><BR>[Stack]<UL><LI>Max Depth = 560<LI>Call Chain = UART_RxISR_16BIT &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Write &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
@@ -1096,14 +1104,14 @@ Local Symbols
 <LI> stm32g0xx_hal_uart.o(i.UART_RxISR_16BIT_FIFOEN)
 </UL>
 <P><STRONG><a name="[25]"></a>UART_RxISR_16BIT_FIFOEN</STRONG> (Thumb, 178 bytes, Stack size 32 bytes, stm32g0xx_hal_uart.o(i.UART_RxISR_16BIT_FIFOEN))
-<BR><BR>[Stack]<UL><LI>Max Depth = 568<LI>Call Chain = UART_RxISR_16BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Read &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
+<BR><BR>[Stack]<UL><LI>Max Depth = 568<LI>Call Chain = UART_RxISR_16BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Write &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> stm32g0xx_hal_uart.o(i.HAL_UART_Receive_IT)
 </UL>
 <P><STRONG><a name="[28]"></a>UART_RxISR_8BIT</STRONG> (Thumb, 112 bytes, Stack size 16 bytes, stm32g0xx_hal_uart.o(i.UART_RxISR_8BIT))
-<BR><BR>[Stack]<UL><LI>Max Depth = 552<LI>Call Chain = UART_RxISR_8BIT &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Read &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
+<BR><BR>[Stack]<UL><LI>Max Depth = 552<LI>Call Chain = UART_RxISR_8BIT &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Write &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
@@ -1111,7 +1119,7 @@ Local Symbols
 <LI> stm32g0xx_hal_uart.o(i.UART_RxISR_8BIT_FIFOEN)
 </UL>
 <P><STRONG><a name="[26]"></a>UART_RxISR_8BIT_FIFOEN</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, stm32g0xx_hal_uart.o(i.UART_RxISR_8BIT_FIFOEN))
-<BR><BR>[Stack]<UL><LI>Max Depth = 560<LI>Call Chain = UART_RxISR_8BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Read &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
+<BR><BR>[Stack]<UL><LI>Max Depth = 560<LI>Call Chain = UART_RxISR_8BIT_FIFOEN &rArr; HAL_UART_RxCpltCallback &rArr; UART_Process_Param &rArr; I2C_Master_Write &rArr; I2C_Master_SDA_Rising_Falling_Init &rArr; HAL_NVIC_SetPriority &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>

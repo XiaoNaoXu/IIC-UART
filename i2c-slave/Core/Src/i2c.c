@@ -1,9 +1,16 @@
+/**
+  ******************************************************************************
+  * @file           : i2c.c
+  * @brief          : I2C related code
+  */
+
 #include "i2c.h"
 
 
 
-u8 I2C_buff[DEFAULT_BUFF_SIZE] 		=  {0};
-u8 I2C_Bus_state							 		=  I2C_BUS_FREE;
+u8 		 I2C_buff[DEFAULT_BUFF_SIZE] 		=  {0};
+u8 		 I2C_Bus_state							 		=  I2C_BUS_FREE;
+
 
 /**************************************************************************/
 /***********                    LED              **************************/
@@ -11,9 +18,9 @@ u8 I2C_Bus_state							 		=  I2C_BUS_FREE;
 
 
 /**
-* @brief  Control function 
-* @retval void
-*/
+	* @brief  Control function 
+	* @retval void
+	*/
 void LED(u32 up_time){
 	LED_ON;
 	delay_us(up_time);
@@ -22,9 +29,9 @@ void LED(u32 up_time){
 
 
 /**
-* @brief Initialize GPIO of the LED
-* @retval void
-*/
+	* @brief Initialize GPIO of the LED
+	* @retval void
+	*/
 void LED_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -48,6 +55,11 @@ void LED_GPIO_Init(void)
 /***********                    GPIO              ************************/
 /**************************************************************************/
 
+
+/**
+	* @brief 	Set SCL to high level and busy waiting
+	* @retval void
+	*/
 void I2C_SCL_1(){
 	I2C_SCL_S_1();
 	while(!I2C_SCL_READ());
@@ -62,10 +74,10 @@ void I2C_SCL_1(){
 
 
 /**
-* @brief Sleep function, the units is microsecond
-* @param us: sleep time(microsecond)
-* @retval void
-*/
+	* @brief Sleep function, the units is microsecond
+	* @param us: sleep time(microsecond)
+	* @retval void
+	*/
 void delay_us(uint32_t us)
 {
 	__IO int i = us * 5;
@@ -73,10 +85,10 @@ void delay_us(uint32_t us)
 }
 
 /**
-* @brief Sleep function, the units is millisecond
-* @param[in] us: sleep time(millisecond)
-* @retval void
-*/
+	* @brief Sleep function, the units is millisecond
+	* @param[in] us: sleep time(millisecond)
+	* @retval void
+	*/
 void delay_ms(uint32_t ms)
 {
 	while(ms--) {
@@ -85,9 +97,9 @@ void delay_ms(uint32_t ms)
 }
 
 /**
-* @brief Determine if the signal is a start signal
-* @retval u8, GPIO_PIN_SET(high level) or GPIO_PIN_RESET(low level)
-*/
+	* @brief Determine if the signal is a start signal
+	* @retval u8, GPIO_PIN_SET(high level) or GPIO_PIN_RESET(low level)
+	*/
 u8 is_I2C_Slave_Start(){
 	if(!I2C_SDA_READ()){
 		return GPIO_PIN_SET;
@@ -96,9 +108,9 @@ u8 is_I2C_Slave_Start(){
 }
 
 /**
-* @brief Determine if the signal is a stop signal
-* @retval u8, GPIO_PIN_SET(high level) or GPIO_PIN_RESET(low level)
-*/
+	* @brief Determine if the signal is a stop signal
+	* @retval u8, GPIO_PIN_SET(high level) or GPIO_PIN_RESET(low level)
+	*/
 u8 is_I2C_Slave_Stop(){
 	if(I2C_SCL_READ()){
 		return GPIO_PIN_SET;
@@ -108,9 +120,9 @@ u8 is_I2C_Slave_Stop(){
 
 
 /**
-* @brief Send a Ack
-* @retval void
-*/
+	* @brief Send a Ack
+	* @retval void
+	*/
 void I2C_Slave_SendAck(void){
 	I2C_SDA_0();
 	delay_us(I2C_PD);
@@ -118,18 +130,18 @@ void I2C_Slave_SendAck(void){
 }
 
 /**
-* @brief Send a NAck
-* @retval void
-*/
+	* @brief Send a NAck
+	* @retval void
+	*/
 void I2C_Slave_SendNAck(void){
 	I2C_SDA_1();
 	delay_us(I2C_PD);
 }
 
 /**
-* @brief Wait a Ack
-* @retval u8: received a ack from SDA
-*/
+	* @brief Wait a Ack
+	* @retval u8: received a ack from SDA
+	*/
 u8 I2C_Slave_WaitAck(){
 	__IO u8 re_value = 1U;
 	if(I2C_SCL_READ()){
@@ -140,9 +152,9 @@ u8 I2C_Slave_WaitAck(){
 }
 
 /**
-* @brief Enable SCL Falling exti ----   SCL - PC5
-* @retval void
-*/
+	* @brief Enable SCL Falling exti ----   SCL - PC5
+	* @retval void
+	*/
 void I2C_Slave_SCL_Falling_Exti_Enable(){
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	
@@ -159,44 +171,44 @@ void I2C_Slave_SCL_Falling_Exti_Enable(){
 
 
 /**
-* @brief Reable SCL Falling exti
-* @retval void
-*/
+	* @brief Reable SCL Falling exti
+	* @retval void
+	*/
 void I2C_Slave_SCL_Falling_Exti_Reable(){
 	delay_us(I2C_PD);
 	EXTI->FTSR1 |= I2C_SCL_EXTI_ENABLE_ADDR;
 }
 
 /**
-* @brief Disable SCL Falling exti
-* @retval void
-*/
+	* @brief Disable SCL Falling exti
+	* @retval void
+	*/
 void I2C_Slave_SCL_Falling_Exti_Disable(){
 	EXTI->FTSR1 &= I2C_SCL_EXTI_DISABLE_ADDR;
 }
 
 
 /**
-* @brief Enable SCL Rising exti
-* @retval void
-*/
+	* @brief Enable SCL Rising exti
+	* @retval void
+	*/
 void I2C_Slave_SCL_Rising_Exti_Enable(){
 	EXTI->RTSR1 |= I2C_SCL_EXTI_ENABLE_ADDR;
 }
 
 /**
-* @brief Disable SCL Falling exti
-* @retval void
-*/
+	* @brief Disable SCL Falling exti
+	* @retval void
+	*/
 void I2C_Slave_SCL_Rising_Exti_Disable(){
 	EXTI->RTSR1 &= I2C_SCL_EXTI_DISABLE_ADDR;
 }
 
 
 /**
-* @brief Init I2C GPIO  ---  SDA - PC4
-* @retval void
-*/
+	* @brief Init I2C GPIO  ---  SDA - PC4
+	* @retval void
+	*/
 void I2C_Slave_SDA_GPIO_Output_OD_Init(){
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	__HAL_RCC_GPIOC_CLK_ENABLE();														//GPIOC Ports Clock Enable
@@ -221,9 +233,9 @@ void I2C_Slave_SDA_GPIO_Output_OD_Init(){
 
 
 /**
-* @brief Init I2C GPIO  ---   SCL - PC5
-* @retval void
-*/
+	* @brief Init I2C GPIO  ---   SCL - PC5
+	* @retval void
+	*/
 void I2C_Master_SCL_Output_OD_Init(void){
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	__HAL_RCC_GPIOC_CLK_ENABLE();																		 
@@ -241,9 +253,9 @@ void I2C_Master_SCL_Output_OD_Init(void){
 
 
 /**
-* @brief Init I2C GPIO  ---  SDA - PC4 
-* @retval void
-*/
+	* @brief Init I2C GPIO  ---  SDA - PC4 
+	* @retval void
+	*/
 void I2C_Master_SDA_Output_OD_Init(void){
 	GPIO_InitTypeDef GPIO_InitStruct = {0};																 
 	__HAL_RCC_GPIOC_CLK_ENABLE();	
@@ -261,11 +273,12 @@ void I2C_Master_SDA_Output_OD_Init(void){
 
 
 /**
-* @biref  I2C SDA Falling EXTI Init  -----    SDA - PC4
-* @retval void
-*/
+	* @biref  I2C SDA Falling EXTI Init  -----    SDA - PC4
+	* @retval void
+	*/
 void I2C_Master_SDA_Rising_Falling_Init(){
-	
+	__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
+	__HAL_GPIO_EXTI_CLEAR_RISING_IT(MASTER_EXTI_PIN);
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 	
@@ -281,9 +294,9 @@ void I2C_Master_SDA_Rising_Falling_Init(){
 
 
 /**
-* @biref  I2C SDA Falling EXTI Init  -----    SDA - PC4
-* @retval void
-*/
+	* @biref  I2C SDA Falling EXTI Init  -----    SDA - PC4
+	* @retval void
+	*/
 void I2C_Master_SDA_Rising_Init(){
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	
@@ -300,9 +313,9 @@ void I2C_Master_SDA_Rising_Init(){
 
 
 /**
-* @brief Start signal function
-* @retval void
-*/
+	* @brief Start signal function
+	* @retval void
+	*/
 void I2C_Master_Start(){
 	I2C_SCL_1();
 	I2C_SDA_1();
@@ -311,9 +324,9 @@ void I2C_Master_Start(){
 }
 
 /**
-* @brief Start stop function
-* @retval void
-*/
+	* @brief Start stop function
+	* @retval void
+	*/
 void I2C_Master_Stop(){
 	I2C_SCL_0();
 	I2C_SDA_0();
@@ -323,9 +336,9 @@ void I2C_Master_Stop(){
 }
 
 /**
-* @brief Send a acknowledge
-* @retval void
-*/
+	* @brief Send a acknowledge
+	* @retval void
+	*/
 void I2C_Master_SendAck(void){
 	I2C_SCL_0();
 	I2C_SDA_0();
@@ -337,9 +350,9 @@ void I2C_Master_SendAck(void){
 }
 
 /**
-* @brief Send a not acknowledge
-* @retval void
-*/
+	* @brief Send a not acknowledge
+	* @retval void
+	*/
 void I2C_Master_SendNAck(void){
 	I2C_SCL_0();
 	delay_us(I2C_PD);
@@ -349,10 +362,10 @@ void I2C_Master_SendNAck(void){
 }
 
 /**
-* @brief wiat slave or master return ack
-* @param re_value: A ack or a Nack
-* @retval uint8_t:acknowledge
-*/
+	* @brief wiat slave or master return ack
+	* @param re_value: A ack or a Nack
+	* @retval uint8_t:acknowledge
+	*/
 u8 I2C_Master_WaitAck(){
 	u8 re_value;
 	I2C_SCL_0();
@@ -366,10 +379,10 @@ u8 I2C_Master_WaitAck(){
 }
 
 /**
-* @brief send a byte
-* @param i: Control loop variable
-* @retval void
-*/
+	* @brief send a byte
+	* @param i: Control loop variable
+	* @retval void
+	*/
 u8 I2C_Master_SendByte(u8 data_byte){
 	__IO u8 i = 0;
 	for(i = 0; i < BIT_LENGTH; ++i){
@@ -403,10 +416,10 @@ u8 I2C_Master_SendByte(u8 data_byte){
 
 
 /**
-* @brief read a byte
-* @param i: Control loop variable
-* @retval uint8_t: received byte from SDA
-*/
+	* @brief read a byte
+	* @param i: Control loop variable
+	* @retval uint8_t: received byte from SDA
+	*/
 u8 I2C_Master_ReadByte(){
 	__IO u8 i, value = 0;
 	for(i = 0; i < BIT_LENGTH; ++i){
@@ -424,11 +437,11 @@ u8 I2C_Master_ReadByte(){
 }
 
 /**
-* @brief Send an amount of data
-* @param pdata: A pointer to outgoing data
-* @param len: Length of data to be sent
-* @retval uint32_t: It may be modified
-*/
+	* @brief Send an amount of data
+	* @param pdata: A pointer to outgoing data
+	* @param len: Length of data to be sent
+	* @retval uint32_t: It may be modified
+	*/
 u32 I2C_Master_Write(u8 slave_addr, u8 *data, u32 data_length){
 	u8 *pdata = data;
 	u32 len = 0;
@@ -442,6 +455,7 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data, u32 data_length){
 			return I2C_BUS_BUSY;
 		}
 		I2C_Master_SDA_Output_OD_Init();
+		__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
 	}
 	else{
 		return I2C_BUS_BUSY;
@@ -449,7 +463,7 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data, u32 data_length){
 	
 	//Send start signal
 	I2C_Master_Start();
-	while(1);
+	//while(1);
 	
 	//Send slave address and w/r bit
 	if(I2C_BUS_BUSY == I2C_Master_SendByte(slave_addr)){
@@ -476,9 +490,9 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data, u32 data_length){
 }
 
 /**
-* @brief Read an amount of data
-* @retval uint32_t: It may be modified
-*/
+	* @brief Read an amount of data
+	* @retval uint32_t: It may be modified
+	*/
 u32 I2C_Master_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 	u8 *pdata     =   buff;
 	u32 len       =   0;
@@ -492,6 +506,7 @@ u32 I2C_Master_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 			return I2C_BUS_BUSY;
 		}
 		I2C_Master_SDA_Output_OD_Init();
+		__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
 	}
 	else{
 		return I2C_BUS_BUSY;
@@ -521,7 +536,6 @@ u32 I2C_Master_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 	}
 	//Send end signal
 	I2C_Master_Stop();	
-
 	I2C_Master_SDA_Rising_Falling_Init();	
 	
 	return I2C_BUS_FREE;
