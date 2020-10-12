@@ -34,6 +34,7 @@ typedef enum Running_State {
 }Running_State;
 
 extern Running_State running_state;
+extern void (* running)(void);
 
 
 
@@ -117,10 +118,12 @@ void 			LED_GPIO_Init(void);
 
 
 /*      Define address and offet                      */
-#define BASE_ADDR 					    	      ((u8)0x00)	     // Receive/send buff base index
+#define START_ADDR 					    	      ((u8)0x00)	     // Receive/send buff start index
+#define BASE_ADDR 					    	      ((u8)0x01)	     // Receive/send buff base index
 #define TIME_OFFSET     	    		      ((u8)0x01)	  	 // Data byte offset
 #define UNITS_OFFSET                    ((u8)0x02)	  	 // Units byte offset
-#define ADDR_OFFSET 				    			   	((u8)0x02)	  	 // Frequency address offset
+#define ADDR_OFFSET 				    			  ((u8)0x02)	  	 // Frequency address offset
+#define STATE_OFFSET 				    			  ((u8)0x01)	  	 // State address offset
 
 
 /*      Define the rate and unit of time of I2C        */
@@ -150,13 +153,14 @@ void 			LED_GPIO_Init(void);
 
 /*      Command Set or Get   																		     */
 #define SET 											 ((u8)0xFF)           // Set the frequency and duration of the LED
-#define Get 											 ((u8)0x00)           // Get the frequency and duration of the LED
+#define GET 											 ((u8)0x00)           // Get the frequency and duration of the LED
 
 
 /*		  light on and light off frequency , duration of the Green LED */
 #define LED_FREQUENCY							    ((u8)0x0F)        // LED frequency command
 #define LED_DURATION 							    ((u8)0xF0)        // LED duration command
 #define LED_DURATION_FREQUENCY				((u8)0xFF)        // LED frequency and duration command
+#define RUNNING_STATE									((u8)0x01)				// running state command
 
 
 /*			Unit of time   -----    s,  ms, us     											 */
@@ -221,8 +225,8 @@ u8 			 I2C_Slave_WaitAck(void);
 
 /*			 Send and receive data																	  		*/
 u8	 	   I2C_Master_SendByte(u8);
-u32		   I2C_Master_Write(u8, u8 *, u32);
-u32		   I2C_Master_Read(u8, u8 *, u8);
+u32		   I2C_Master_Write(u8, u8 *);
+u32		   I2C_Master_Read(u8, u8 *);
 
 
 /*			 Acknowledge																									*/

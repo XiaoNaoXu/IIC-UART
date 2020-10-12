@@ -30,7 +30,7 @@ extern "C" {
 
 
 /*      UART command                                                            */
-#define RUNNING_STATE 						   			  "state"      				 /*    Running state      								*/
+#define COMMAND_RUNNING_STATE 						   			  "state"      				 /*    Running state      								*/
 #define COMMAND_GET 								 				"get"								 /*    Get                    				    */
 #define COMMAND_SET 						  					"set"								 /*    Set     					      				    */
 #define LED_DURA 								   			 		"dura"							 /*    Led duration         				      */

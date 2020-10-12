@@ -18,7 +18,7 @@ __IO u32   led_frequency = 0;									        				//The frequency of the led
 __IO u32   led_duration = 0;										        			//The duration of the led
 Option     option = ret;												      				//Control read/write state
 
-u8         sent_buff[DEFAULT_BUFF_SIZE] = {0xFF,1,0x73,1,0x73};	   	//Send array/buff
+u8         sent_buff[DEFAULT_BUFF_SIZE] = {5,0xFF,1,0x73,1,0x73};	   	//Send array/buff
 extern u8  I2C_buff[DEFAULT_BUFF_SIZE];
 
 
@@ -58,7 +58,7 @@ void flag_reset(){
 	bit_location = 0;
 	receive_cnt = 0;
 	a_bit_value = 0;
-	receive_len = 3;
+	receive_len = 0;
 	sent_cnt = 0;
 }
 
@@ -99,13 +99,34 @@ u32 get_units_mul(u8 units){
   * @retval None
   */
 void param_assert(){
-	if((receive_buff[BASE_ADDR] & LED_DURATION) == LED_DURATION){
-		set_led_duration(receive_buff[TIME_OFFSET] * get_units_mul(receive_buff[UNITS_OFFSET]));
+
+	/*     This byte use for duration only                   */
+	if(receive_buff[BASE_ADDR] == LED_DURATION){
+		set_led_duration(receive_buff[BASE_ADDR + TIME_OFFSET] * get_units_mul(receive_buff[BASE_ADDR + UNITS_OFFSET]));
 	}
-	if((receive_buff[BASE_ADDR] & LED_FREQUENCY) == LED_FREQUENCY){
-		set_led_frequency(receive_buff[TIME_OFFSET + ADDR_OFFSET] * get_units_mul(receive_buff[UNITS_OFFSET + ADDR_OFFSET]));
+	
+	/*     This byte use for frequency only                  */
+	else if(receive_buff[BASE_ADDR] == LED_FREQUENCY){
+		set_led_duration(receive_buff[BASE_ADDR + TIME_OFFSET] * get_units_mul(receive_buff[BASE_ADDR + UNITS_OFFSET]));
+	}
+	
+	/*    This byte use for duration/frequency               */
+	else if(receive_buff[BASE_ADDR] == LED_DURATION_FREQUENCY){
+		set_led_duration(receive_buff[BASE_ADDR + TIME_OFFSET] * get_units_mul(receive_buff[BASE_ADDR + UNITS_OFFSET]));
+		set_led_frequency(receive_buff[BASE_ADDR + TIME_OFFSET + ADDR_OFFSET] * get_units_mul(receive_buff[BASE_ADDR + UNITS_OFFSET + ADDR_OFFSET]));
+	}
+	
+	else if(receive_buff[BASE_ADDR] == RUNNING_STATE){
+		if(receive_buff[BASE_ADDR + STATE_OFFSET] == MASTER){
+			running_state = master;
+		}
+		else{
+			running_state = slave;
+		}
+		running = &slave_start;
 	}
 }
+
 
 
 /**
@@ -148,7 +169,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			}
 			else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
 				option = write;
-				a_bit_value = sent_buff[++sent_cnt];
+				a_bit_value = sent_buff[sent_cnt++];
 			}
 			else{
 				bit_location = 0;
@@ -176,7 +197,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			
 			if(bit_location == BIT_LENGTH){
 				delay_us(I2C_PD);
-				if(receive_cnt + 1 < receive_len){
+				if(receive_cnt  <= receive_len){
 					I2C_SDA_0();
 				}
 				else{
@@ -188,31 +209,12 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			/*       Store this byte and wait acknowledge              */
 			/*       How to store first byte                           */
 			if(!receive_cnt){
-				receive_buff[BASE_ADDR] = a_bit_value;
+				receive_len = a_bit_value;
 			}
 			
 			/*       How to store next byte received                   */
-			else{
-				
-				/*     This byte use for duration only                   */
-				if(receive_buff[BASE_ADDR] == LED_DURATION){
-					receive_buff[BASE_ADDR + receive_cnt] = a_bit_value;
-					receive_len = I2C_PARA_LENGTH - 2;
-				}
-				
-				/*     This byte use for frequency only                  */
-				else if(receive_buff[BASE_ADDR] == LED_FREQUENCY){
-					receive_buff[BASE_ADDR + receive_cnt + ADDR_OFFSET] = a_bit_value;
-					receive_len = I2C_PARA_LENGTH - 2;
-				}
-				
-				/*    This byte use for duration/frequency only          */
-				else{
-					receive_buff[receive_cnt] = a_bit_value;
-					receive_len = I2C_PARA_LENGTH;
-				}
-			}
-			receive_cnt++;
+			receive_buff[receive_cnt++] = a_bit_value;
+			
 			
 			/*      Send acknowledge and reable/disable EXTI            */
 			if(receive_cnt < receive_len){
@@ -227,7 +229,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			bit_location = 0;
 		}
 	}
-	/*   To be confirmed   */
+	/*   To be confirmed   																					*/
 	else if(option == write){
 		bit_location++;
 		if(bit_location <= BIT_LENGTH){
@@ -246,8 +248,8 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				I2C_Slave_SCL_Rising_Exti_Disable();
 				return;
 			}
-			if(sent_cnt < I2C_PARA_LENGTH){
-				a_bit_value = sent_buff[++sent_cnt];
+			if(sent_cnt <= sent_buff[START_ADDR]){
+				a_bit_value = sent_buff[sent_cnt++];
 				delay_us(I2C_PD);
 				(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
 				a_bit_value <<= 1U;

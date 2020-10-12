@@ -104,28 +104,31 @@ void Error_Handler(void)
 u8 I2C_To_UART(u8 *I2C_ptr, u8 data_len, u8 flag){
 	__IO u8 i = 0, temp, rx = 0, div ='1';
 	memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
-	for(i = 0; i < data_len; ++i){
-		if(i%2){
-			UART_Rx_Buffer[rx++] = I2C_ptr[i];
-			UART_Rx_Buffer[rx++] = '\n';
-		}
-		else{
-			if((flag & LED_DURATION) == LED_DURATION){
-				memcpy(UART_Rx_Buffer, DURA, strlen(DURA));
-				rx += strlen(DURA);
+	if(I2C_ptr[BASE_ADDR] == LED_DURATION_FREQUENCY){
+		for(i = 1; i < data_len; ++i){
+			if(i%2 == 0){
+				UART_Rx_Buffer[rx++] = I2C_ptr[BASE_ADDR + i];
+				UART_Rx_Buffer[rx++] = '\n';
 			}
 			else{
-				memcpy(UART_Rx_Buffer + rx, FREQ, strlen(FREQ));
-				rx += strlen(FREQ);
-			}
-			temp = I2C_ptr[i];
-			div = 100;
-			while(temp){
-				if(temp/div > 0){
-					UART_Rx_Buffer[rx++] = temp / div + 0x30;
+				if((flag & LED_DURATION) == LED_DURATION){
+					memcpy(UART_Rx_Buffer, DURA, strlen(DURA));
+					rx += strlen(DURA);
+					flag &= ~LED_DURATION;
 				}
-				temp %= div;
-				div /= 10;
+				if((flag & LED_FREQUENCY) == LED_FREQUENCY){
+					memcpy(UART_Rx_Buffer + rx, FREQ, strlen(FREQ));
+					rx += strlen(FREQ);
+				}
+				temp = I2C_ptr[BASE_ADDR + i];
+				div = 100;
+				while(temp){
+					if(temp/div > 0){
+						UART_Rx_Buffer[rx++] = temp / div + 0x30;
+					}
+					temp %= div;
+					div /= 10;
+				}
 			}
 		}
 	}
@@ -218,7 +221,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 	if(!strcmp(COMMAND_GET, command[0])){
 		
 		/*          Get running state                                              */
-		if(!strcmp(RUNNING_STATE, command[1])){
+		if(!strcmp(COMMAND_RUNNING_STATE, command[1])){
 			if(running_state == MASTER){
 				HAL_UART_Transmit(huart, (u8 *)RUNSTAT_MASTER, strlen(RUNSTAT_MASTER),UART_TR_TIMEOUT);
 			}
@@ -255,7 +258,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 			}
 			
 			/*        Self running state is master, can read another slave info       */
-			if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_buff, I2C_PARA_LENGTH)){
+			if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_buff)){
 				HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 			}
 			if(!strcmp(LED_DURA, command[1])){
@@ -275,7 +278,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 	else if(!strcmp(COMMAND_SET, command[0])){
 		
 		/*          Set    running state                                            */
-		if(!strcmp(RUNNING_STATE, command[1])){
+		if(!strcmp(COMMAND_RUNNING_STATE, command[1])){
 			
 			if(command_buff_size < UART_SET_RUNSTATE_PARA_NUM){
 				HAL_UART_Transmit(huart, (u8 *)COMMAND_ERR, strlen(COMMAND_ERR), UART_TR_TIMEOUT);
@@ -353,16 +356,17 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 			
 			/*        Self running state is master, can set another slave info        */ 	
 			if(!strcmp(LED_DURA, command[1])){
-				I2C_buff[0] = LED_DURATION;
-				I2C_buff[TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
-				I2C_buff[UNITS_OFFSET] = (u8)command[4][0];
-				if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], strlen(command[2])), I2C_buff, I2C_PARA_LENGTH - 2)){
+				I2C_buff[START_ADDR] = I2C_PARA_LENGTH - 2;
+				I2C_buff[BASE_ADDR] = LED_DURATION;
+				I2C_buff[BASE_ADDR + TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
+				I2C_buff[BASE_ADDR + UNITS_OFFSET] = (u8)command[4][0];
+				if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], strlen(command[2])) + I2C_WRITE, I2C_buff)){
 					HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 					return I2C_BUS_BUSY;
 				}
 				
 				delay_ms(1);
-				if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff, I2C_PARA_LENGTH - 1)){
+				if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff)){
 					HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 					return I2C_BUS_BUSY;
 				}
@@ -375,16 +379,17 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 				}
 			}
 			else if(!strcmp(LED_FREQ, command[1])){
+				I2C_buff[START_ADDR] = I2C_PARA_LENGTH - 2;
 				I2C_buff[BASE_ADDR] = LED_FREQUENCY;
-				I2C_buff[TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
-				I2C_buff[UNITS_OFFSET] = (u8)command[4][0];
-				if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], strlen(command[2])), I2C_buff, I2C_PARA_LENGTH - 2)){
+				I2C_buff[BASE_ADDR + TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
+				I2C_buff[BASE_ADDR + UNITS_OFFSET] = (u8)command[4][0];
+				if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], strlen(command[2])) + I2C_WRITE, I2C_buff)){
 					HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 					return I2C_BUS_BUSY;
 				}
 				
 				delay_ms(1);
-				if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff, I2C_PARA_LENGTH - 1)){
+				if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff)){
 					HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 					return I2C_BUS_BUSY;
 				}
@@ -396,23 +401,26 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 				}
 			}
 			else{
-				I2C_buff[0] = LED_DURATION_FREQUENCY;
-				I2C_buff[TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
-				I2C_buff[UNITS_OFFSET] = (u8)command[4][0];
-				I2C_buff[ADDR_OFFSET + TIME_OFFSET] = String_To_Hex_Of_Data(command[3 + ADDR_OFFSET], strlen(command[3 + ADDR_OFFSET]));
-				I2C_buff[ADDR_OFFSET + UNITS_OFFSET] = (u8)command[4 + ADDR_OFFSET][0];
-				if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], strlen(command[2])), I2C_buff, I2C_PARA_LENGTH)){
+				I2C_buff[START_ADDR] = I2C_PARA_LENGTH;
+				I2C_buff[BASE_ADDR] = LED_DURATION_FREQUENCY;
+				I2C_buff[BASE_ADDR + TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
+				I2C_buff[BASE_ADDR + UNITS_OFFSET] = (u8)command[4][0];
+				I2C_buff[BASE_ADDR + ADDR_OFFSET + TIME_OFFSET] = String_To_Hex_Of_Data(command[3 + ADDR_OFFSET], strlen(command[3 + ADDR_OFFSET]));
+				I2C_buff[BASE_ADDR + ADDR_OFFSET + UNITS_OFFSET] = (u8)command[4 + ADDR_OFFSET][0];
+				if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], strlen(command[2])) + I2C_WRITE, I2C_buff)){
 					HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 					return I2C_BUS_BUSY;
 				}
 				
 				delay_ms(1);
-				if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff, I2C_PARA_LENGTH - 1)){
+				if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff)){
 					HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 					return I2C_BUS_BUSY;
 				}
-				if(!strcmp((char *)(I2C_buff + 1), (char *)I2C_receive_buff)){
+				uart_rx_cnt = I2C_To_UART(I2C_receive_buff, I2C_receive_buff[START_ADDR], I2C_receive_buff[BASE_ADDR]);
+				if(!strcmp((char *)I2C_buff, (char *)I2C_receive_buff)){
 					HAL_UART_Transmit(huart, (u8 *)OK, strlen(OK),UART_TR_TIMEOUT);
+					HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt,UART_TR_TIMEOUT);
 				}
 				else{
 					HAL_UART_Transmit(huart, (u8 *)FAILED, strlen(FAILED),UART_TR_TIMEOUT);

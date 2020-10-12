@@ -152,9 +152,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>132</LineNumber>
+          <LineNumber>135</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134225504</Address>
+          <Address>134225552</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,14 +163,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Core/Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\i2c_slave\../Core/Src/main.c\132</Expression>
+          <Expression>\\i2c_slave\../Core/Src/main.c\135</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>105</LineNumber>
+          <LineNumber>106</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134225262</Address>
+          <Address>134225296</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -179,7 +179,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Core/Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\i2c_slave\../Core/Src/main.c\105</Expression>
+          <Expression>\\i2c_slave\../Core/Src/main.c\106</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -273,6 +273,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>I2C_Bus_state</ItemText>
         </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>pdata</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -285,7 +290,7 @@
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>0x20000133</ItemText>
+          <ItemText>0x20000141 </ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>

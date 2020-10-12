@@ -442,7 +442,7 @@ u8 I2C_Master_ReadByte(){
 	* @param len: Length of data to be sent
 	* @retval uint32_t: It may be modified
 	*/
-u32 I2C_Master_Write(u8 slave_addr, u8 *data, u32 data_length){
+u32 I2C_Master_Write(u8 slave_addr, u8 *data){
 	u8 *pdata = data;
 	u32 len = 0;
 	u8 scl_state = 0;
@@ -472,7 +472,7 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data, u32 data_length){
 	}
 	
 	//Wait and analyze for acknowledge
-	while(len < data_length){
+	while(len < data[START_ADDR]){
 		if(!I2C_Master_WaitAck()){
 			if(I2C_BUS_BUSY == I2C_Master_SendByte(pdata[len++])){
 				I2C_Bus_state = I2C_BUS_BUSY;
@@ -493,10 +493,11 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data, u32 data_length){
 	* @brief Read an amount of data
 	* @retval uint32_t: It may be modified
 	*/
-u32 I2C_Master_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
-	u8 *pdata     =   buff;
-	u32 len       =   0;
-	u8 scl_state  =   0;
+u32 I2C_Master_Read(u8 slave_addr, u8 *buff){
+	u8 *pdata         =   buff;
+	u32 len           =   0;
+	u8 scl_state      =   0;
+	u8 numByteToRead  =   0;
 	
 	/*       I2C SDA Init               */
 	if(I2C_Bus_state == I2C_BUS_FREE ){
@@ -521,9 +522,13 @@ u32 I2C_Master_Read(u8 slave_addr, u8 *buff, u8 numByteToRead){
 		return I2C_BUS_BUSY;
 	}
 	
+	
 	//Wait and analyze for acknowledge
 	if(!I2C_Master_WaitAck()){
-		while(len < numByteToRead){
+		numByteToRead = I2C_Master_ReadByte() + 1;
+		I2C_Master_SendAck();
+		pdata[len++] = numByteToRead - 1;
+		while(len <= numByteToRead){
 			pdata[len++] = I2C_Master_ReadByte();
 			if(len == numByteToRead){
 				I2C_Master_SendNAck();
