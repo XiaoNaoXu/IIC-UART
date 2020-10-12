@@ -101,24 +101,28 @@ void Error_Handler(void)
 }
 
 
-u8 I2C_To_UART(u8 *I2C_ptr, u8 data_len, u8 flag){
+u8 I2C_To_UART(u8 *I2C_ptr){
 	__IO u8 i = 0, temp, rx = 0, div ='1';
+	__IO u8 data_len = I2C_ptr[START_ADDR], reg = I2C_ptr[BASE_ADDR];
+
 	memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
-	if(I2C_ptr[BASE_ADDR] == LED_DURATION_FREQUENCY){
+
+	if((reg & LED_DURATION) == LED_DURATION || (reg & LED_FREQUENCY) == LED_FREQUENCY){
 		for(i = 1; i < data_len; ++i){
 			if(i%2 == 0){
 				UART_Rx_Buffer[rx++] = I2C_ptr[BASE_ADDR + i];
 				UART_Rx_Buffer[rx++] = '\n';
 			}
 			else{
-				if((flag & LED_DURATION) == LED_DURATION){
+				if((reg & LED_DURATION) == LED_DURATION){
 					memcpy(UART_Rx_Buffer, DURA, strlen(DURA));
 					rx += strlen(DURA);
-					flag &= ~LED_DURATION;
+					reg &= ~LED_DURATION;
 				}
-				if((flag & LED_FREQUENCY) == LED_FREQUENCY){
+				else if((reg & LED_FREQUENCY) == LED_FREQUENCY){
 					memcpy(UART_Rx_Buffer + rx, FREQ, strlen(FREQ));
 					rx += strlen(FREQ);
+					reg &= ~LED_FREQUENCY;
 				}
 				temp = I2C_ptr[BASE_ADDR + i];
 				div = 100;
@@ -130,6 +134,16 @@ u8 I2C_To_UART(u8 *I2C_ptr, u8 data_len, u8 flag){
 					div /= 10;
 				}
 			}
+		}
+	}
+	else if(reg == RUNNING_STATE){
+		if(I2C_ptr[RUNNING_STATE_OFFSET] == MASTER){
+			rx += strlen(RUNSTAT_MASTER);
+			memcpy(UART_RX_BUFF_SIZE, RUNSTAT_MASTER, strlen(RUNSTAT_MASTER));
+		}
+		else if(I2C_ptr[RUNNING_STATE_OFFSET] == SLAVE){
+			rx += strlen(RUNSTAT_SLAVE);
+			memcpy(UART_RX_BUFF_SIZE, RUNSTAT_SLAVE, strlen(RUNSTAT_SLAVE));
 		}
 	}
 	return rx;
@@ -244,8 +258,9 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 					return PROCESS_SUCCESS;
 				}
 				else if(running_state == SLAVE){
-					Date_To_I2CBuff();
-					HAL_UART_Transmit(huart, (u8 *)I2C_buff, DEFAULT_BUFF_SIZE - 1, UART_TR_TIMEOUT);
+					Date_To_I2CBuff(command[1]);
+					uart_rx_cnt = I2C_To_UART(I2C_buff);
+					HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);
 					return PROCESS_SUCCESS;
 				}
 			}
@@ -260,17 +275,21 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 			/*        Self running state is master, can read another slave info       */
 			if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_buff)){
 				HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
+				return PROCESS_SUCCESS
 			}
-			if(!strcmp(LED_DURA, command[1])){
-				HAL_UART_Transmit(huart, (u8 *)(I2C_buff), DEFAULT_BUFF_SIZE - 3, UART_TR_TIMEOUT);
-			}
-			else if(!strcmp(LED_FREQ, command[1])){
-				HAL_UART_Transmit(huart, (u8 *)(I2C_buff + 2), DEFAULT_BUFF_SIZE - 3, UART_TR_TIMEOUT);
-			}
-			else{
-				uart_rx_cnt = I2C_To_UART(I2C_buff, I2C_PARA_LENGTH - 1, LED_DURATION_FREQUENCY);
-				HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);
-			}
+			uart_rx_cnt = I2C_To_UART(I2C_buff);
+			HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);
+
+			// if(!strcmp(LED_DURA, command[1])){
+			// 	HAL_UART_Transmit(huart, (u8 *)(I2C_buff), DEFAULT_BUFF_SIZE - 3, UART_TR_TIMEOUT);
+			// }
+			// else if(!strcmp(LED_FREQ, command[1])){
+			// 	HAL_UART_Transmit(huart, (u8 *)(I2C_buff + 2), DEFAULT_BUFF_SIZE - 3, UART_TR_TIMEOUT);
+			// }
+			// else{
+			// 	uart_rx_cnt = I2C_To_UART(I2C_buff);
+			// 	HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);
+			// }
 		}
 	}
 	
@@ -417,15 +436,15 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 					HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 					return I2C_BUS_BUSY;
 				}
-				uart_rx_cnt = I2C_To_UART(I2C_receive_buff, I2C_receive_buff[START_ADDR], I2C_receive_buff[BASE_ADDR]);
 				if(!strcmp((char *)I2C_buff, (char *)I2C_receive_buff)){
 					HAL_UART_Transmit(huart, (u8 *)OK, strlen(OK),UART_TR_TIMEOUT);
-					HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt,UART_TR_TIMEOUT);
 				}
 				else{
 					HAL_UART_Transmit(huart, (u8 *)FAILED, strlen(FAILED),UART_TR_TIMEOUT);
 				}
 			}
+			uart_rx_cnt = I2C_To_UART(I2C_receive_buff);
+			HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt,UART_TR_TIMEOUT);
 		}		
 	}
 	else{

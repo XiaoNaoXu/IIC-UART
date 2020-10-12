@@ -113,7 +113,7 @@ void 			LED_GPIO_Init(void);
 
 /*      Define length and size                        */
 #define BIT_LENGTH 					    		    ((u8)0x08)       // A bit length
-#define DEFAULT_BUFF_SIZE               ((u8)0x0A)	  	 // Receive/send buff length
+#define DEFAULT_BUFF_SIZE               ((u8)0x0F)	  	 // Receive/send buff length
 #define I2C_PARA_LENGTH 			    		  ((u8)0x05)	  	 // The number of arguments
 
 
@@ -123,7 +123,8 @@ void 			LED_GPIO_Init(void);
 #define TIME_OFFSET     	    		      ((u8)0x01)	  	 // Data byte offset
 #define UNITS_OFFSET                    ((u8)0x02)	  	 // Units byte offset
 #define ADDR_OFFSET 				    			  ((u8)0x02)	  	 // Frequency address offset
-#define STATE_OFFSET 				    			  ((u8)0x01)	  	 // State address offset
+#define STATE_OFFSET 				    		    ((u8)0x01)	  	 // Command address offset
+#define RUNNING_STATE_OFFSET 				    ((u8)0x02)	  	 // State address offset
 
 
 /*      Define the rate and unit of time of I2C        */

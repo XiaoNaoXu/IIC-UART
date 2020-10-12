@@ -37,15 +37,15 @@ void slave_start(){
 	I2C_Slave_SCL_Falling_Exti_Enable();										//Enable SCL Falling exti
 	
 	param_assert();
-  while(running_state == SLAVE)
-  {
+    while(running_state == SLAVE)
+    {
 		if(led_duration){
 			LED(led_duration);
 		}
 		if(led_frequency){
 			delay_us(led_frequency);
 		}
-  }
+    }
 }
 
 
@@ -264,35 +264,40 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 }
 
 
+void Data_Transfer(u8 para, u8 offset){
+	
+	if((para / I2C_S_TO_US) <= 0xFF && (para / I2C_S_TO_US) >= 0x01 ){
+		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (u8)(para/I2C_S_TO_US);
+		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (u8)'s';
+	}
+	else if((para / I2C_MS_TO_US) <= 0xFF  && (para / I2C_S_TO_US) >= 0x01 ){
+		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (u8)(para/I2C_MS_TO_US);
+		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (u8)'m';
+	}
+	else{
+		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (u8)(para/I2C_MS_TO_US);
+		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (u8)'u';
+	}
+}
+
 /**
   * @brief  This function is get LED duration and frequency 
 	* 				when running state is slave but receive a get command.
   * @retval None
   */
-u8 Date_To_I2CBuff(){
-	if((led_duration / I2C_S_TO_US) <= 0xFF && (led_duration / I2C_S_TO_US) >= 0x01 ){
-		I2C_buff[0] = (u8)(led_duration/I2C_S_TO_US);
-		I2C_buff[1] = (u8)'s';
-	}
-	else if((led_duration / I2C_MS_TO_US) <= 0xFF  && (led_duration / I2C_S_TO_US) >= 0x01 ){
-		I2C_buff[0] = (u8)(led_duration/I2C_MS_TO_US);
-		I2C_buff[1] = (u8)'m';
-	}
-	else{
-		I2C_buff[0] = (u8)(led_duration/I2C_MS_TO_US);
-		I2C_buff[1] = (u8)'u';
-	}
-	if((led_frequency / I2C_S_TO_US) <= 0xFF  && (led_frequency / I2C_S_TO_US) >= 0x01 ){
-		I2C_buff[2] = (u8)(led_frequency/I2C_S_TO_US);
-		I2C_buff[3] = (u8)'s';
-	}
-	else if((led_frequency / I2C_MS_TO_US) >= 0xFF && (led_frequency / I2C_S_TO_US) >= 0x01 ){
-		I2C_buff[2] = (u8)(led_frequency/I2C_MS_TO_US);
-		I2C_buff[3] = (u8)'m';
-	}
-	else{
-		I2C_buff[2] = (u8)(led_frequency/I2C_MS_TO_US);
-		I2C_buff[3] = (u8)'u';
+u8 Date_To_I2CBuff(u8 state){
+	u8 offset = 0, temp;
+	I2C_buff[START_ADDR] = (state == LED_DURATION_FREQUENCY) ? (I2C_PARA_LENGTH : I2C_PARA_LENGTH - 2);
+	I2C_buff[BASE_ADDR] = state;
+	while(state){
+		if((state & LED_DURATION) == LED_DURATION){
+			Data_Transfer(led_duration, BASE_ADDR);
+			state &= ~LED_DURATION;
+		}
+		else if((state & LED_FRECQUENCY) == LED_FRECQUENCY)){
+			Data_Transfer(led_frequency, ADDR_OFFSET);
+			state &= ~LED_FRECQUENCY;
+		}
 	}
 	return PROCESS_SUCCESS;
 }
