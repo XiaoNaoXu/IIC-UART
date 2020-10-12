@@ -143,20 +143,20 @@ void 			LED_GPIO_Init(void);
 
 
 /* 			I2C address																	*/
-#define I2C_ADDRESS                     ((u8)0xA0)          // As a slave address
+#define I2C_ADDRESS                     ((u8)0xB0)          // As a slave address
 #define I2C_ADDRESS_LEN                 ((u8)0x02)					// A address length
 
 
 
 /*      Command Set or Get   																		     */
-#define Set 											 ((u8)0xFF)           // Set the frequency and duration of the LED
+#define SET 											 ((u8)0xFF)           // Set the frequency and duration of the LED
 #define Get 											 ((u8)0x00)           // Get the frequency and duration of the LED
 
 
 /*		  light on and light off frequency , duration of the Green LED */
-#define LED_frequency							    ((u8)0x0F)        // LED frequency command
-#define LED_duration 							    ((u8)0xF0)        // LED duration command
-#define LED_duration_frequency				((u8)0xFF)        // LED frequency and duration command
+#define LED_FREQUENCY							    ((u8)0x0F)        // LED frequency command
+#define LED_DURATION 							    ((u8)0xF0)        // LED duration command
+#define LED_DURATION_FREQUENCY				((u8)0xFF)        // LED frequency and duration command
 
 
 /*			Unit of time   -----    s,  ms, us     											 */

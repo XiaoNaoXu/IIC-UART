@@ -99,10 +99,10 @@ u32 get_units_mul(u8 units){
   * @retval None
   */
 void param_assert(){
-	if((receive_buff[BASE_ADDR] & LED_duration) == LED_duration){
+	if((receive_buff[BASE_ADDR] & LED_DURATION) == LED_DURATION){
 		set_led_duration(receive_buff[TIME_OFFSET] * get_units_mul(receive_buff[UNITS_OFFSET]));
 	}
-	if((receive_buff[BASE_ADDR] & LED_frequency) == LED_frequency){
+	if((receive_buff[BASE_ADDR] & LED_FREQUENCY) == LED_FREQUENCY){
 		set_led_frequency(receive_buff[TIME_OFFSET + ADDR_OFFSET] * get_units_mul(receive_buff[UNITS_OFFSET + ADDR_OFFSET]));
 	}
 }
@@ -195,13 +195,13 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			else{
 				
 				/*     This byte use for duration only                   */
-				if(receive_buff[BASE_ADDR] == LED_duration){
+				if(receive_buff[BASE_ADDR] == LED_DURATION){
 					receive_buff[BASE_ADDR + receive_cnt] = a_bit_value;
 					receive_len = I2C_PARA_LENGTH - 2;
 				}
 				
 				/*     This byte use for frequency only                  */
-				else if(receive_buff[BASE_ADDR] == LED_frequency){
+				else if(receive_buff[BASE_ADDR] == LED_FREQUENCY){
 					receive_buff[BASE_ADDR + receive_cnt + ADDR_OFFSET] = a_bit_value;
 					receive_len = I2C_PARA_LENGTH - 2;
 				}

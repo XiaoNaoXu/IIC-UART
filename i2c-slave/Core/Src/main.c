@@ -17,11 +17,11 @@ extern u8 I2C_receive_buff[DEFAULT_BUFF_SIZE];
 
 
 
-//Running_State running_state = master;
-//void (* running)(void) = &master_start;
+Running_State running_state = master;
+void (* running)(void) = &master_start;
 
-Running_State running_state = slave;
-void (* running)(void) = &slave_start;
+//Running_State running_state = slave;
+//void (* running)(void) = &slave_start;
 
 
 /**
@@ -101,6 +101,37 @@ void Error_Handler(void)
 }
 
 
+u8 I2C_To_UART(u8 *I2C_ptr, u8 data_len, u8 flag){
+	__IO u8 i = 0, temp, rx = 0, div ='1';
+	memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
+	for(i = 0; i < data_len; ++i){
+		if(i%2){
+			UART_Rx_Buffer[rx++] = I2C_ptr[i];
+			UART_Rx_Buffer[rx++] = '\n';
+		}
+		else{
+			if((flag & LED_DURATION) == LED_DURATION){
+				memcpy(UART_Rx_Buffer, DURA, strlen(DURA));
+				rx += strlen(DURA);
+			}
+			else{
+				memcpy(UART_Rx_Buffer + rx, FREQ, strlen(FREQ));
+				rx += strlen(FREQ);
+			}
+			temp = I2C_ptr[i];
+			div = 100;
+			while(temp){
+				if(temp/div > 0){
+					UART_Rx_Buffer[rx++] = temp / div + 0x30;
+				}
+				temp %= div;
+				div /= 10;
+			}
+		}
+	}
+	return rx;
+}
+
 /**
   * @brief  This function is transition string to hex of the date.
 	*					Transiton slave addrss.
@@ -178,8 +209,13 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 		++uart_buff_location;
 	}
 	
+	if(command_buff_size < UART_GET_RUNSTATE_PARA_NUM){
+		HAL_UART_Transmit(huart, (u8 *)COMMAND_ERR, strlen(COMMAND_ERR), UART_TR_TIMEOUT);
+		return PROCESS_SUCCESS;
+	}
+	
 	/*            Get info option                                                 */
-	if(!strcmp(GET, command[0])){
+	if(!strcmp(COMMAND_GET, command[0])){
 		
 		/*          Get running state                                              */
 		if(!strcmp(RUNNING_STATE, command[1])){
@@ -193,6 +229,11 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 		
 		/*           Get slave's light duration or frequency of led                  */
 		else if(!strcmp(LED_DURA, command[1]) || !strcmp(LED_FREQ, command[1]) || !strcmp(LED_DURA_FREQ, command[1])){
+			if(command_buff_size < UART_GET_LED_INFO_PARA_NUM){
+				HAL_UART_Transmit(huart, (u8 *)COMMAND_ERR, strlen(COMMAND_ERR), UART_TR_TIMEOUT);
+				return PROCESS_SUCCESS;
+			}
+			
 			/*         This address is is self       										    			     */
 			if( (u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) == I2C_ADDRESS){
 				if(running_state == MASTER){
@@ -224,16 +265,23 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 				HAL_UART_Transmit(huart, (u8 *)(I2C_buff + 2), DEFAULT_BUFF_SIZE - 3, UART_TR_TIMEOUT);
 			}
 			else{
-				HAL_UART_Transmit(huart, (u8 *)I2C_buff, DEFAULT_BUFF_SIZE - 1, UART_TR_TIMEOUT);
+				uart_rx_cnt = I2C_To_UART(I2C_buff, I2C_PARA_LENGTH - 1, LED_DURATION_FREQUENCY);
+				HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);
 			}
 		}
 	}
 	
 	/*            Set info option                                                 */
-	else if(!strcmp(SET, command[0])){
+	else if(!strcmp(COMMAND_SET, command[0])){
 		
 		/*          Set    running state                                            */
 		if(!strcmp(RUNNING_STATE, command[1])){
+			
+			if(command_buff_size < UART_SET_RUNSTATE_PARA_NUM){
+				HAL_UART_Transmit(huart, (u8 *)COMMAND_ERR, strlen(COMMAND_ERR), UART_TR_TIMEOUT);
+				return PROCESS_SUCCESS;
+			}
+			
 			if(!strcmp(command[2], "slave")){
 				if(running_state == SLAVE){
 					HAL_UART_Transmit(huart, (u8 *)RUNSTAT_SLAVE_TO_SLAVE, strlen(RUNSTAT_SLAVE_TO_SLAVE),UART_TR_TIMEOUT);
@@ -268,13 +316,19 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 		
 		/*           Set slave's light duration or frequency of led                  */
 		else if(!strcmp(LED_DURA, command[1]) || !strcmp(LED_FREQ, command[1]) || !strcmp(LED_DURA_FREQ, command[1])){
+			
+			if(command_buff_size < UART_SET_LED_INFO_PARA_NUM){
+				HAL_UART_Transmit(huart, (u8 *)COMMAND_ERR, strlen(COMMAND_ERR), UART_TR_TIMEOUT);
+				return PROCESS_SUCCESS;
+			}
+			
 			/*         This address is is self       										    			     */
 			if( (u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) == I2C_ADDRESS){
 				if(running_state == MASTER){
 					HAL_UART_Transmit(huart, (u8 *)MASTER_NO_LED, strlen(MASTER_NO_LED), UART_TR_TIMEOUT);
 					return PROCESS_SUCCESS;
 				}
-				else if(running_state == SLAVE){
+				else if(running_state == SLAVE){					
 					if(!strcmp(LED_DURA, command[1])){
 						set_led_duration((u8)String_To_Hex_Of_Data(command[2+TIME_OFFSET], strlen(command[2+TIME_OFFSET])) * get_units_mul((u8)command[2+UNITS_OFFSET][0]));
 					}
@@ -299,7 +353,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 			
 			/*        Self running state is master, can set another slave info        */ 	
 			if(!strcmp(LED_DURA, command[1])){
-				I2C_buff[0] = LED_duration;
+				I2C_buff[0] = LED_DURATION;
 				I2C_buff[TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
 				I2C_buff[UNITS_OFFSET] = (u8)command[4][0];
 				if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], strlen(command[2])), I2C_buff, I2C_PARA_LENGTH - 2)){
@@ -321,7 +375,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 				}
 			}
 			else if(!strcmp(LED_FREQ, command[1])){
-				I2C_buff[BASE_ADDR] = LED_frequency;
+				I2C_buff[BASE_ADDR] = LED_FREQUENCY;
 				I2C_buff[TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
 				I2C_buff[UNITS_OFFSET] = (u8)command[4][0];
 				if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], strlen(command[2])), I2C_buff, I2C_PARA_LENGTH - 2)){
@@ -342,7 +396,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 				}
 			}
 			else{
-				I2C_buff[0] = LED_duration_frequency;
+				I2C_buff[0] = LED_DURATION_FREQUENCY;
 				I2C_buff[TIME_OFFSET] = String_To_Hex_Of_Data(command[3], strlen(command[3]));
 				I2C_buff[UNITS_OFFSET] = (u8)command[4][0];
 				I2C_buff[ADDR_OFFSET + TIME_OFFSET] = String_To_Hex_Of_Data(command[3 + ADDR_OFFSET], strlen(command[3 + ADDR_OFFSET]));
