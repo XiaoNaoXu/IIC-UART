@@ -448,36 +448,25 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data){
 	u8 scl_state = 0;
 	
 	/*       I2C SDA Init               */
-	if(I2C_Bus_state == I2C_BUS_FREE ){
-		scl_state = I2C_SCL_READ();
-		delay_us(I2C_PD);
-		if((scl_state & I2C_SCL_READ()) != I2C_LEVEL_HIGH){
-			return I2C_BUS_BUSY;
-		}
-		I2C_Master_SDA_Output_OD_Init();
-		__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
-	}
-	else{
+	scl_state = I2C_SCL_READ();
+	delay_us(I2C_PD);
+	if((scl_state & I2C_SCL_READ()) != I2C_LEVEL_HIGH){
 		return I2C_BUS_BUSY;
 	}
+	I2C_Master_SDA_Output_OD_Init();
+	__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
 	
 	//Send start signal
 	I2C_Master_Start();
 	//while(1);
 	
 	//Send slave address and w/r bit
-	if(I2C_BUS_BUSY == I2C_Master_SendByte(slave_addr)){
-		I2C_Bus_state = I2C_BUS_BUSY;
-		return I2C_BUS_BUSY;
-	}
+	I2C_Master_SendByte(slave_addr);
 	
 	//Wait and analyze for acknowledge
 	while(len < data[START_ADDR] + 1){
 		if(!I2C_Master_WaitAck()){
-			if(I2C_BUS_BUSY == I2C_Master_SendByte(pdata[len++])){
-				I2C_Bus_state = I2C_BUS_BUSY;
-				return I2C_BUS_BUSY;
-			}
+			I2C_Master_SendByte(pdata[len++]);
 		}
 		else{
 			break;
@@ -500,27 +489,18 @@ u32 I2C_Master_Read(u8 slave_addr, u8 *buff){
 	u8 numByteToRead  =   0;
 	
 	/*       I2C SDA Init               */
-	if(I2C_Bus_state == I2C_BUS_FREE ){
-		scl_state = I2C_SCL_READ();
-		delay_us(I2C_PD);
-		if((scl_state & I2C_SCL_READ()) != I2C_LEVEL_HIGH){
-			return I2C_BUS_BUSY;
-		}
-		I2C_Master_SDA_Output_OD_Init();
-		__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
-	}
-	else{
+	scl_state = I2C_SCL_READ();
+	delay_us(I2C_PD);
+	if((scl_state & I2C_SCL_READ()) != I2C_LEVEL_HIGH){
 		return I2C_BUS_BUSY;
 	}
+	I2C_Master_SDA_Output_OD_Init();
 	
 	//Send start signal
 	I2C_Master_Start();
 	
 	//Send slave address and w/r bit
-	if(I2C_BUS_BUSY == I2C_Master_SendByte(slave_addr)){
-		I2C_Bus_state = I2C_BUS_BUSY;
-		return I2C_BUS_BUSY;
-	}
+	I2C_Master_SendByte(slave_addr);
 	
 	
 	//Wait and analyze for acknowledge

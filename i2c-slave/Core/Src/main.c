@@ -226,6 +226,8 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 		++uart_buff_location;
 	}
 	
+	command_buff_size++;
+	
 	if(command_buff_size < UART_GET_RUNSTATE_PARA_NUM){
 		HAL_UART_Transmit(huart, (u8 *)COMMAND_ERR, strlen(COMMAND_ERR), UART_TR_TIMEOUT);
 		return PROCESS_SUCCESS;
@@ -258,7 +260,16 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 					return PROCESS_SUCCESS;
 				}
 				else if(running_state == SLAVE){
-					//Date_To_I2CBuff(command[1]);
+					if(!strcmp(LED_DURA, command[1])){
+						Date_To_I2CBuff(LED_DURATION);
+					}
+					else if(!strcmp(LED_FREQ, command[1])){
+						Date_To_I2CBuff(LED_FREQUENCY);
+					}
+					else{
+						Date_To_I2CBuff(LED_DURATION_FREQUENCY);
+					}
+					
 					uart_rx_cnt = I2C_To_UART(I2C_buff);
 					HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);
 					return PROCESS_SUCCESS;
@@ -273,11 +284,27 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 			}
 			
 			/*        Self running state is master, can read another slave info       */
-			if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_buff)){
+			I2C_buff[START_ADDR] = 1;
+			if(!strcmp(LED_DURA, command[1])){
+				I2C_buff[BASE_ADDR] = LED_DURATION;
+			}
+			else if(!strcmp(LED_FREQ, command[1])){
+				I2C_buff[BASE_ADDR] = LED_FREQUENCY;
+			}
+			else{
+				I2C_buff[BASE_ADDR] = LED_DURATION_FREQUENCY;
+			}
+		
+			if(I2C_BUS_BUSY == I2C_Master_Write((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_WRITE, I2C_buff)){
 				HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
 				return PROCESS_SUCCESS;
 			}
-			uart_rx_cnt = I2C_To_UART(I2C_buff);
+			delay_ms(1);
+			if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff)){
+				HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
+				return PROCESS_SUCCESS;
+			}
+			uart_rx_cnt = I2C_To_UART(I2C_receive_buff);
 			HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);
 
 			// if(!strcmp(LED_DURA, command[1])){
@@ -313,6 +340,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 					running = &slave_start;
 					if(running_state == SLAVE){
 						HAL_UART_Transmit(huart, (u8 *)OK, strlen(OK),UART_TR_TIMEOUT);
+						HAL_UART_Transmit(huart, (u8 *)RUNSTAT_SLAVE, strlen(RUNSTAT_SLAVE),UART_TR_TIMEOUT);
 					}
 					else{
 						HAL_UART_Transmit(huart, (u8 *)FAILED, strlen(FAILED),UART_TR_TIMEOUT);
@@ -328,6 +356,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 					running = &master_start;
 					if(running_state == MASTER){
 						HAL_UART_Transmit(huart, (u8 *)OK, strlen(OK),UART_TR_TIMEOUT);
+						HAL_UART_Transmit(huart, (u8 *)RUNSTAT_MASTER, strlen(RUNSTAT_MASTER),UART_TR_TIMEOUT);
 					}
 					else{
 						HAL_UART_Transmit(huart, (u8 *)FAILED, strlen(FAILED),UART_TR_TIMEOUT);

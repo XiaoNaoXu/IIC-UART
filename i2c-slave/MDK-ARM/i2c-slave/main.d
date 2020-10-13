@@ -36,5 +36,6 @@ i2c-slave\main.o: ../Core/Inc/slave.h
 i2c-slave\main.o: ../Core/Inc/i2c.h
 i2c-slave\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 i2c-slave\main.o: ../Core/Inc/master.h
+i2c-slave\main.o: ../Core/Inc/i2c.h
 i2c-slave\main.o: ../Core/Inc/usart.h
 i2c-slave\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

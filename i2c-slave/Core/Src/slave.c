@@ -18,7 +18,7 @@ __IO u32   led_frequency = 0;									        				//The frequency of the led
 __IO u32   led_duration = 0;										        			//The duration of the led
 Option     option = ret;												      				//Control read/write state
 
-u8         sent_buff[DEFAULT_BUFF_SIZE] = {5,0xFF,1,0x73,1,0x73};	   	//Send array/buff
+u8         sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
 extern u8  I2C_buff[DEFAULT_BUFF_SIZE];
 
 
@@ -99,31 +99,35 @@ u32 get_units_mul(u8 units){
   * @retval None
   */
 void param_assert(){
-
-	/*     This byte use for duration only                   */
-	if(receive_buff[BASE_ADDR] == LED_DURATION){
-		set_led_duration(receive_buff[BASE_ADDR + TIME_OFFSET] * get_units_mul(receive_buff[BASE_ADDR + UNITS_OFFSET]));
-	}
+	u8 state = receive_buff[BASE_ADDR], offset = START_ADDR;
 	
-	/*     This byte use for frequency only                  */
-	else if(receive_buff[BASE_ADDR] == LED_FREQUENCY){
-		set_led_duration(receive_buff[BASE_ADDR + TIME_OFFSET] * get_units_mul(receive_buff[BASE_ADDR + UNITS_OFFSET]));
-	}
-	
-	/*    This byte use for duration/frequency               */
-	else if(receive_buff[BASE_ADDR] == LED_DURATION_FREQUENCY){
-		set_led_duration(receive_buff[BASE_ADDR + TIME_OFFSET] * get_units_mul(receive_buff[BASE_ADDR + UNITS_OFFSET]));
-		set_led_frequency(receive_buff[BASE_ADDR + TIME_OFFSET + ADDR_OFFSET] * get_units_mul(receive_buff[BASE_ADDR + UNITS_OFFSET + ADDR_OFFSET]));
-	}
-	
-	else if(receive_buff[BASE_ADDR] == RUNNING_STATE){
-		if(receive_buff[BASE_ADDR + STATE_OFFSET] == MASTER){
-			running_state = master;
+	while(state){
+		/*     This byte use for duration only                   */
+		if((state & LED_DURATION)== LED_DURATION){
+			set_led_duration(receive_buff[BASE_ADDR + TIME_OFFSET + offset] * get_units_mul(receive_buff[BASE_ADDR + offset + UNITS_OFFSET]));
+			state &= ~LED_DURATION;
+			offset = ADDR_OFFSET;
 		}
-		else{
-			running_state = slave;
+		
+		/*     This byte use for frequency only                  */
+		else if((state & LED_FREQUENCY) == LED_FREQUENCY){
+			set_led_frequency(receive_buff[BASE_ADDR + TIME_OFFSET + offset] * get_units_mul(receive_buff[BASE_ADDR + offset + UNITS_OFFSET]));
+			state &= ~LED_FREQUENCY;
 		}
-		running = &slave_start;
+		
+		else if(state == RUNNING_STATE){
+			if(receive_buff[BASE_ADDR + STATE_OFFSET] == MASTER){
+				running_state = master;
+				running = &master_start;
+			}
+			else{
+				running_state = slave;
+				running = &slave_start;
+			}
+		}
+	}
+	if((receive_buff[BASE_ADDR] & LED_DURATION_FREQUENCY)){
+		Date_To_I2CBuff(receive_buff[BASE_ADDR]);
 	}
 }
 
@@ -169,7 +173,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			}
 			else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
 				option = write;
-				a_bit_value = sent_buff[sent_count++];
+				a_bit_value = I2C_buff[sent_count++];
 			}
 			else{
 				bit_location = 0;
@@ -248,8 +252,8 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				I2C_Slave_SCL_Rising_Exti_Disable();
 				return;
 			}
-			if(sent_count <= sent_buff[START_ADDR]){
-				a_bit_value = sent_buff[sent_count++];
+			if(sent_count <= I2C_buff[START_ADDR]){
+				a_bit_value = I2C_buff[sent_count++];
 				delay_us(I2C_PD);
 				(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
 				a_bit_value <<= 1U;
@@ -264,7 +268,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 }
 
 
-void Data_Transfer(u8 para, u8 offset){
+void Data_Transfer(u32 para, u8 offset){
 	
 	if((para / I2C_S_TO_US) <= 0xFF && (para / I2C_S_TO_US) >= 0x01 ){
 		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (u8)(para/I2C_S_TO_US);
@@ -286,7 +290,7 @@ void Data_Transfer(u8 para, u8 offset){
   * @retval None
   */
 u8 Date_To_I2CBuff(u8 state){
-	//I2C_buff[START_ADDR] = (state == LED_DURATION_FREQUENCY) ? (I2C_PARA_LENGTH : I2C_PARA_LENGTH - 2);
+	I2C_buff[START_ADDR] = (state == LED_DURATION_FREQUENCY) ? (I2C_PARA_LENGTH):(I2C_PARA_LENGTH - 2);
 	I2C_buff[BASE_ADDR] = state;
 	while(state){
 		if((state & LED_DURATION) == LED_DURATION){

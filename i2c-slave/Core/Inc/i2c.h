@@ -35,7 +35,7 @@ typedef enum Running_State {
 
 extern Running_State running_state;
 extern void (* running)(void);
-
+extern void		 master_start(void);
 
 
 /**************************************************************************/
@@ -158,10 +158,10 @@ void 			LED_GPIO_Init(void);
 
 
 /*		  light on and light off frequency , duration of the Green LED */
-#define LED_FREQUENCY							    ((u8)0x0F)        // LED frequency command
-#define LED_DURATION 							    ((u8)0xF0)        // LED duration command
-#define LED_DURATION_FREQUENCY				((u8)0xFF)        // LED frequency and duration command
-#define RUNNING_STATE									((u8)0x01)				// running state command
+#define LED_FREQUENCY							    ((u8)0x02)        // LED frequency command
+#define LED_DURATION 							    ((u8)0x01)        // LED duration command
+#define LED_DURATION_FREQUENCY				((u8)0x03)        // LED frequency and duration command
+#define RUNNING_STATE									((u8)0x04)				// running state command
 
 
 /*			Unit of time   -----    s,  ms, us     											 */
@@ -251,4 +251,22 @@ void 		 I2C_Master_SDA_Rising_Disable(void);
 #endif
 
 
+
+/**************************************************************************/
+/***********                UART PRINT              ***********************/
+/**************************************************************************/
+
+
+#define P_STATE_MASTER_TO_SLAVE							"\nState changed from master to slave.\n"
+#define P_STATE_SLAVE_TO_MASTER							"\nState changed from slave to master.\n"
+#define P_RECEIVED_START_SIGNAL							"\nReceived a start signal.\n"
+#define P_RECEIVED_STOP_SIGNAL							"\nReceived a start signal.\n"
+#define P_I2C_BUS_FREE											"\nI2C bus in free state.\n"
+#define P_I2C_BUS_BUSY											"\nI2C bus in busy state.\n"
+#define P_SLAVE_IN_RECEIVING								"\nIn receiving data.\n"
+#define P_SLAVE_END_RESIVING								"\nEnd receiving data.\n"
+#define P_SLAVE_IN_SENDING									"\nIn sending  data.\n"
+#define P_SLAVE_END_SENDING									"\nEnd sending  data.\n"
+#define P_SLAVE_ADDR_CPMPARE_SUCCESS				"\nAddress matching successful.\n"
+#define P_SLAVE_ADDR_CPMPARE_FILED				  "\nAddress matching failed, exit.\n"
 
