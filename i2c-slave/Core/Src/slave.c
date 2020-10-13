@@ -37,15 +37,15 @@ void slave_start(){
 	I2C_Slave_SCL_Falling_Exti_Enable();										//Enable SCL Falling exti
 	
 	param_assert();
-    while(running_state == SLAVE)
-    {
+  while(running_state == SLAVE)
+  {
 		if(led_duration){
 			LED(led_duration);
 		}
 		if(led_frequency){
 			delay_us(led_frequency);
 		}
-    }
+  }
 }
 
 
@@ -286,17 +286,16 @@ void Data_Transfer(u8 para, u8 offset){
   * @retval None
   */
 u8 Date_To_I2CBuff(u8 state){
-	u8 offset = 0, temp;
-	I2C_buff[START_ADDR] = (state == LED_DURATION_FREQUENCY) ? (I2C_PARA_LENGTH : I2C_PARA_LENGTH - 2);
+	//I2C_buff[START_ADDR] = (state == LED_DURATION_FREQUENCY) ? (I2C_PARA_LENGTH : I2C_PARA_LENGTH - 2);
 	I2C_buff[BASE_ADDR] = state;
 	while(state){
 		if((state & LED_DURATION) == LED_DURATION){
-			Data_Transfer(led_duration, BASE_ADDR);
+			Data_Transfer(led_duration, START_ADDR);
 			state &= ~LED_DURATION;
 		}
-		else if((state & LED_FRECQUENCY) == LED_FRECQUENCY)){
+		else if((state & LED_FREQUENCY) == LED_FREQUENCY){
 			Data_Transfer(led_frequency, ADDR_OFFSET);
-			state &= ~LED_FRECQUENCY;
+			state &= ~LED_FREQUENCY;
 		}
 	}
 	return PROCESS_SUCCESS;

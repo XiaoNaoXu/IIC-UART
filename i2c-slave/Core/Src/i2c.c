@@ -472,7 +472,7 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data){
 	}
 	
 	//Wait and analyze for acknowledge
-	while(len < data[START_ADDR]){
+	while(len < data[START_ADDR] + 1){
 		if(!I2C_Master_WaitAck()){
 			if(I2C_BUS_BUSY == I2C_Master_SendByte(pdata[len++])){
 				I2C_Bus_state = I2C_BUS_BUSY;

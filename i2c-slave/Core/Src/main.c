@@ -17,11 +17,11 @@ extern u8 I2C_receive_buff[DEFAULT_BUFF_SIZE];
 
 
 
-Running_State running_state = master;
-void (* running)(void) = &master_start;
+//Running_State running_state = master;
+//void (* running)(void) = &master_start;
 
-//Running_State running_state = slave;
-//void (* running)(void) = &slave_start;
+Running_State running_state = slave;
+void (* running)(void) = &slave_start;
 
 
 /**
@@ -102,7 +102,7 @@ void Error_Handler(void)
 
 
 u8 I2C_To_UART(u8 *I2C_ptr){
-	__IO u8 i = 0, temp, rx = 0, div ='1';
+	__IO u8 i = 0, temp, rx = 0, div = '1';
 	__IO u8 data_len = I2C_ptr[START_ADDR], reg = I2C_ptr[BASE_ADDR];
 
 	memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
@@ -139,11 +139,11 @@ u8 I2C_To_UART(u8 *I2C_ptr){
 	else if(reg == RUNNING_STATE){
 		if(I2C_ptr[RUNNING_STATE_OFFSET] == MASTER){
 			rx += strlen(RUNSTAT_MASTER);
-			memcpy(UART_RX_BUFF_SIZE, RUNSTAT_MASTER, strlen(RUNSTAT_MASTER));
+			memcpy(UART_Rx_Buffer, RUNSTAT_MASTER, strlen(RUNSTAT_MASTER));
 		}
 		else if(I2C_ptr[RUNNING_STATE_OFFSET] == SLAVE){
 			rx += strlen(RUNSTAT_SLAVE);
-			memcpy(UART_RX_BUFF_SIZE, RUNSTAT_SLAVE, strlen(RUNSTAT_SLAVE));
+			memcpy(UART_Rx_Buffer, RUNSTAT_SLAVE, strlen(RUNSTAT_SLAVE));
 		}
 	}
 	return rx;
@@ -258,7 +258,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 					return PROCESS_SUCCESS;
 				}
 				else if(running_state == SLAVE){
-					Date_To_I2CBuff(command[1]);
+					//Date_To_I2CBuff(command[1]);
 					uart_rx_cnt = I2C_To_UART(I2C_buff);
 					HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);
 					return PROCESS_SUCCESS;
@@ -275,7 +275,7 @@ u8 UART_Process_Param(UART_HandleTypeDef *huart){
 			/*        Self running state is master, can read another slave info       */
 			if(I2C_BUS_BUSY == I2C_Master_Read((u8)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_buff)){
 				HAL_UART_Transmit(huart, (u8 *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
-				return PROCESS_SUCCESS
+				return PROCESS_SUCCESS;
 			}
 			uart_rx_cnt = I2C_To_UART(I2C_buff);
 			HAL_UART_Transmit(huart, (u8 *)UART_Rx_Buffer, uart_rx_cnt, UART_TR_TIMEOUT);

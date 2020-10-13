@@ -147,7 +147,7 @@ void 			LED_GPIO_Init(void);
 
 
 /* 			I2C address																	*/
-#define I2C_ADDRESS                     ((u8)0xB0)          // As a slave address
+#define I2C_ADDRESS                     ((u8)0xA0)          // As a slave address
 #define I2C_ADDRESS_LEN                 ((u8)0x02)					// A address length
 
 
