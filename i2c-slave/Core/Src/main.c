@@ -17,19 +17,23 @@ extern u8 I2C_receive_buff[DEFAULT_BUFF_SIZE];
 
 
 
-Running_State running_state = master;
-void (* running)(void) = &master_start;
+//Running_State running_state = master;
+//void (* running)(void) = &master_start;
 
-//Running_State running_state = slave;
-//void (* running)(void) = &slave_start;
+Running_State running_state = slave;
+void (* running)(void) = &slave_start;
 
 
+extern __IO u8    sent_cnt;
+extern __IO uint32_t uwTick;
 /**
   * @brief  The application entry point.
   * @retval int
   */
 int main(void)
 {
+	__IO u32 *i = &uwTick;
+	__IO u8 *j = &sent_cnt;
 
   HAL_Init();																							//Init HAL
 

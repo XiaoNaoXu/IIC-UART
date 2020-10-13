@@ -229,7 +229,18 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			/*       How to store next byte received                   */
 			receive_buff[receive_cnt++] = a_bit_value;
 			
-			
+			if(receive_cnt == 4){
+				receive_cnt;
+			}
+			else if(receive_cnt == 3){
+				receive_cnt;
+			}
+			else if(receive_cnt == 2){
+				receive_cnt;
+			}
+			else if(receive_cnt == 5){
+				receive_cnt;
+			}
 			/*      Send acknowledge and reable/disable EXTI            */
 			if(receive_cnt < receive_len){
 				I2C_Slave_SendAck();

@@ -19,7 +19,7 @@
 
 /*			Define UART related constant																		*/
 #define UART_TR_TIMEOUT								 			((u16)0xFFFF)
-#define UART_RX_BUFF_SIZE 						 			((u8)0xFF)
+#define UART_RX_BUFF_SIZE 						 			((u8)0x10)
 #define UART_RECEIVE_BYTE_NUMBER						((u8)0x01)
 
 
