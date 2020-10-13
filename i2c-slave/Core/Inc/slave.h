@@ -26,6 +26,9 @@ void 			set_led_duration(u32);
 void 			slave_start(void); 
 void 			Slave_EXTI_Rising_Callback(u16);
 void			Slave_EXTI_Falling_Callback(u16);
-u8 				Date_To_I2CBuff(void);
+u8 				Date_To_I2CBuff(u8);
+void 			Data_Transfer(u32 , u8);
+
+extern void master_start(void);
 
 #endif

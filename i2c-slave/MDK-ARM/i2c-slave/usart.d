@@ -35,7 +35,7 @@ i2c-slave\usart.o: ../Core/Inc/gpio.h
 i2c-slave\usart.o: ../Core/Inc/main.h
 i2c-slave\usart.o: ../Core/Inc/slave.h
 i2c-slave\usart.o: ../Core/Inc/i2c.h
-i2c-slave\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-i2c-slave\usart.o: ../Core/Inc/master.h
-i2c-slave\usart.o: ../Core/Inc/usart.h
 i2c-slave\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+i2c-slave\usart.o: ../Core/Inc/master.h
+i2c-slave\usart.o: ../Core/Inc/i2c.h
+i2c-slave\usart.o: ../Core/Inc/usart.h

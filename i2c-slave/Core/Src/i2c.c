@@ -12,6 +12,7 @@ u8 		 I2C_buff[DEFAULT_BUFF_SIZE] 		=  {0};
 u8 		 I2C_Bus_state							 		=  I2C_BUS_FREE;
 
 
+
 /**************************************************************************/
 /***********                    LED              **************************/
 /**************************************************************************/
@@ -135,7 +136,6 @@ void I2C_Slave_SendAck(void){
 	*/
 void I2C_Slave_SendNAck(void){
 	I2C_SDA_1();
-	delay_us(I2C_PD);
 }
 
 /**
@@ -156,6 +156,8 @@ u8 I2C_Slave_WaitAck(){
 	* @retval void
 	*/
 void I2C_Slave_SCL_Falling_Exti_Enable(){
+	//HAL_GPIO_DeInit(SLAVE_EXTI_PORT, SLAVE_EXTI_PIN);
+	
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	
 	/*Configure I2C GPIO pins : SCL -- PC5 */
@@ -210,6 +212,8 @@ void I2C_Slave_SCL_Rising_Exti_Disable(){
 	* @retval void
 	*/
 void I2C_Slave_SDA_GPIO_Output_OD_Init(){
+	
+	//HAL_GPIO_DeInit(I2C_SDA_PORT,I2C_SDA_PIN);
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	__HAL_RCC_GPIOC_CLK_ENABLE();														//GPIOC Ports Clock Enable
 	
@@ -237,6 +241,8 @@ void I2C_Slave_SDA_GPIO_Output_OD_Init(){
 	* @retval void
 	*/
 void I2C_Master_SCL_Output_OD_Init(void){
+	HAL_GPIO_DeInit(I2C_SCL_PORT,I2C_SCL_PIN);
+	
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	__HAL_RCC_GPIOC_CLK_ENABLE();																		 
 	
@@ -257,6 +263,7 @@ void I2C_Master_SCL_Output_OD_Init(void){
 	* @retval void
 	*/
 void I2C_Master_SDA_Output_OD_Init(void){
+	HAL_GPIO_DeInit(I2C_SDA_PORT,I2C_SDA_PIN);
 	GPIO_InitTypeDef GPIO_InitStruct = {0};																 
 	__HAL_RCC_GPIOC_CLK_ENABLE();	
 	/*Configure I2C GPIO pins : SDA -- PC4 */
@@ -277,6 +284,7 @@ void I2C_Master_SDA_Output_OD_Init(void){
 	* @retval void
 	*/
 void I2C_Master_SDA_Rising_Falling_Init(){
+	HAL_GPIO_DeInit(I2C_SDA_PORT,I2C_SDA_PIN);
 	__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
 	__HAL_GPIO_EXTI_CLEAR_RISING_IT(MASTER_EXTI_PIN);
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -298,6 +306,7 @@ void I2C_Master_SDA_Rising_Falling_Init(){
 	* @retval void
 	*/
 void I2C_Master_SDA_Rising_Init(){
+	HAL_GPIO_DeInit(I2C_SDA_PORT,I2C_SDA_PIN);
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	
 	/*Configure I2C GPIO pins : SDA - PC4 */
@@ -400,6 +409,7 @@ u8 I2C_Master_SendByte(u8 data_byte){
 			if(I2C_SDA_READ() != I2C_LEVEL_LOW){
 				return I2C_BUS_BUSY;
 			}
+			
 		}
 		I2C_SCL_1();
 		delay_us(I2C_PD);
@@ -472,7 +482,7 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data){
 	}
 	
 	//Wait and analyze for acknowledge
-	while(len < data[START_ADDR]){
+	while(len < (data[START_ADDR] + 1)){
 		if(!I2C_Master_WaitAck()){
 			if(I2C_BUS_BUSY == I2C_Master_SendByte(pdata[len++])){
 				I2C_Bus_state = I2C_BUS_BUSY;
@@ -528,7 +538,7 @@ u32 I2C_Master_Read(u8 slave_addr, u8 *buff){
 		numByteToRead = I2C_Master_ReadByte() + 1;
 		I2C_Master_SendAck();
 		pdata[len++] = numByteToRead - 1;
-		while(len <= numByteToRead){
+		while(len < numByteToRead){
 			pdata[len++] = I2C_Master_ReadByte();
 			if(len == numByteToRead){
 				I2C_Master_SendNAck();
