@@ -3,35 +3,87 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: ¦ÌVision V5.26.2.0
-Copyright (C) 2018 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Chen Hongjie, Flex, LIC=----
+IDE-Version: ¦ÌVision V5.31.0.0
+Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: 1 1, 1, LIC=----
  
 Tool Versions:
-Toolchain:       MDK-Lite  Version: 5.26.2.0
+Toolchain:       MDK-Lite  Version: 5.31.0.0
 Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
 C Compiler:      Armcc.exe V5.06 update 6 (build 750)
 Assembler:       Armasm.exe V5.06 update 6 (build 750)
 Linker/Locator:  ArmLink.exe V5.06 update 6 (build 750)
 Library Manager: ArmAr.exe V5.06 update 6 (build 750)
 Hex Converter:   FromElf.exe V5.06 update 6 (build 750)
-CPU DLL:         SARMCM3.DLL V5.26.2.0
-Dialog DLL:      DARMCM1.DLL V1.19.1.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.5.0
-Dialog DLL:      TARMCM1.DLL V1.14.0.0
+CPU DLL:         SARMCM3.DLL V5.31.0.0
+Dialog DLL:      DARMCM1.DLL V1.19.3.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.7.0
+Dialog DLL:      TARMCM1.DLL V1.14.2.0
  
 <h2>Project:</h2>
-C:\Users\SHDHoChe\Documents\project\IIC-UART\i2c-slave\MDK-ARM\i2c-slave.uvprojx
-Project File Date:  10/09/2020
+C:\Users\xiaonaoxu\Documents\1\IIC-UART\i2c-slave\MDK-ARM\i2c-slave.uvprojx
+Project File Date:  10/13/2020
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'i2c-slave'
+assembling startup_stm32g070xx.s...
 compiling main.c...
-linking...
-Program Size: Code=14832 RO-data=312 RW-data=56 ZI-data=1440  
-FromELF: creating hex file...
-"i2c-slave\i2c-slave.axf" - 0 Error(s), 0 Warning(s).
+../Core/Src/main.c(142): error:  #167: argument of type "u8" is incompatible with parameter of type "void *restrict"
+  			memcpy(UART_RX_BUFF_SIZE, RUNSTAT_MASTER, strlen(RUNSTAT_MASTER));
+../Core/Src/main.c(146): error:  #167: argument of type "u8" is incompatible with parameter of type "void *restrict"
+  			memcpy(UART_RX_BUFF_SIZE, RUNSTAT_SLAVE, strlen(RUNSTAT_SLAVE));
+../Core/Src/main.c(261): error:  #140: too many arguments in function call
+  					Date_To_I2CBuff(command[1]);
+../Core/Src/main.c(279): error:  #65: expected a ";"
+  			}
+../Core/Src/main.c: 0 warnings, 4 errors
+compiling stm32g0xx_it.c...
+compiling gpio.c...
+compiling slave.c...
+..\Core\Src\slave.c(288): error:  #147-D: declaration is incompatible with "u8 Date_To_I2CBuff(void)"  (declared at line 29 of "../Core/Inc/slave.h")
+  u8 Date_To_I2CBuff(u8 state){
+..\Core\Src\slave.c(290): error:  #18: expected a ")"
+  	I2C_buff[START_ADDR] = (state == LED_DURATION_FREQUENCY) ? (I2C_PARA_LENGTH : I2C_PARA_LENGTH - 2);
+..\Core\Src\slave.c(290): error:  #53: expected a ":"
+  	I2C_buff[START_ADDR] = (state == LED_DURATION_FREQUENCY) ? (I2C_PARA_LENGTH : I2C_PARA_LENGTH - 2);
+..\Core\Src\slave.c(297): error:  #20: identifier "LED_FRECQUENCY" is undefined
+  		else if((state & LED_FRECQUENCY) == LED_FRECQUENCY)){
+..\Core\Src\slave.c(297): error:  #29: expected an expression
+  		else if((state & LED_FRECQUENCY) == LED_FRECQUENCY)){
+..\Core\Src\slave.c(301): warning:  #12-D: parsing restarts here after previous syntax error
+  	}
+..\Core\Src\slave.c(301): error:  #65: expected a ";"
+  	}
+..\Core\Src\slave.c(289): warning:  #177-D: variable "offset"  was declared but never referenced
+  	u8 offset = 0, temp;
+..\Core\Src\slave.c(289): warning:  #177-D: variable "temp"  was declared but never referenced
+  	u8 offset = 0, temp;
+..\Core\Src\slave.c: 3 warnings, 6 errors
+compiling stm32g0xx_hal_msp.c...
+compiling i2c.c...
+compiling master.c...
+compiling usart.c...
+compiling stm32g0xx_hal_gpio.c...
+compiling stm32g0xx_hal_tim.c...
+compiling stm32g0xx_hal_tim_ex.c...
+compiling stm32g0xx_hal_rcc.c...
+compiling stm32g0xx_ll_rcc.c...
+compiling stm32g0xx_hal_flash_ex.c...
+compiling stm32g0xx_hal_flash.c...
+compiling stm32g0xx_hal_rcc_ex.c...
+compiling stm32g0xx_ll_dma.c...
+compiling stm32g0xx_hal_dma_ex.c...
+compiling stm32g0xx_hal_dma.c...
+compiling stm32g0xx_hal_pwr.c...
+compiling stm32g0xx_hal_cortex.c...
+compiling stm32g0xx_hal.c...
+compiling stm32g0xx_hal_pwr_ex.c...
+compiling stm32g0xx_hal_exti.c...
+compiling stm32g0xx_hal_uart_ex.c...
+compiling stm32g0xx_hal_uart.c...
+compiling system_stm32g0xx.c...
+"i2c-slave\i2c-slave.axf" - 10 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -48,13 +100,14 @@ Package Vendor: Keil
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_i2c-slave
-  C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include
-  C:\Keil_v5\ARM\PACK\Keil\STM32G0xx_DFP\1.2.0\Drivers\CMSIS\Device\ST\STM32G0xx\Include
+  C:\Users\xiaonaoxu\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include
+  C:\Users\xiaonaoxu\AppData\Local\Arm\Packs\Keil\STM32G0xx_DFP\1.2.0\Drivers\CMSIS\Device\ST\STM32G0xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.4.0
-Build Time Elapsed:  00:00:03
+Target not created.
+Build Time Elapsed:  00:00:16
 </pre>
 </body>
 </html>

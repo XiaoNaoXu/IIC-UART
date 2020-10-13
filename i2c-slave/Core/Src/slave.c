@@ -13,7 +13,7 @@ __IO u8    bit_location = 0U;        													//Records the location of the 
 __IO u8    a_bit_value = 0U;																	//Store a full byte received
 __IO u8    receive_cnt = 0;																		//The number that has been sent
 __IO u8    receive_len = 3;															   		//The number when need to send
-__IO u8    sent_cnt = 0;												      				//The number that has been received
+__IO u8    sent_count = 0;												      				//The number that has been received
 __IO u32   led_frequency = 0;									        				//The frequency of the led
 __IO u32   led_duration = 0;										        			//The duration of the led
 Option     option = ret;												      				//Control read/write state
@@ -59,7 +59,7 @@ void flag_reset(){
 	receive_cnt = 0;
 	a_bit_value = 0;
 	receive_len = 0;
-	sent_cnt = 0;
+	sent_count = 0;
 }
 
 
@@ -169,7 +169,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			}
 			else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
 				option = write;
-				a_bit_value = sent_buff[sent_cnt++];
+				a_bit_value = sent_buff[sent_count++];
 			}
 			else{
 				bit_location = 0;
@@ -248,8 +248,8 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				I2C_Slave_SCL_Rising_Exti_Disable();
 				return;
 			}
-			if(sent_cnt <= sent_buff[START_ADDR]){
-				a_bit_value = sent_buff[sent_cnt++];
+			if(sent_count <= sent_buff[START_ADDR]){
+				a_bit_value = sent_buff[sent_count++];
 				delay_us(I2C_PD);
 				(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
 				a_bit_value <<= 1U;
