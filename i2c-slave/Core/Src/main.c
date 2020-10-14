@@ -30,14 +30,19 @@ void (* running)(void) = &master_start;
   */
 int main(void)
 {
+	__IO u32 i = 100000;
+
 
   HAL_Init();																							//Init HAL
 
   SystemClock_Config();																		//Config System Clock
+
+	while(i--);
 	
 	MX_USART2_UART_Init();																	//Init UART2 GPIO
 	
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&Rx_Byte, UART_RECEIVE_BYTE_NUMBER);
+	
 	
 	while(1){
 		running();
