@@ -252,41 +252,23 @@ void I2C_Master_SCL_Output_OD_Init(void){
 }
 
 
-/**
-	* @brief Init I2C GPIO  ---  SDA - PC4 
-	* @retval void
-	*/
-void I2C_Master_SDA_Output_OD_Init(void){
-	GPIO_InitTypeDef GPIO_InitStruct = {0};																 
-	__HAL_RCC_GPIOC_CLK_ENABLE();	
-	/*Configure I2C GPIO pins : SDA -- PC4 */
-  GPIO_InitStruct.Pin     =  I2C_SDA_PIN;
-  GPIO_InitStruct.Mode    =  GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Pull    =  GPIO_NOPULL;
-  GPIO_InitStruct.Speed   =  GPIO_SPEED_FREQ_VERY_HIGH;
-	
-  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);									//Init SDA
-	HAL_GPIO_WritePin(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_PIN_SET);			//Set SDA = high level 
-	
-	
-}
-
 
 /**
 	* @biref  I2C SDA Falling EXTI Init  -----    SDA - PC4
 	* @retval void
 	*/
-void I2C_Master_SDA_Rising_Falling_Init(){
-	__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
-	__HAL_GPIO_EXTI_CLEAR_RISING_IT(MASTER_EXTI_PIN);
+void I2C_Master_SDA__OutputOD_Rising_Falling_Init(){
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 	
 	/*Configure I2C GPIO pins : SDA - PC4 */
   GPIO_InitStruct.Pin = MASTER_EXTI_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING | GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+	
   HAL_GPIO_Init(MASTER_EXTI_PORT, &GPIO_InitStruct);
+	I2C_Master_SDA_Rising_Disable();
+	//I2C_SDA_1();
 	
 	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0, 0);								//Set Priority
   HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);												//Enable EXTI 4-15
@@ -294,21 +276,36 @@ void I2C_Master_SDA_Rising_Falling_Init(){
 
 
 /**
-	* @biref  I2C SDA Falling EXTI Init  -----    SDA - PC4
+	* @biref  I2C SDA Rising EXTI Disable  -----    SDA - PC4
 	* @retval void
 	*/
-void I2C_Master_SDA_Rising_Init(){
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
-	
-	/*Configure I2C GPIO pins : SDA - PC4 */
-  GPIO_InitStruct.Pin = I2C_SDA_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);
-	
-	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 1, 0);								//Set Priority
-  HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);												//Enable EXTI 4-15
+void I2C_Master_SDA_Rising_Disable(){
+	EXTI->RTSR1 &= I2C_SDA_EXTI_DISABLE_ADDR;
+}
+
+/**
+	* @biref  I2C SDA Rising EXTI Enable  -----    SDA - PC4
+	* @retval void
+	*/
+void I2C_Master_SDA_Rising_Enable(){
+	EXTI->RTSR1 |= I2C_SDA_EXTI_ENABLE_ADDR;
+}
+
+
+/**
+	* @biref  I2C SDA Falling EXTI Disable  -----    SDA - PC4
+	* @retval void
+	*/
+void I2C_Master_SDA_Falling_Disable(){
+	EXTI->FTSR1 &= I2C_SDA_EXTI_DISABLE_ADDR;
+}
+
+/**
+	* @biref  I2C SDA Falling EXTI Enable  -----    SDA - PC4
+	* @retval void
+	*/
+void I2C_Master_SDA_Falling_Enable(){
+	EXTI->FTSR1 |= I2C_SDA_EXTI_ENABLE_ADDR;
 }
 
 
@@ -406,11 +403,6 @@ u8 I2C_Master_SendByte(u8 data_byte){
 		data_byte <<= 1U;
 	}
 	return I2C_BUS_FREE;
-//	SCL_L()
-//	sda_L/H
-//	delay_ms()
-//	SCL_H()
-//	delay_ms()
 	
 }
 
@@ -443,18 +435,22 @@ u8 I2C_Master_ReadByte(){
 	* @retval uint32_t: It may be modified
 	*/
 u32 I2C_Master_Write(u8 slave_addr, u8 *data){
-	u8 *pdata = data;
-	u32 len = 0;
-	u8 scl_state = 0;
+	u8 *pdata 			 = 			data;
+	u32 len					 = 			0;
+	u8 scl_state		 = 			0;
 	
 	/*       I2C SDA Init               */
-	scl_state = I2C_SCL_READ();
-	delay_us(I2C_PD);
-	if((scl_state & I2C_SCL_READ()) != I2C_LEVEL_HIGH){
+	if(I2C_Bus_state == I2C_BUS_FREE ){
+		scl_state = I2C_SCL_READ();
+		delay_us(I2C_PD);
+		if((scl_state & I2C_SCL_READ()) != I2C_LEVEL_HIGH){
+			return I2C_BUS_BUSY;
+		}
+		I2C_Master_SDA_Falling_Disable();
+	}
+	else{
 		return I2C_BUS_BUSY;
 	}
-	I2C_Master_SDA_Output_OD_Init();
-	__HAL_GPIO_EXTI_CLEAR_FALLING_IT(MASTER_EXTI_PIN);
 	
 	//Send start signal
 	I2C_Master_Start();
@@ -473,8 +469,7 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data){
 		}
 	}
 	I2C_Master_Stop();
-	I2C_Master_SDA_Rising_Falling_Init();
-	
+	I2C_Master_SDA_Falling_Enable();
 	return I2C_BUS_FREE;
 }
 
@@ -489,12 +484,17 @@ u32 I2C_Master_Read(u8 slave_addr, u8 *buff){
 	u8 numByteToRead  =   0;
 	
 	/*       I2C SDA Init               */
-	scl_state = I2C_SCL_READ();
-	delay_us(I2C_PD);
-	if((scl_state & I2C_SCL_READ()) != I2C_LEVEL_HIGH){
+	if(I2C_Bus_state == I2C_BUS_FREE ){
+		scl_state = I2C_SCL_READ();
+		delay_us(I2C_PD);
+		if((scl_state & I2C_SCL_READ()) != I2C_LEVEL_HIGH){
+			return I2C_BUS_BUSY;
+		}
+		I2C_Master_SDA_Falling_Disable();
+	}
+	else{
 		return I2C_BUS_BUSY;
 	}
-	I2C_Master_SDA_Output_OD_Init();
 	
 	//Send start signal
 	I2C_Master_Start();
@@ -520,8 +520,8 @@ u32 I2C_Master_Read(u8 slave_addr, u8 *buff){
 		}
 	}
 	//Send end signal
-	I2C_Master_Stop();	
-	I2C_Master_SDA_Rising_Falling_Init();	
+	I2C_Master_Stop();
+	I2C_Master_SDA_Falling_Enable();
 	
 	return I2C_BUS_FREE;
 }

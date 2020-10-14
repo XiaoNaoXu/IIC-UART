@@ -36,6 +36,7 @@ typedef enum Running_State {
 extern Running_State running_state;
 extern void (* running)(void);
 extern void		 master_start(void);
+extern u8 			I2C_Bus_state;
 
 
 /**************************************************************************/
@@ -139,6 +140,8 @@ void 			LED_GPIO_Init(void);
 /*			  I2C RISING ENABLE AND DISABLE ADDR					*/
 #define I2C_SCL_EXTI_ENABLE_ADDR 	         	((u16)0x0020)       // SCL EXTI enable register
 #define I2C_SCL_EXTI_DISABLE_ADDR           ~((u16)0x0020)     // SCL EXTI disable register
+#define I2C_SDA_EXTI_ENABLE_ADDR 	         	((u16)0x0008)       // SCL EXTI enable register
+#define I2C_SDA_EXTI_DISABLE_ADDR           ~((u16)0x0008)     // SCL EXTI disable register
 
 
 /*			  LED port select 								            */
@@ -147,7 +150,7 @@ void 			LED_GPIO_Init(void);
 
 
 /* 			I2C address																	*/
-#define I2C_ADDRESS                     ((u8)0xA0)          // As a slave address
+#define I2C_ADDRESS                     ((u8)0xB0)          // As a slave address
 #define I2C_ADDRESS_LEN                 ((u8)0x02)					// A address length
 
 
@@ -242,10 +245,10 @@ void		 I2C_Master_Stop(void);
 
 /*			 Master GPIO Init and EXTI Init																*/
 void 		 I2C_Master_SCL_Output_OD_Init(void);
-void 		 I2C_Master_SDA_Output_OD_Init(void);
-void 		 I2C_Master_SDA_Rising_Falling_Init(void);
+void 		 I2C_Master_SDA__OutputOD_Rising_Falling_Init(void);
 void 		 I2C_Master_SDA_Falling_Disable(void);
-void 		 I2C_Master_SDA_Rising_Init(void);
+void 		 I2C_Master_SDA_Falling_Enable(void);
+void 		 I2C_Master_SDA_Rising_Enable(void);
 void 		 I2C_Master_SDA_Rising_Disable(void);
 
 #endif
