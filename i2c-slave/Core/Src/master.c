@@ -7,8 +7,7 @@
 #include "master.h"
 
 
-u8 							I2C_receive_buff[DEFAULT_BUFF_SIZE] = {0};
-
+extern u8 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
 
 
 /**
@@ -17,13 +16,11 @@ u8 							I2C_receive_buff[DEFAULT_BUFF_SIZE] = {0};
   */
 void master_start(){
 	
-	I2C_Master_SCL_Output_OD_Init();
-	
-	I2C_Master_SDA__OutputOD_Rising_Falling_Init();
-	
-	I2C_Master_SendByte(I2C_ADDRESS);
-	
-	while(running_state == MASTER);
+	while(running_state == MASTER){
+		if(UART_DATA_REG == UART_DATA_OK){
+			UART_Process_Param(&huart2);
+		}
+	}
 	
 }
 
@@ -35,7 +32,6 @@ void Master_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
 	if(I2C_SCL_READ()){
 		I2C_Bus_state = I2C_BUS_BUSY;
-		I2C_Master_SDA_Rising_Enable();
 	}
 }
 
@@ -47,7 +43,7 @@ void Master_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 void Master_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
 	if(I2C_SCL_READ()){
-		I2C_Bus_state = I2C_BUS_FREE;
-		I2C_Master_SDA_Rising_Disable();
+		I2C_Bus_state = I2C_BUS_IDLE;
+		I2C_SCL_Rising_Disable();
 	}
 }

@@ -18,8 +18,9 @@ __IO u32   led_frequency = 0;									        				//The frequency of the led
 __IO u32   led_duration = 0;										        			//The duration of the led
 Option     option = ret;												      				//Control read/write state
 
-u8         sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
-extern u8  I2C_buff[DEFAULT_BUFF_SIZE];
+u8         		sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
+extern u8  		I2C_buff[DEFAULT_BUFF_SIZE];
+extern u8 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
 
 
 
@@ -32,11 +33,8 @@ void slave_start(){
 	
 	LED_GPIO_Init();																				//Init Green LED GPIO --- PA5
 	
-	I2C_Slave_SDA_GPIO_Output_OD_Init();									  //Init SDA GPIO       --- PC4
-	
-	I2C_Slave_SCL_Falling_Exti_Enable();										//Enable SCL Falling exti
-	
 	param_assert();
+	
   while(running_state == SLAVE)
   {
 		if(led_duration){
@@ -140,11 +138,7 @@ void param_assert(){
 void Slave_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
 	if(is_I2C_Slave_Start()){
-		
-		I2C_Slave_SCL_Rising_Exti_Enable();
-		I2C_Slave_SCL_Falling_Exti_Disable();
 		flag_reset();
-		
 	}
 }
 
@@ -169,16 +163,19 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 		}
 		else{
  			if((a_bit_value & (I2C_ADDRESS + I2C_WRITE)) == a_bit_value){
+				I2C_SCL_Falling_Disable();
+				I2C_SCL_Rising_Enable();
 				option = read;
 			}
 			else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
+				I2C_SCL_Rising_Disable();
+				I2C_SCL_Falling_Enable();
 				option = write;
 				a_bit_value = I2C_buff[sent_count++];
 			}
 			else{
 				bit_location = 0;
-				I2C_Slave_SCL_Falling_Exti_Reable();
-				I2C_Slave_SCL_Rising_Exti_Disable();
+
 				return;
 			}
 			I2C_Slave_SendAck();
@@ -226,8 +223,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			}
 			else{
 				I2C_Slave_SendNAck();
-				I2C_Slave_SCL_Rising_Exti_Disable();
-				I2C_Slave_SCL_Falling_Exti_Reable();				
+				
 				param_assert();
 			}
 			bit_location = 0;
@@ -248,8 +244,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 		else{
 			if(I2C_SDA_READ()){
 				I2C_SDA_1();
-				I2C_Slave_SCL_Falling_Exti_Reable();
-				I2C_Slave_SCL_Rising_Exti_Disable();
+
 				return;
 			}
 			if(sent_count <= I2C_buff[START_ADDR]){
@@ -259,8 +254,7 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				a_bit_value <<= 1U;
 			}
 			else{
-				I2C_Slave_SCL_Falling_Exti_Reable();
-				I2C_Slave_SCL_Rising_Exti_Disable();
+				
 			}
 			bit_location = 0;
 		}

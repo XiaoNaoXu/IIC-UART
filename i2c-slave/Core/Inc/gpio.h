@@ -14,7 +14,7 @@
 #endif
 
 
-#include "main.h"
+#include "i2c.h"
 
 
 void MX_GPIO_Init(void);

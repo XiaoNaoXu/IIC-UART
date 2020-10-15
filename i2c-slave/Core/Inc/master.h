@@ -11,10 +11,8 @@
 
 
 #include "i2c.h"
-#include "usart.h"
 
 /*     UART receive byte																	*/
-extern u8 Rx_Byte;
 
 
 /*			frequency and duration of the Green LED  				  */

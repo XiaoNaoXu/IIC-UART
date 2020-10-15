@@ -1,5 +1,8 @@
 i2c-slave\stm32g0xx_it.o: ../Core/Src/stm32g0xx_it.c
 i2c-slave\stm32g0xx_it.o: ../Core/Inc/main.h
+i2c-slave\stm32g0xx_it.o: ../Core/Inc/slave.h
+i2c-slave\stm32g0xx_it.o: ../Core/Inc/i2c.h
+i2c-slave\stm32g0xx_it.o: ../Core/Inc/usart.h
 i2c-slave\stm32g0xx_it.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h
 i2c-slave\stm32g0xx_it.o: ../Core/Inc/stm32g0xx_hal_conf.h
 i2c-slave\stm32g0xx_it.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc.h
@@ -30,13 +33,7 @@ i2c-slave\stm32g0xx_it.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr.
 i2c-slave\stm32g0xx_it.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h
 i2c-slave\stm32g0xx_it.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart.h
 i2c-slave\stm32g0xx_it.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h
-i2c-slave\stm32g0xx_it.o: ../Core/Inc/gpio.h
-i2c-slave\stm32g0xx_it.o: ../Core/Inc/main.h
-i2c-slave\stm32g0xx_it.o: ../Core/Inc/slave.h
-i2c-slave\stm32g0xx_it.o: ../Core/Inc/i2c.h
 i2c-slave\stm32g0xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-i2c-slave\stm32g0xx_it.o: ../Core/Inc/master.h
-i2c-slave\stm32g0xx_it.o: ../Core/Inc/i2c.h
-i2c-slave\stm32g0xx_it.o: ../Core/Inc/usart.h
 i2c-slave\stm32g0xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+i2c-slave\stm32g0xx_it.o: ../Core/Inc/master.h
 i2c-slave\stm32g0xx_it.o: ../Core/Inc/stm32g0xx_it.h

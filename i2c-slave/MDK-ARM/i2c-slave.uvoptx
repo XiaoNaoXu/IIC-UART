@@ -152,9 +152,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>269</LineNumber>
+          <LineNumber>416</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134224388</Address>
+          <Address>134224674</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,23 +163,55 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Core\Src\i2c.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\i2c_slave\../Core/Src/i2c.c\269</Expression>
+          <Expression>\\i2c_slave\../Core/Src/i2c.c\416</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>209</LineNumber>
+          <LineNumber>395</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218898</Address>
+          <Address>134224616</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c</Filename>
+          <Filename>..\Core\Src\i2c.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\i2c_slave\../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c\209</Expression>
+          <Expression>\\i2c_slave\../Core/Src/i2c.c\395</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>424</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\Core\Src\i2c.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>445</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\Core\Src\i2c.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -405,7 +437,7 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>4</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>../Core/Src/stm32g0xx_it.c</PathWithFileName>

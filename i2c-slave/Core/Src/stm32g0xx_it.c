@@ -21,12 +21,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32g0xx_it.h"
-#include "stm32g0xx_hal_uart.h"
-#include "stm32g0xx_hal_uart_ex.h"
 /* Private includes ----------------------------------------------------------*/
 
 extern UART_HandleTypeDef huart2;
-extern uint8_t UART_Rx_Buffer[255];
 extern uint8_t Rx_Byte;
 extern Running_State running_state;
 
