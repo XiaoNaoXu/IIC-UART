@@ -7,10 +7,10 @@
 #include "i2c.h"
 
 
-u8 		 I2C_Bus_state							 			   =  I2C_BUS_IDLE;
-u8 		 I2C_buff[DEFAULT_BUFF_SIZE] 		     =  {0};
-u8 		 I2C_receive_buff[DEFAULT_BUFF_SIZE] =  {0};
-u8 		 UART_DATA_REG											 = 	NO_UART_DATA;
+I2C_TYPE 		 I2C_Bus_state							 			   =  I2C_BUS_IDLE;
+I2C_TYPE 		 I2C_buff[DEFAULT_BUFF_SIZE] 		     =  {0};
+I2C_TYPE 		 I2C_receive_buff[DEFAULT_BUFF_SIZE] =  {0};
+I2C_TYPE 		 UART_DATA_REG											 = 	NO_UART_DATA;
 
 
 
@@ -61,44 +61,16 @@ void LED_GPIO_Init(void)
 /**************************************************************************/
 
 
-/**
-	* @brief 	Set SCL to high level and busy waiting
-	* @retval void
-	*/
-void I2C_SCL_1(){
-	I2C_SCL_S_1();
-	while(I2C_SCL_READ() != I2C_LEVEL_HIGH);
-}
+/////////**
+////////	* @brief 	Set SCL to high level and busy waiting
+////////	* @retval void
+////////	*/
+////////void I2C_SCL_1(){
+////////	I2C_SCL_S_1();
+////////	while(I2C_SCL_READ() != I2C_LEVEL_HIGH);
+////////}
 
 
-///**
-//	* @brief 	Set SCL to high level and busy waiting
-//	* @retval void
-//	*/
-//void I2C_SDA_1(){
-//	I2C_SCL_S_1();
-//	while(I2C_SCL_READ() != I2C_LEVEL_HIGH);
-//}
-
-
-///**
-//	* @brief 	Set SCL to high level and busy waiting
-//	* @retval void
-//	*/
-//void I2C_SCL_0(){
-//	I2C_SCL_S_1();
-//	while(I2C_SCL_READ() != I2C_LEVEL_HIGH);
-//}
-
-
-///**
-//	* @brief 	Set SCL to high level and busy waiting
-//	* @retval void
-//	*/
-//void I2C_SDA_0(){
-//	I2C_SCL_S_1();
-//	while(I2C_SCL_READ() != I2C_LEVEL_HIGH);
-//}
 
 
 
@@ -135,10 +107,10 @@ void delay_ms(uint32_t ms)
 
 /**
 	* @brief Determine if the signal is a start signal
-	* @retval u8, GPIO_PIN_SET(high level) or GPIO_PIN_RESET(low level)
+	* @retval I2C_TYPE, GPIO_PIN_SET(high level) or GPIO_PIN_RESET(low level)
 	*/
-u8 is_I2C_Slave_Start(){
-	if(!I2C_SDA_READ()){
+I2C_TYPE is_I2C_Slave_Start(){
+	if(I2C_SCL_READ()){
 		return GPIO_PIN_SET;
 	}
 	return GPIO_PIN_RESET;
@@ -146,9 +118,9 @@ u8 is_I2C_Slave_Start(){
 
 /**
 	* @brief Determine if the signal is a stop signal
-	* @retval u8, GPIO_PIN_SET(high level) or GPIO_PIN_RESET(low level)
+	* @retval I2C_TYPE, GPIO_PIN_SET(high level) or GPIO_PIN_RESET(low level)
 	*/
-u8 is_I2C_Slave_Stop(){
+I2C_TYPE is_I2C_Slave_Stop(){
 	if(I2C_SCL_READ()){
 		return GPIO_PIN_SET;
 	}
@@ -157,30 +129,11 @@ u8 is_I2C_Slave_Stop(){
 
 
 /**
-	* @brief Send a Ack
-	* @retval void
-	*/
-void I2C_Slave_SendAck(void){
-	I2C_SDA_0();
-	delay_us(I2C_PD);
-	I2C_SDA_1();
-}
-
-/**
-	* @brief Send a NAck
-	* @retval void
-	*/
-void I2C_Slave_SendNAck(void){
-	I2C_SDA_1();
-	delay_us(I2C_PD);
-}
-
-/**
 	* @brief Wait a Ack
-	* @retval u8: received a ack from SDA
+	* @retval I2C_TYPE: received a ack from SDA
 	*/
-u8 I2C_Slave_WaitAck(){
-	__IO u8 re_value = 1U;
+I2C_TYPE I2C_Slave_WaitAck(){
+	__IO I2C_TYPE re_value = 1U;
 	if(I2C_SCL_READ()){
 		re_value = I2C_SDA_READ();
 		delay_us(I2C_PD);
@@ -294,7 +247,7 @@ void I2C_Master_SDA_Output_OD_Init(){
 	* @retval void
 	*/
 void I2C_Master_Start(){
-	I2C_SCL_S_1();
+	I2C_SCL_1();
 	I2C_SDA_1();
 	delay_us(I2C_PD);
 	I2C_SDA_0();
@@ -308,7 +261,7 @@ void I2C_Master_Stop(){
 	I2C_SCL_0();
 	I2C_SDA_0();
 	delay_us(I2C_PD);
-	I2C_SCL_S_1();
+	I2C_SCL_1();
 	I2C_SDA_1();
 }
 
@@ -343,8 +296,8 @@ void I2C_Master_SendNAck(void){
 	* @param re_value: A ack or a Nack
 	* @retval uint8_t:acknowledge
 	*/
-u8 I2C_Master_WaitAck(){
-	u8 re_value;
+I2C_TYPE I2C_Master_WaitAck(){
+	I2C_TYPE re_value;
 	I2C_SCL_0();
 	I2C_SDA_1();
 	//I2C_SDA_0();	
@@ -361,8 +314,8 @@ u8 I2C_Master_WaitAck(){
 	* @param i: Control loop variable
 	* @retval void
 	*/
-u8 I2C_Master_SendByte(u8 data_byte){
-	__IO u8 i = 0, temp = 0;
+I2C_TYPE I2C_Master_SendByte(I2C_TYPE data_byte){
+	__IO I2C_TYPE i = 0, temp = 0;
 	for(i = 0; i < BIT_LENGTH; ++i){
 		I2C_SCL_0();	
 		if((data_byte) & 0x80)
@@ -390,8 +343,8 @@ u8 I2C_Master_SendByte(u8 data_byte){
 	* @param i: Control loop variable
 	* @retval uint8_t: received byte from SDA
 	*/
-u8 I2C_Master_ReadByte(){
-	__IO u8 i, value = 0;
+I2C_TYPE I2C_Master_ReadByte(){
+	__IO I2C_TYPE i, value = 0;
 	for(i = 0; i < BIT_LENGTH; ++i){
 		I2C_SCL_0();
 		delay_us(I2C_PD);
@@ -410,8 +363,8 @@ u8 I2C_Master_ReadByte(){
 	* @param len: Length of data to be sent
 	* @retval uint32_t: It may be modified
 	*/
-u32 I2C_Master_Write(u8 slave_addr, u8 *data){
-	u8 *pdata 			 = 			data;
+u32 I2C_Master_Write(I2C_TYPE slave_addr, I2C_TYPE *data){
+	I2C_TYPE *pdata 			 = 			data;
 	u32 len					 = 			0;
 	
 	/*       I2C SDA Init               */
@@ -451,10 +404,10 @@ u32 I2C_Master_Write(u8 slave_addr, u8 *data){
 	* @brief Read an amount of data
 	* @retval uint32_t: It may be modified
 	*/
-u32 I2C_Master_Read(u8 slave_addr, u8 *buff){
-	u8 *pdata         =   buff;
+u32 I2C_Master_Read(I2C_TYPE slave_addr, I2C_TYPE *buff){
+	I2C_TYPE *pdata         =   buff;
 	u32 len           =   0;
-	u8 numByteToRead  =   0;
+	I2C_TYPE numByteToRead  =   0;
 	
 	/*       I2C SDA Init               */
 	if(I2C_Bus_state == I2C_BUS_BUSY ){
@@ -512,31 +465,22 @@ u32 I2C_Master_Read(u8 slave_addr, u8 *buff){
 	* @retval void
 	*/
 void I2C_GPIO_Init(void){
-	__HAL_RCC_GPIOC_CLK_ENABLE();																				//Enable RCC GPIOC CLOCK
+	__HAL_RCC_GPIOC_CLK_ENABLE();																							//Enable RCC GPIOC CLOCK
 	GPIO_InitTypeDef GPIO_InitStruct = {0};																	 
 	
-	/*Configure I2C GPIO pins : SDA - PC4 */
-  GPIO_InitStruct.Pin		 = 	I2C_SDA_PIN;
+	/*Configure I2C GPIO pins : SDA - PC4,  SCL -- PC5  */
+  GPIO_InitStruct.Pin		 = 	I2C_SDA_PIN | I2C_SCL_PIN;
   GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD  | GPIO_MODE_IT_RISING_FALLING;
-  GPIO_InitStruct.Pull	 = 	GPIO_PULLUP;
+  GPIO_InitStruct.Pull	 = 	GPIO_NOPULL;
 	GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);											// Init SDA
-	I2C_SDA_Falling_Rising_Disable();																		// Disable SDA EXTI Falling and Rising
-	I2C_SDA_1();																												// SET SDA = high level
-	
-	
-	/*Configure I2C GPIO pins : SCL -- PC5 */
-	GPIO_InitStruct.Pin    =  I2C_SCL_PIN;
-  GPIO_InitStruct.Mode   =  GPIO_MODE_OUTPUT_OD | GPIO_MODE_IT_RISING_FALLING;
-  GPIO_InitStruct.Pull   =  GPIO_NOPULL;
-  GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(I2C_SCL_PORT, &GPIO_InitStruct);               		//Init SCL
+  HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);														// Init SDA
+	I2C_SDA_Falling_Rising_Disable();																					// Disable SDA EXTI Falling and Rising
 	I2C_SCL_Rising_Disable();
-	I2C_SCL_S_1();																									//SET SCL = high level
-	
-	
-	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 10, 0);											//Set Priority
-  HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);															//Enable EXTI 4-15
+	I2C_SDA_1();																															// SET SDA = high level
+	I2C_SCL_1();																														//SET SCL = high level
+		
+	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 5, 0);																//Set Priority
+  HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);																				//Enable EXTI 4-15
 }
 
 
@@ -557,9 +501,9 @@ void I2C_GPIO_Init(void){
   * @brief  This function is combining a string
 	* @retval uint32_t rx: String length
   */
-u8 I2C_To_UART(u8 *I2C_ptr){
-	__IO u8 i = 0, temp, rx = 0, div = '1';
-	__IO u8 data_len = I2C_ptr[START_ADDR], reg = I2C_ptr[BASE_ADDR];
+I2C_TYPE I2C_To_UART(I2C_TYPE *I2C_ptr){
+	__IO I2C_TYPE i = 0, temp, rx = 0, div = '1';
+	__IO I2C_TYPE data_len = I2C_ptr[START_ADDR], reg = I2C_ptr[BASE_ADDR];
 
 	memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
 

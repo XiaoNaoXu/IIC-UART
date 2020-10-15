@@ -14,7 +14,7 @@
 
 
 /*				Process parameter functions												*/
-u32 			get_units_mul(u8);
+u32 			get_units_mul(I2C_TYPE);
 void  		flag_reset(void);
 void 			param_assert(void);
 
@@ -24,8 +24,10 @@ void 			set_led_duration(u32);
 
 /*				Slave related functions														*/
 void 			slave_start(void); 
-void 			Slave_EXTI_Rising_Callback(u16);
-void			Slave_EXTI_Falling_Callback(u16);
-u8 				Date_To_I2CBuff(u8);
+void 			Slave_SDA_EXTI_Rising_Callback(void);
+void			Slave_SDA_EXTI_Falling_Callback(void);
+void 			Slave_SCL_EXTI_Rising_Callback(void);
+void			Slave_SCL_EXTI_Falling_Callback(void);
+I2C_TYPE 				Date_To_I2CBuff(I2C_TYPE);
 
 #endif

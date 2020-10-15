@@ -17,8 +17,8 @@
 #include "stm32g0xx_hal_uart_ex.h"
 
 /*      UART return information                                                  */
-#define MAX_COMMAND_LENGH 								((u8)0x14)				 /*    Max command legth         */
-#define MAX_COMMAND_BUFF_SIZE 						((u8)0x14)				 /*    Get command buff size     */
+#define MAX_COMMAND_LENGH 								((I2C_TYPE)0x14)				 /*    Max command legth         */
+#define MAX_COMMAND_BUFF_SIZE 						((I2C_TYPE)0x14)				 /*    Get command buff size     */
 
 
 /*      UART command                                                            */
@@ -28,10 +28,10 @@
 #define LED_DURA 								   			 		"dura"							 /*    Led duration         				      */
 #define LED_FREQ 						    			  		"freq"							 /*    Led frequency        				      */
 #define LED_DURA_FREQ  								  		"dura_freq"			     /*    Led frequency and  frequency       */
-#define UART_GET_LED_INFO_PARA_NUM								((u8)0x03)
-#define UART_SET_LED_INFO_PARA_NUM								((u8)0x05)
-#define UART_GET_RUNSTATE_PARA_NUM								((u8)0x01)
-#define UART_SET_RUNSTATE_PARA_NUM								((u8)0x03)
+#define UART_GET_LED_INFO_PARA_NUM								((I2C_TYPE)0x03)
+#define UART_SET_LED_INFO_PARA_NUM								((I2C_TYPE)0x05)
+#define UART_GET_RUNSTATE_PARA_NUM								((I2C_TYPE)0x01)
+#define UART_SET_RUNSTATE_PARA_NUM								((I2C_TYPE)0x03)
 
 
 /*      UART return information                                                  */
@@ -57,11 +57,11 @@
 /*			Define UART related constant																		*/
 #define UART_TR_TIMEOUT								 			((u16)0xFFFF)
 #define UART_RX_BUFF_SIZE 						 			((u8)0xFF)
-#define UART_RECEIVE_BYTE_NUMBER						((u8)0x01)
+#define UART_RECEIVE_BYTE_NUMBER						((I2C_TYPE)0x01)
 
 
-#define UART_DATA_OK												((u8)0x01)
-#define NO_UART_DATA												((u8)0x00)
+#define UART_DATA_OK												((I2C_TYPE)0x01)
+#define NO_UART_DATA												((I2C_TYPE)0x00)
 
 /*			Uart modle enable																								*/
 #define HAL_UART_MODULE_ENABLED

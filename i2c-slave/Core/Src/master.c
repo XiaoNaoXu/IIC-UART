@@ -7,7 +7,7 @@
 #include "master.h"
 
 
-extern u8 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
+extern I2C_TYPE 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
 
 
 /**

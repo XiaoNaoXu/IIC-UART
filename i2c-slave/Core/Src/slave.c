@@ -9,18 +9,18 @@
 
 #define receive_buff sent_buff    														// Receive and send use the same array
 
-__IO u8    bit_location = 0U;        													//Records the location of the bits received
-__IO u8    a_bit_value = 0U;																	//Store a full byte received
-__IO u8    receive_cnt = 0;																		//The number that has been sent
-__IO u8    receive_len = 3;															   		//The number when need to send
-__IO u8    sent_count = 0;												      				//The number that has been received
+__IO I2C_TYPE    bit_location = 0U;        													//Records the location of the bits received
+__IO I2C_TYPE    a_bit_value = 0U;																	//Store a full byte received
+__IO I2C_TYPE    receive_cnt = 0;																		//The number that has been sent
+__IO I2C_TYPE    receive_len = 3;															   		//The number when need to send
+__IO I2C_TYPE    sent_count = 0;												      				//The number that has been received
 __IO u32   led_frequency = 0;									        				//The frequency of the led
 __IO u32   led_duration = 0;										        			//The duration of the led
 Option     option = ret;												      				//Control read/write state
 
-u8         		sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
-extern u8  		I2C_buff[DEFAULT_BUFF_SIZE];
-extern u8 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
+I2C_TYPE         		sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
+extern I2C_TYPE  		I2C_buff[DEFAULT_BUFF_SIZE];
+extern I2C_TYPE 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
 
 
 
@@ -31,9 +31,9 @@ extern u8 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
   */
 void slave_start(){
 	
-	LED_GPIO_Init();																				//Init Green LED GPIO --- PA5
-	
 	param_assert();
+	
+	I2C_SDA_Falling_Enable();
 	
   while(running_state == SLAVE)
   {
@@ -83,7 +83,7 @@ void set_led_duration(u32 duration){
   * @brief  Convert s/ms to us.
   * @retval None
   */
-u32 get_units_mul(u8 units){
+u32 get_units_mul(I2C_TYPE units){
 	switch(units){
 		case I2C_S: return I2C_S_TO_US;
 		case I2C_MS: return I2C_MS_TO_US;
@@ -97,7 +97,7 @@ u32 get_units_mul(u8 units){
   * @retval None
   */
 void param_assert(){
-	u8 state = receive_buff[BASE_ADDR], offset = START_ADDR;
+	I2C_TYPE state = receive_buff[BASE_ADDR], offset = START_ADDR;
 	
 	while(state){
 		/*     This byte use for duration only                   */
@@ -135,19 +135,72 @@ void param_assert(){
   * @brief  This function is slave's falling exti callback.
   * @retval None
   */
-void Slave_EXTI_Falling_Callback(uint16_t GPIO_Pin)
+void Slave_SDA_EXTI_Falling_Callback()
 {
 	if(is_I2C_Slave_Start()){
+		I2C_SDA_Falling_Disable();
+		I2C_SCL_Rising_Enable();
 		flag_reset();
 	}
 }
 
 
 /**
+  * @brief  This function is slave's falling exti callback.
+  * @retval None
+  */
+void Slave_SDA_EXTI_Rising_Callback()
+{
+	if(is_I2C_Slave_Stop()){
+		I2C_SCL_Falling_Rising_Disable();
+		I2C_SDA_Falling_Enable();
+	}
+}
+
+
+/**
+  * @brief  This function is slave's falling exti callback.
+  * @retval None
+  */
+void Slave_SCL_EXTI_Falling_Callback()
+{
+	bit_location++;
+	if(option == write){
+		if(bit_location <= BIT_LENGTH){
+			SEND_HIGHEST_BIT(a_bit_value);
+			a_bit_value <<= 1U;
+			if(bit_location == BIT_LENGTH){
+				I2C_SCL_FallingDisable_RisingEnable();
+				return;
+			}
+		}
+		else{
+			//
+		}
+	}
+	else{
+		if(bit_location == BIT_LENGTH + 1){
+			if(receive_cnt < receive_len){
+				I2C_Slave_SendAck();
+			}
+			else{
+				I2C_Slave_SendNAck();
+			}
+		}
+		else if(bit_location == BIT_LENGTH + 2){
+			I2C_Slave_SendNAck();
+		}
+		I2C_SCL_FallingDisable_RisingEnable();
+	}
+}
+
+
+
+/**
   * @brief  This function is slave's rising exti callback.
   * @retval None
   */
-void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
+void Slave_SCL_EXTI_Rising_Callback()
 {
 	/*receive first bit : its address and read/write bit.  */
 	if(option == ret){
@@ -155,21 +208,16 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 		if(bit_location <= BIT_LENGTH){
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
-			
 			if(bit_location == BIT_LENGTH){
-				delay_us(I2C_PD);
-				I2C_SDA_0();
+				I2C_SCL_FallingEnable_RisingDisable();
 			}
 		}
 		else{
  			if((a_bit_value & (I2C_ADDRESS + I2C_WRITE)) == a_bit_value){
-				I2C_SCL_Falling_Disable();
-				I2C_SCL_Rising_Enable();
 				option = read;
 			}
 			else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
-				I2C_SCL_Rising_Disable();
-				I2C_SCL_Falling_Enable();
+				I2C_SCL_FallingEnable_RisingDisable();
 				option = write;
 				a_bit_value = I2C_buff[sent_count++];
 			}
@@ -179,10 +227,6 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 				return;
 			}
 			I2C_Slave_SendAck();
-			if(option == write){
-				(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
-				a_bit_value <<= 1U;
-			}
 			bit_location = 0;
 		}
 	}
@@ -229,52 +273,42 @@ void Slave_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 			bit_location = 0;
 		}
 	}
-	/*   To be confirmed   																					*/
 	else if(option == write){
-		bit_location++;
-		if(bit_location <= BIT_LENGTH){
+		if(I2C_SDA_READ()){
+			return;
+		}
+		if(sent_count <= I2C_buff[START_ADDR]){
+			a_bit_value = I2C_buff[sent_count++];
 			delay_us(I2C_PD);
-			if(bit_location == BIT_LENGTH){
-				I2C_SDA_1();
-				return;
-			}
-			(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
+			SEND_HIGHEST_BIT(a_bit_value);
 			a_bit_value <<= 1U;
 		}
 		else{
-			if(I2C_SDA_READ()){
-				I2C_SDA_1();
-
-				return;
-			}
-			if(sent_count <= I2C_buff[START_ADDR]){
-				a_bit_value = I2C_buff[sent_count++];
-				delay_us(I2C_PD);
-				(a_bit_value & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0());
-				a_bit_value <<= 1U;
-			}
-			else{
 				
-			}
-			bit_location = 0;
 		}
+		bit_location = 0;
 	}
+
 }
 
 
-void Data_Transfer(u32 para, u8 offset){
+
+
+
+
+void Data_Transfer(u32 para, I2C_TYPE offset){
 	
 	if((para / I2C_S_TO_US) <= 0xFF && (para / I2C_S_TO_US) >= 0x01 ){
-		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (u8)(para/I2C_S_TO_US);
-		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (u8)'s';
+		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (I2C_TYPE)(para/I2C_S_TO_US);
+		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (I2C_TYPE)'s';
 	}
 	else if((para / I2C_MS_TO_US) <= 0xFF  && (para / I2C_S_TO_US) >= 0x01 ){
-		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (u8)(para/I2C_MS_TO_US);
-		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (u8)'m';
+		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (I2C_TYPE)(para/I2C_MS_TO_US);
+		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (I2C_TYPE)'m';
 	}
 	else{
-		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (u8)(para/I2C_MS_TO_US);
-		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (u8)'u';
+		I2C_buff[offset + BASE_ADDR + TIME_OFFSET] = (I2C_TYPE)(para/I2C_MS_TO_US);
+		I2C_buff[offset + BASE_ADDR + UNITS_OFFSET] = (I2C_TYPE)'u';
 	}
 }
 
@@ -283,7 +317,7 @@ void Data_Transfer(u32 para, u8 offset){
 	* 				when running state is slave but receive a get command.
   * @retval None
   */
-u8 Date_To_I2CBuff(u8 state){
+I2C_TYPE Date_To_I2CBuff(I2C_TYPE state){
 	I2C_buff[START_ADDR] = (state == LED_DURATION_FREQUENCY) ? (I2C_PARA_LENGTH):(I2C_PARA_LENGTH - 2);
 	I2C_buff[BASE_ADDR] = state;
 	while(state){
