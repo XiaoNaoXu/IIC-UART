@@ -19,9 +19,6 @@ __IO u32   led_duration = 0;										        			//The duration of the led
 Option     option = ret;												      				//Control read/write state
 
 I2C_TYPE         		sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
-extern I2C_TYPE  		I2C_buff[DEFAULT_BUFF_SIZE];
-extern I2C_TYPE 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
-
 
 
 
@@ -33,16 +30,18 @@ void slave_start(){
 	
 	param_assert();
 	
+	I2C_SCL_Falling_Disable();
+	
 	I2C_SDA_Falling_Enable();
 	
   while(running_state == SLAVE)
   {
-		if(led_duration){
-			LED(led_duration);
-		}
-		if(led_frequency){
-			delay_us(led_frequency);
-		}
+//		if(led_duration){
+//			LED(led_duration);
+//		}
+//		if(led_frequency){
+//			delay_us(led_frequency);
+//		}
   }
 }
 
@@ -174,9 +173,6 @@ void Slave_SCL_EXTI_Falling_Callback()
 				return;
 			}
 		}
-		else{
-			//
-		}
 	}
 	else{
 		if(bit_location == BIT_LENGTH + 1){
@@ -185,12 +181,14 @@ void Slave_SCL_EXTI_Falling_Callback()
 			}
 			else{
 				I2C_Slave_SendNAck();
+				
 			}
 		}
 		else if(bit_location == BIT_LENGTH + 2){
-			I2C_Slave_SendNAck();
+			bit_location = 0;
+			I2C_SDA_1();
+			I2C_SCL_FallingDisable_RisingEnable();
 		}
-		I2C_SCL_FallingDisable_RisingEnable();
 	}
 }
 
@@ -203,31 +201,28 @@ void Slave_SCL_EXTI_Falling_Callback()
 void Slave_SCL_EXTI_Rising_Callback()
 {
 	/*receive first bit : its address and read/write bit.  */
+	//LED(0);
 	if(option == ret){
 		bit_location++;
 		if(bit_location <= BIT_LENGTH){
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
 			if(bit_location == BIT_LENGTH){
-				I2C_SCL_FallingEnable_RisingDisable();
+				if((a_bit_value & (I2C_ADDRESS + I2C_WRITE)) == a_bit_value){
+					option = read;
+					I2C_SCL_FallingEnable_RisingDisable();
+				}
+				else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
+					I2C_SCL_FallingEnable_RisingDisable();
+					option = write;
+					a_bit_value = I2C_buff[sent_count++];
+				}
+				else{
+					bit_location = 0;
+					I2C_SCL_FallingDisable_RisingEnable();
+					return;
+				}
 			}
-		}
-		else{
- 			if((a_bit_value & (I2C_ADDRESS + I2C_WRITE)) == a_bit_value){
-				option = read;
-			}
-			else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
-				I2C_SCL_FallingEnable_RisingDisable();
-				option = write;
-				a_bit_value = I2C_buff[sent_count++];
-			}
-			else{
-				bit_location = 0;
-
-				return;
-			}
-			I2C_Slave_SendAck();
-			bit_location = 0;
 		}
 	}
 		
@@ -241,54 +236,27 @@ void Slave_SCL_EXTI_Rising_Callback()
 			a_bit_value |= I2C_SDA_READ();
 			
 			if(bit_location == BIT_LENGTH){
-				delay_us(I2C_PD);
-				if(receive_cnt  <= receive_len){
-					I2C_SDA_0();
+				/*       Store this byte and wait acknowledge              */
+				/*       How to store first byte                           */
+				if(!receive_cnt){
+					receive_len = a_bit_value;
 				}
-				else{
-					I2C_SDA_1();
-				}
+				receive_buff[receive_cnt++] = a_bit_value;
+				bit_location = 0;
+				I2C_SCL_FallingEnable_RisingDisable();
 			}
-		}
-		else{
-			/*       Store this byte and wait acknowledge              */
-			/*       How to store first byte                           */
-			if(!receive_cnt){
-				receive_len = a_bit_value;
-			}
-			
-			/*       How to store next byte received                   */
-			receive_buff[receive_cnt++] = a_bit_value;
-			
-			
-			/*      Send acknowledge and reable/disable EXTI            */
-			if(receive_cnt < receive_len){
-				I2C_Slave_SendAck();
-			}
-			else{
-				I2C_Slave_SendNAck();
-				
-				param_assert();
-			}
-			bit_location = 0;
 		}
 	}
 	else if(option == write){
+		bit_location = 0;
 		if(I2C_SDA_READ()){
+			I2C_SCL_FallingEnable_RisingDisable();
 			return;
 		}
 		if(sent_count <= I2C_buff[START_ADDR]){
 			a_bit_value = I2C_buff[sent_count++];
-			delay_us(I2C_PD);
-			SEND_HIGHEST_BIT(a_bit_value);
-			a_bit_value <<= 1U;
 		}
-		else{
-				
-		}
-		bit_location = 0;
 	}
-
 }
 
 

@@ -7,14 +7,14 @@
 #include "master.h"
 
 
-extern I2C_TYPE 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
-
 
 /**
   * @brief  Master entry point.
   * @retval None
   */
 void master_start(){
+	
+	//I2C_Master_SendByte(I2C_ADDRESS);
 	
 	while(running_state == MASTER){
 		if(UART_DATA_REG == UART_DATA_OK){

@@ -48,11 +48,11 @@ typedef enum Running_State {
 	      slave    =   SLAVE
 }Running_State;
 
-extern Running_State running_state;
-extern void (* running)(void);
-extern void		 master_start(void);
-extern void		 slave_start(void);
-extern I2C_TYPE 			I2C_Bus_state;
+extern Running_State 		running_state;
+extern void 						(* running)(void);
+extern void		 					master_start(void);
+extern void		 					slave_start(void);
+extern I2C_TYPE 				I2C_Bus_state;
 
 
 
@@ -84,7 +84,7 @@ extern I2C_TYPE 			I2C_Bus_state;
 
 /*      SET SDA LEVEL																			  */
 #define I2C_SDA_1() 			I2C_SDA_PORT->BSRR = I2C_SDA_PIN							// Set SDA = 1
-#define I2C_SDA_0() 			I2C_SDA_PORT->BRR = I2C_SDA_PIN								// Set SDA = 0
+#define I2C_SDA_0() 			I2C_SDA_PORT->BRR  = I2C_SDA_PIN								// Set SDA = 0
 
 
 /*			SET SCL LEVEL																				*/
@@ -286,6 +286,24 @@ void		 I2C_Master_Stop(void);
 #define UART_I2C_OK												((I2C_TYPE)0x01)
 #define NO_I2C_DATA												((I2C_TYPE)0x00)
 
+
+#define I2C_GPIO_EXTI_Rising_Callback(GPIO_Pin)   
+
+#define I2C_GPIO_EXTI_Falling_Callback(GPIO_Pin)
+
+#define I2C_GPIO_EXTI_IRQHandler(GPIO_Pin)	 {if (__HAL_GPIO_EXTI_GET_RISING_IT(GPIO_Pin) != 0x00u){\
+																								 __HAL_GPIO_EXTI_CLEAR_RISING_IT(GPIO_Pin);\
+																								 HAL_GPIO_EXTI_Rising_Callback(GPIO_Pin);}\
+																						 else if (__HAL_GPIO_EXTI_GET_FALLING_IT(GPIO_Pin) != 0x00u){\
+																								 __HAL_GPIO_EXTI_CLEAR_FALLING_IT(GPIO_Pin);\
+																								 HAL_GPIO_EXTI_Falling_Callback(GPIO_Pin);}\
+																						 }
+
+
+extern I2C_TYPE  		I2C_buff[DEFAULT_BUFF_SIZE];
+extern I2C_TYPE 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
+
+
 /*			 I2C GPIO Init 																									*/
 void 		 I2C_GPIO_Init(void);
 
@@ -313,10 +331,10 @@ void 		 I2C_GPIO_Init(void);
 
 
 extern I2C_TYPE 									UART_Process_Param(UART_HandleTypeDef *);
-extern UART_HandleTypeDef 	huart2;
+extern UART_HandleTypeDef 				huart2;
 extern I2C_TYPE 		 						  UART_DATA_REG;
 extern I2C_TYPE										uart_rx_cnt;
-extern char 								UART_Rx_Buffer[UART_RX_BUFF_SIZE];
+extern char 											UART_Rx_Buffer[UART_RX_BUFF_SIZE];
 
 
 

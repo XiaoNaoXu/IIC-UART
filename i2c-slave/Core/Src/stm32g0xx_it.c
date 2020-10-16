@@ -38,10 +38,12 @@ extern Running_State running_state;
 void EXTI4_15_IRQHandler(void)
 {
 	if(running_state == MASTER){
-		HAL_GPIO_EXTI_IRQHandler(MASTER_EXTI_PIN);
+		I2C_GPIO_EXTI_IRQHandler(I2C_SCL_PIN);
+		
 	}
 	else{
-		HAL_GPIO_EXTI_IRQHandler(SLAVE_EXTI_PIN);
+		I2C_GPIO_EXTI_IRQHandler(I2C_SDA_PIN);
+		I2C_GPIO_EXTI_IRQHandler(I2C_SCL_PIN);
 	}
 }
 

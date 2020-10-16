@@ -11,6 +11,7 @@ I2C_TYPE 		 I2C_Bus_state							 			   =  I2C_BUS_IDLE;
 I2C_TYPE 		 I2C_buff[DEFAULT_BUFF_SIZE] 		     =  {0};
 I2C_TYPE 		 I2C_receive_buff[DEFAULT_BUFF_SIZE] =  {0};
 I2C_TYPE 		 UART_DATA_REG											 = 	NO_UART_DATA;
+I2C_TYPE 		 I2C_DATA_REG											 	 = 	NO_I2C_DATA;
 
 
 
@@ -247,10 +248,8 @@ void I2C_Master_SDA_Output_OD_Init(){
 	* @retval void
 	*/
 void I2C_Master_Start(){
-	I2C_SCL_1();
-	I2C_SDA_1();
-	delay_us(I2C_PD);
 	I2C_SDA_0();
+	delay_us(I2C_PD);
 }
 
 /**
@@ -321,6 +320,7 @@ I2C_TYPE I2C_Master_SendByte(I2C_TYPE data_byte){
 		if((data_byte) & 0x80)
 		{
 			I2C_SDA_1();
+			//temp = I2C_SDA_READ();                                  // Waiting for electricity
 			if(I2C_SDA_READ() != I2C_LEVEL_HIGH){
 				return I2C_BUS_BUSY;
 			}
@@ -470,14 +470,14 @@ void I2C_GPIO_Init(void){
 	
 	/*Configure I2C GPIO pins : SDA - PC4,  SCL -- PC5  */
   GPIO_InitStruct.Pin		 = 	I2C_SDA_PIN | I2C_SCL_PIN;
-  GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD  | GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD | GPIO_MODE_IT_RISING_FALLING ;
   GPIO_InitStruct.Pull	 = 	GPIO_NOPULL;
 	GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);														// Init SDA
 	I2C_SDA_Falling_Rising_Disable();																					// Disable SDA EXTI Falling and Rising
-	I2C_SCL_Rising_Disable();
+	I2C_SCL_Falling_Rising_Disable();
 	I2C_SDA_1();																															// SET SDA = high level
-	I2C_SCL_1();																														//SET SCL = high level
+	I2C_SCL_1();																															//SET SCL = high level
 		
 	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 5, 0);																//Set Priority
   HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);																				//Enable EXTI 4-15

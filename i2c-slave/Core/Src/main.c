@@ -12,10 +12,6 @@ I2C_TYPE 		uart_rx_cnt												=  0;
 char  UART_Rx_Buffer[UART_RX_BUFF_SIZE] =  {0};
 
 
-extern I2C_TYPE I2C_buff[DEFAULT_BUFF_SIZE];
-extern I2C_TYPE I2C_receive_buff[DEFAULT_BUFF_SIZE];
-
-
 
 Running_State running_state = master;
 void (* running)(void) = &master_start;
@@ -39,11 +35,11 @@ int main(void)
 	
 	LED_GPIO_Init();																				//Init Green LED GPIO --- PA5
 	
+	I2C_GPIO_Init();
+		
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&Rx_Byte, UART_RECEIVE_BYTE_NUMBER);
 	
 	//I2C_Master_SDA_Output_OD_Init();
-	
-	I2C_GPIO_Init();
 	
 	while(1){
 		running();
@@ -318,13 +314,13 @@ I2C_TYPE UART_Process_Param(UART_HandleTypeDef *huart){
 					I2C_buff[BASE_ADDR + UNITS_OFFSET] = (I2C_TYPE)command[4][0];
 					if(I2C_BUS_BUSY == I2C_Master_Write((I2C_TYPE)String_To_Hex_Of_Data(command[2], strlen(command[2])) + I2C_WRITE, I2C_buff)){
 						HAL_UART_Transmit(huart, (I2C_TYPE *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
-						return I2C_BUS_BUSY;
+						break;
 					}
 					
 					delay_ms(1);
 					if(I2C_BUS_BUSY == I2C_Master_Read((I2C_TYPE)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff)){
 						HAL_UART_Transmit(huart, (I2C_TYPE *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
-						return I2C_BUS_BUSY;
+						break;
 					}
 					I2C_receive_buff[ADDR_OFFSET] = '\0';
 					if(!strcmp((char *)(I2C_buff + 1), (char *)I2C_receive_buff)){
@@ -341,13 +337,13 @@ I2C_TYPE UART_Process_Param(UART_HandleTypeDef *huart){
 					I2C_buff[BASE_ADDR + UNITS_OFFSET] = (I2C_TYPE)command[4][0];
 					if(I2C_BUS_BUSY == I2C_Master_Write((I2C_TYPE)String_To_Hex_Of_Data(command[2], strlen(command[2])) + I2C_WRITE, I2C_buff)){
 						HAL_UART_Transmit(huart, (I2C_TYPE *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
-						return I2C_BUS_BUSY;
+						break;
 					}
 					
 					delay_ms(1);
 					if(I2C_BUS_BUSY == I2C_Master_Read((I2C_TYPE)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff)){
 						HAL_UART_Transmit(huart, (I2C_TYPE *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
-						return I2C_BUS_BUSY;
+						break;
 					}
 					if(!strcmp((char *)(I2C_receive_buff + ADDR_OFFSET), (char *)(I2C_buff + 1))){
 						HAL_UART_Transmit(huart, (I2C_TYPE *)OK, strlen(OK),UART_TR_TIMEOUT);
@@ -365,13 +361,13 @@ I2C_TYPE UART_Process_Param(UART_HandleTypeDef *huart){
 					I2C_buff[BASE_ADDR + ADDR_OFFSET + UNITS_OFFSET] = (I2C_TYPE)command[4 + ADDR_OFFSET][0];
 					if(I2C_BUS_BUSY == I2C_Master_Write((I2C_TYPE)String_To_Hex_Of_Data(command[2], strlen(command[2])) + I2C_WRITE, I2C_buff)){
 						HAL_UART_Transmit(huart, (I2C_TYPE *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
-						return I2C_BUS_BUSY;
+						break;
 					}
 					
 					delay_ms(1);
 					if(I2C_BUS_BUSY == I2C_Master_Read((I2C_TYPE)String_To_Hex_Of_Data(command[2], I2C_ADDRESS_LEN) + I2C_READ, I2C_receive_buff)){
 						HAL_UART_Transmit(huart, (I2C_TYPE *)BUS_BUSY, strlen(BUS_BUSY), UART_TR_TIMEOUT);
-						return I2C_BUS_BUSY;
+						break;
 					}
 					if(!strcmp((char *)I2C_buff, (char *)I2C_receive_buff)){
 						HAL_UART_Transmit(huart, (I2C_TYPE *)OK, strlen(OK),UART_TR_TIMEOUT);
@@ -427,6 +423,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   */
 void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
+	
 	if(running_state == MASTER && GPIO_Pin == MASTER_EXTI_PIN){
 		Master_EXTI_Falling_Callback(GPIO_Pin);
 	}
