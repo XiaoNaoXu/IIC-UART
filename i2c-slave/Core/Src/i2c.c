@@ -470,8 +470,8 @@ void I2C_GPIO_Init(void){
 	
 	/*Configure I2C GPIO pins : SDA - PC4,  SCL -- PC5  */
   GPIO_InitStruct.Pin		 = 	I2C_SDA_PIN | I2C_SCL_PIN;
-  GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD | GPIO_MODE_IT_RISING_FALLING ;
-  GPIO_InitStruct.Pull	 = 	GPIO_NOPULL;
+  GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD | GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull	 = 	GPIO_PULLUP;
 	GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);														// Init SDA
 	I2C_SDA_Falling_Rising_Disable();																					// Disable SDA EXTI Falling and Rising

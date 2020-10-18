@@ -89,6 +89,7 @@ extern I2C_TYPE 				I2C_Bus_state;
 
 /*			SET SCL LEVEL																				*/
 #define I2C_SCL_1() 				{I2C_PORT_GPIO->BSRR = I2C_SCL_PIN; while(I2C_SCL_READ() != I2C_LEVEL_HIGH);}							// Set SCL = 1 
+//#define I2C_SCL_1() 				I2C_PORT_GPIO->BSRR = I2C_SCL_PIN						// Set SCL = 1 
 #define I2C_SCL_0() 				I2C_PORT_GPIO->BRR = I2C_SCL_PIN  																												// Set SCL = 0 
 
 
@@ -148,7 +149,7 @@ void 			LED_GPIO_Init(void);
 
 
 /* 			I2C address																	*/
-#define I2C_ADDRESS                     ((I2C_TYPE)0xB0)          // As a slave address
+#define I2C_ADDRESS                     ((I2C_TYPE)0xA0)          // As a slave address
 #define I2C_ADDRESS_LEN                 ((I2C_TYPE)0x02)					// A address length
 
 
@@ -261,7 +262,7 @@ void		 I2C_Master_Stop(void);
 
 
 /*      Define the rate and unit of time of I2C        */
-#define I2C_PD                          ((I2C_TYPE)0x05)	  	 // A pulse width
+#define I2C_PD                          ((I2C_TYPE)0xA0)	  	 // A pulse width
 #define I2C_S 				    						  ((I2C_TYPE)0x73)       // A second
 #define I2C_MS 				    							((I2C_TYPE)0x6D)       // A millisecond
 #define I2C_US 													((I2C_TYPE)0x75)       // A microsecond
@@ -287,9 +288,9 @@ void		 I2C_Master_Stop(void);
 #define NO_I2C_DATA												((I2C_TYPE)0x00)
 
 
-#define I2C_GPIO_EXTI_Rising_Callback(GPIO_Pin)   
+//#define I2C_GPIO_EXTI_Rising_Callback(GPIO_Pin)   
 
-#define I2C_GPIO_EXTI_Falling_Callback(GPIO_Pin)
+//#define I2C_GPIO_EXTI_Falling_Callback(GPIO_Pin)
 
 #define I2C_GPIO_EXTI_IRQHandler(GPIO_Pin)	 {if (__HAL_GPIO_EXTI_GET_RISING_IT(GPIO_Pin) != 0x00u){\
 																								 __HAL_GPIO_EXTI_CLEAR_RISING_IT(GPIO_Pin);\

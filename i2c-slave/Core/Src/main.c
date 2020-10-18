@@ -13,11 +13,11 @@ char  UART_Rx_Buffer[UART_RX_BUFF_SIZE] =  {0};
 
 
 
-Running_State running_state = master;
-void (* running)(void) = &master_start;
+//Running_State running_state = master;
+//void (* running)(void) = &master_start;
 
-//Running_State running_state = slave;
-//void (* running)(void) = &slave_start;
+Running_State running_state = slave;
+void (* running)(void) = &slave_start;
 
 
 /**
@@ -408,7 +408,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	else
 	{
 		UART_Rx_Buffer[uart_rx_cnt++] = Rx_Byte;   
-		if(UART_Rx_Buffer[uart_rx_cnt-1] == '\n' || UART_Rx_Buffer[uart_rx_cnt-1] == '\n')
+		if(UART_Rx_Buffer[uart_rx_cnt-1] == '\n' || UART_Rx_Buffer[uart_rx_cnt-1] == '\r')
 		{
       while(HAL_UART_GetState(huart) == HAL_UART_STATE_BUSY_TX);
 			UART_DATA_REG = UART_DATA_OK;

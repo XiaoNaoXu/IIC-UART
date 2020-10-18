@@ -30,18 +30,20 @@ void slave_start(){
 	
 	param_assert();
 	
-	I2C_SCL_Falling_Disable();
-	
 	I2C_SDA_Falling_Enable();
 	
   while(running_state == SLAVE)
   {
-//		if(led_duration){
-//			LED(led_duration);
-//		}
-//		if(led_frequency){
-//			delay_us(led_frequency);
-//		}
+		if(UART_DATA_REG == UART_DATA_OK){
+			UART_Process_Param(&huart2);
+		}
+		
+		if(led_duration){
+			LED(led_duration);
+		}
+		if(led_frequency){
+			delay_us(led_frequency);
+		}
   }
 }
 
