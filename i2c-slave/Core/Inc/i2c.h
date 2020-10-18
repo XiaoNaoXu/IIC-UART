@@ -67,8 +67,8 @@ extern I2C_TYPE 				I2C_Bus_state;
 #define I2C_PORT_GPIO 						  				GPIOC                		 // I2C IOPORT
 #define I2C_SDA_PORT						            I2C_PORT_GPIO       	   // I2C SDA IOPORT
 #define I2C_SCL_PORT							          I2C_PORT_GPIO         	 // I2C SCL IOPORT
-#define I2C_SDA_PIN 								        GPIO_PIN_4            	 // I2C SDA GPIO
-#define I2C_SCL_PIN 								        GPIO_PIN_5            	 // I2C SCL GPIO
+#define I2C_SDA_PIN 								        GPIO_PIN_8            	 // I2C SDA GPIO
+#define I2C_SCL_PIN 								        GPIO_PIN_9            	 // I2C SCL GPIO
 
 
 /*      EXTI GPIO Select                                    */
@@ -234,10 +234,10 @@ void		 I2C_Master_Stop(void);
 #define SEND_HIGHEST_BIT(BYTE)							(BYTE & 0x80) ? (I2C_SDA_1()) : (I2C_SDA_0())
 
 /*			  I2C RISING ENABLE AND DISABLE ADDR					*/
-#define I2C_SCL_EXTI_ENABLE_ADDR 	         	((u16)0x0020)       // SCL EXTI enable register
-#define I2C_SCL_EXTI_DISABLE_ADDR           ~((u16)0x0020)     	// SCL EXTI disable register
-#define I2C_SDA_EXTI_ENABLE_ADDR 	         	((u16)0x0010)       // SCL EXTI enable register
-#define I2C_SDA_EXTI_DISABLE_ADDR           ~((u16)0x0010)     	// SCL EXTI disable register
+#define I2C_SCL_EXTI_ENABLE_ADDR 	         	((u16)0x0200)       // SCL EXTI enable register
+#define I2C_SCL_EXTI_DISABLE_ADDR           ~((u16)0x0200)     	// SCL EXTI disable register
+#define I2C_SDA_EXTI_ENABLE_ADDR 	         	((u16)0x0100)       // SCL EXTI enable register
+#define I2C_SDA_EXTI_DISABLE_ADDR           ~((u16)0x0100)     	// SCL EXTI disable register
 
 
 
@@ -307,6 +307,7 @@ extern I2C_TYPE 		I2C_receive_buff[DEFAULT_BUFF_SIZE];
 
 /*			 I2C GPIO Init 																									*/
 void 		 I2C_GPIO_Init(void);
+void 		 I2C_GPIO_SCL_Init(void);
 
 
 

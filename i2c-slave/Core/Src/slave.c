@@ -14,11 +14,11 @@ __IO I2C_TYPE    a_bit_value = 0U;																	//Store a full byte received
 __IO I2C_TYPE    receive_cnt = 0;																		//The number that has been sent
 __IO I2C_TYPE    receive_len = 3;															   		//The number when need to send
 __IO I2C_TYPE    sent_count = 0;												      				//The number that has been received
-__IO u32   led_frequency = 0;									        				//The frequency of the led
-__IO u32   led_duration = 0;										        			//The duration of the led
-Option     option = ret;												      				//Control read/write state
+__IO u32  			 led_frequency = 0;									        				//The frequency of the led
+__IO u32   			 led_duration = 0;										        			//The duration of the led
+Option     			 option = ret;												      				//Control read/write state
 
-I2C_TYPE         		sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
+I2C_TYPE         sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
 
 
 
@@ -53,12 +53,12 @@ void slave_start(){
   * @retval None
   */
 void flag_reset(){
-	option = ret;
-	bit_location = 0;
-	receive_cnt = 0;
-	a_bit_value = 0;
-	receive_len = 0;
-	sent_count = 0;
+	option 					= 	ret;
+	bit_location 		= 	0U;
+	receive_cnt 		= 	0U;
+	a_bit_value	  	= 	0U;
+	receive_len 		= 	3U;
+	sent_count 			= 	0U;
 }
 
 
@@ -183,7 +183,8 @@ void Slave_SCL_EXTI_Falling_Callback()
 			}
 			else{
 				I2C_Slave_SendNAck();
-				
+				I2C_SCL_Falling_Rising_Enable();
+				I2C_SDA_Falling_Enable();
 			}
 		}
 		else if(bit_location == BIT_LENGTH + 2){
@@ -211,8 +212,8 @@ void Slave_SCL_EXTI_Rising_Callback()
 			a_bit_value |= I2C_SDA_READ();
 			if(bit_location == BIT_LENGTH){
 				if((a_bit_value & (I2C_ADDRESS + I2C_WRITE)) == a_bit_value){
-					option = read;
 					I2C_SCL_FallingEnable_RisingDisable();
+					option = read;
 				}
 				else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
 					I2C_SCL_FallingEnable_RisingDisable();

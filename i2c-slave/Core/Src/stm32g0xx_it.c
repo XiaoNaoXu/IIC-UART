@@ -39,7 +39,7 @@ void EXTI4_15_IRQHandler(void)
 {
 	if(running_state == MASTER){
 		I2C_GPIO_EXTI_IRQHandler(I2C_SCL_PIN);
-		
+		I2C_GPIO_EXTI_IRQHandler(I2C_SDA_PIN);
 	}
 	else{
 		I2C_GPIO_EXTI_IRQHandler(I2C_SDA_PIN);

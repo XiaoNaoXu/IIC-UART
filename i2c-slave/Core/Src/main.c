@@ -35,8 +35,12 @@ int main(void)
 	
 	LED_GPIO_Init();																				//Init Green LED GPIO --- PA5
 	
+	I2C_GPIO_SCL_Init();
+	
 	I2C_GPIO_Init();
-		
+	
+	
+	
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&Rx_Byte, UART_RECEIVE_BYTE_NUMBER);
 	
 	//I2C_Master_SDA_Output_OD_Init();
