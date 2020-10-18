@@ -13,11 +13,11 @@ char  UART_Rx_Buffer[UART_RX_BUFF_SIZE] =  {0};
 
 
 
-//Running_State running_state = master;
-//void (* running)(void) = &master_start;
+Running_State running_state = master;
+void (* running)(void) = &master_start;
 
-Running_State running_state = slave;
-void (* running)(void) = &slave_start;
+//Running_State running_state = slave;
+//void (* running)(void) = &slave_start;
 
 
 /**
@@ -382,13 +382,14 @@ I2C_TYPE UART_Process_Param(UART_HandleTypeDef *huart){
 				}
 				uart_rx_cnt = I2C_To_UART(I2C_receive_buff);
 				HAL_UART_Transmit(huart, (I2C_TYPE *)UART_Rx_Buffer, uart_rx_cnt,UART_TR_TIMEOUT);
+				break;
 			}		
 		}
 		else{
 			HAL_UART_Transmit(huart, (I2C_TYPE *)COMMAND_ERR, strlen(COMMAND_ERR), UART_TR_TIMEOUT);
 		}
 	}while(0);
-	
+	memset(UART_Rx_Buffer, '\0', UART_RX_BUFF_SIZE);
 	return PROCESS_SUCCESS;
 	
 }

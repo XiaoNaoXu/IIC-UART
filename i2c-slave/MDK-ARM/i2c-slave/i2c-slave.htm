@@ -3,7 +3,7 @@
 <title>Static Call Graph - [i2c-slave\i2c-slave.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image i2c-slave\i2c-slave.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Oct 19 01:06:14 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Oct 19 02:52:16 2020
 <BR><P>
 <H3>Maximum Stack Usage =        528 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -64,9 +64,9 @@ Function Pointers
  <LI><a href="#[6]">WWDG_IRQHandler</a> from startup_stm32g070xx.o(.text) referenced from startup_stm32g070xx.o(RESET)
  <LI><a href="#[23]">__main</a> from entry.o(.ARM.Collect$$$$00000000) referenced from startup_stm32g070xx.o(.text)
  <LI><a href="#[21]">main</a> from main.o(i.main) referenced from entry9a.o(.ARM.Collect$$$$0000000B)
+ <LI><a href="#[2a]">master_start</a> from master.o(i.master_start) referenced from main.o(.data)
  <LI><a href="#[2a]">master_start</a> from master.o(i.master_start) referenced from main.o(i.UART_Process_Param)
  <LI><a href="#[2a]">master_start</a> from master.o(i.master_start) referenced from slave.o(i.param_assert)
- <LI><a href="#[29]">slave_start</a> from slave.o(i.slave_start) referenced from main.o(.data)
  <LI><a href="#[29]">slave_start</a> from slave.o(i.slave_start) referenced from main.o(i.UART_Process_Param)
  <LI><a href="#[29]">slave_start</a> from slave.o(i.slave_start) referenced from slave.o(i.param_assert)
 </UL>
@@ -844,7 +844,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Init
 </UL>
 
-<P><STRONG><a name="[7d]"></a>UART_Process_Param</STRONG> (Thumb, 2348 bytes, Stack size 432 bytes, main.o(i.UART_Process_Param))
+<P><STRONG><a name="[7d]"></a>UART_Process_Param</STRONG> (Thumb, 2356 bytes, Stack size 432 bytes, main.o(i.UART_Process_Param))
 <BR><BR>[Stack]<UL><LI>Max Depth = 520<LI>Call Chain = UART_Process_Param &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led_frequency
@@ -964,7 +964,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Process_Param
 </UL>
-<BR>[Address Reference Count : 2]<UL><LI> main.o(i.UART_Process_Param)
+<BR>[Address Reference Count : 3]<UL><LI> main.o(.data)
+<LI> main.o(i.UART_Process_Param)
 <LI> slave.o(i.param_assert)
 </UL>
 <P><STRONG><a name="[86]"></a>param_assert</STRONG> (Thumb, 154 bytes, Stack size 16 bytes, slave.o(i.param_assert))
@@ -995,8 +996,7 @@ Global Symbols
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED
 </UL>
-<BR>[Address Reference Count : 3]<UL><LI> main.o(.data)
-<LI> main.o(i.UART_Process_Param)
+<BR>[Address Reference Count : 2]<UL><LI> main.o(i.UART_Process_Param)
 <LI> slave.o(i.param_assert)
 </UL><P>
 <H3>

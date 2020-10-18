@@ -149,7 +149,7 @@ void 			LED_GPIO_Init(void);
 
 
 /* 			I2C address																	*/
-#define I2C_ADDRESS                     ((I2C_TYPE)0xA0)          // As a slave address
+#define I2C_ADDRESS                     ((I2C_TYPE)0xB0)          // As a slave address
 #define I2C_ADDRESS_LEN                 ((I2C_TYPE)0x02)					// A address length
 
 
@@ -262,7 +262,7 @@ void		 I2C_Master_Stop(void);
 
 
 /*      Define the rate and unit of time of I2C        */
-#define I2C_PD                          ((I2C_TYPE)0x0A)	  	 // A pulse width
+#define I2C_PD                          ((I2C_TYPE)0x06)	  	 // A pulse width
 #define I2C_S 				    						  ((I2C_TYPE)0x73)       // A second
 #define I2C_MS 				    							((I2C_TYPE)0x6D)       // A millisecond
 #define I2C_US 													((I2C_TYPE)0x75)       // A microsecond
