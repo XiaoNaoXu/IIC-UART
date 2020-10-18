@@ -275,7 +275,6 @@ void I2C_Master_SendAck(void){
 	I2C_SCL_1();
 	delay_us(I2C_PD);
 	I2C_SDA_1();
-	I2C_SCL_0();
 }
 
 /**
@@ -485,7 +484,7 @@ void I2C_GPIO_Init(void){
   GPIO_InitStruct.Pin		 = 	I2C_SDA_PIN;
   GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD | GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull	 = 	GPIO_NOPULL;
-	GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_HIGH;
+	GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);														// Init SDA
 	I2C_SDA_Falling_Rising_Disable();																					// Disable SDA EXTI Falling and Rising
 	I2C_SDA_1();																															// SET SDA = high level
@@ -508,7 +507,7 @@ void I2C_GPIO_SCL_Init(void){
   GPIO_InitStruct.Pin		 = 	I2C_SCL_PIN;
   GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD | GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull	 = 	GPIO_NOPULL;
-	GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_HIGH;
+	GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(I2C_SCL_PORT, &GPIO_InitStruct);														// Init SDA
 	I2C_SCL_Falling_Rising_Disable();
 	I2C_SCL_1();																															//SET SCL = high level

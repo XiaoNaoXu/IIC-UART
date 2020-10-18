@@ -262,7 +262,7 @@ void		 I2C_Master_Stop(void);
 
 
 /*      Define the rate and unit of time of I2C        */
-#define I2C_PD                          ((I2C_TYPE)0xA0)	  	 // A pulse width
+#define I2C_PD                          ((I2C_TYPE)0x0A)	  	 // A pulse width
 #define I2C_S 				    						  ((I2C_TYPE)0x73)       // A second
 #define I2C_MS 				    							((I2C_TYPE)0x6D)       // A millisecond
 #define I2C_US 													((I2C_TYPE)0x75)       // A microsecond
@@ -284,7 +284,7 @@ void		 I2C_Master_Stop(void);
 #define RUNNING_STATE_OFFSET 				    ((I2C_TYPE)0x02)	  	 // State address offset
 
 
-#define UART_I2C_OK												((I2C_TYPE)0x01)
+#define I2C_DATA_OK												((I2C_TYPE)0x01)
 #define NO_I2C_DATA												((I2C_TYPE)0x00)
 
 
@@ -335,6 +335,7 @@ void 		 I2C_GPIO_SCL_Init(void);
 extern I2C_TYPE 									UART_Process_Param(UART_HandleTypeDef *);
 extern UART_HandleTypeDef 				huart2;
 extern I2C_TYPE 		 						  UART_DATA_REG;
+extern I2C_TYPE 		 						  I2C_DATA_REG;
 extern I2C_TYPE										uart_rx_cnt;
 extern char 											UART_Rx_Buffer[UART_RX_BUFF_SIZE];
 

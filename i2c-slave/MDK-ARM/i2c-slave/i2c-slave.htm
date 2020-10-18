@@ -3,7 +3,7 @@
 <title>Static Call Graph - [i2c-slave\i2c-slave.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image i2c-slave\i2c-slave.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Oct 18 21:11:44 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Oct 19 01:06:14 2020
 <BR><P>
 <H3>Maximum Stack Usage =        528 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -650,7 +650,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Master_Read
 </UL>
 
-<P><STRONG><a name="[6a]"></a>I2C_Master_SendAck</STRONG> (Thumb, 64 bytes, Stack size 8 bytes, i2c.o(i.I2C_Master_SendAck))
+<P><STRONG><a name="[6a]"></a>I2C_Master_SendAck</STRONG> (Thumb, 60 bytes, Stack size 8 bytes, i2c.o(i.I2C_Master_SendAck))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = I2C_Master_SendAck &rArr; delay_us
 </UL>
 <BR>[Calls]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -774,11 +774,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_EXTI_Rising_Callback
 </UL>
 
-<P><STRONG><a name="[39]"></a>Slave_SCL_EXTI_Falling_Callback</STRONG> (Thumb, 232 bytes, Stack size 0 bytes, slave.o(i.Slave_SCL_EXTI_Falling_Callback))
+<P><STRONG><a name="[39]"></a>Slave_SCL_EXTI_Falling_Callback</STRONG> (Thumb, 284 bytes, Stack size 0 bytes, slave.o(i.Slave_SCL_EXTI_Falling_Callback))
 <BR><BR>[Called By]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_EXTI_Falling_Callback
 </UL>
 
-<P><STRONG><a name="[3c]"></a>Slave_SCL_EXTI_Rising_Callback</STRONG> (Thumb, 444 bytes, Stack size 8 bytes, slave.o(i.Slave_SCL_EXTI_Rising_Callback))
+<P><STRONG><a name="[3c]"></a>Slave_SCL_EXTI_Rising_Callback</STRONG> (Thumb, 476 bytes, Stack size 8 bytes, slave.o(i.Slave_SCL_EXTI_Rising_Callback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Slave_SCL_EXTI_Rising_Callback
 </UL>
 <BR>[Calls]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
@@ -862,8 +862,7 @@ Global Symbols
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 <LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 </UL>
-<BR>[Called By]<UL><LI><a href="#[29]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;slave_start
-<LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;master_start
+<BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;master_start
 </UL>
 
 <P><STRONG><a name="[58]"></a>UART_SetConfig</STRONG> (Thumb, 1688 bytes, Stack size 40 bytes, stm32g0xx_hal_uart.o(i.UART_SetConfig))
@@ -989,13 +988,12 @@ Global Symbols
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Process_Param
 </UL>
 
-<P><STRONG><a name="[29]"></a>slave_start</STRONG> (Thumb, 78 bytes, Stack size 8 bytes, slave.o(i.slave_start))
-<BR><BR>[Stack]<UL><LI>Max Depth = 528<LI>Call Chain = slave_start &rArr; UART_Process_Param &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
+<P><STRONG><a name="[29]"></a>slave_start</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, slave.o(i.slave_start))
+<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = slave_start &rArr; param_assert &rArr; Date_To_I2CBuff &rArr; Data_Transfer &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;param_assert
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Process_Param
 </UL>
 <BR>[Address Reference Count : 3]<UL><LI> main.o(.data)
 <LI> main.o(i.UART_Process_Param)

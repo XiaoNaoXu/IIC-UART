@@ -34,8 +34,8 @@ void slave_start(){
 	
   while(running_state == SLAVE)
   {
-		if(UART_DATA_REG == UART_DATA_OK){
-			UART_Process_Param(&huart2);
+		if(I2C_DATA_REG == I2C_DATA_OK){
+			param_assert();
 		}
 		
 		if(led_duration){
@@ -175,6 +175,15 @@ void Slave_SCL_EXTI_Falling_Callback()
 				return;
 			}
 		}
+		else if(bit_location == BIT_LENGTH + 1){
+			if(sent_count == 1){
+				I2C_Slave_SendAck();
+				bit_location = 0;
+			}
+			else{
+				I2C_SDA_1();
+			}
+		}
 	}
 	else{
 		if(bit_location == BIT_LENGTH + 1){
@@ -183,8 +192,10 @@ void Slave_SCL_EXTI_Falling_Callback()
 			}
 			else{
 				I2C_Slave_SendNAck();
-				I2C_SCL_Falling_Rising_Enable();
+				I2C_SCL_Falling_Rising_Disable();
 				I2C_SDA_Falling_Enable();
+				bit_location = 0;
+				I2C_DATA_REG = I2C_DATA_OK;
 			}
 		}
 		else if(bit_location == BIT_LENGTH + 2){
@@ -245,7 +256,6 @@ void Slave_SCL_EXTI_Rising_Callback()
 					receive_len = a_bit_value;
 				}
 				receive_buff[receive_cnt++] = a_bit_value;
-				bit_location = 0;
 				I2C_SCL_FallingEnable_RisingDisable();
 			}
 		}
@@ -253,12 +263,14 @@ void Slave_SCL_EXTI_Rising_Callback()
 	else if(option == write){
 		bit_location = 0;
 		if(I2C_SDA_READ()){
-			I2C_SCL_FallingEnable_RisingDisable();
+			I2C_SCL_Falling_Rising_Disable();
+			I2C_SDA_Falling_Enable();
 			return;
 		}
 		if(sent_count <= I2C_buff[START_ADDR]){
 			a_bit_value = I2C_buff[sent_count++];
 		}
+		I2C_SCL_FallingEnable_RisingDisable();
 	}
 }
 
