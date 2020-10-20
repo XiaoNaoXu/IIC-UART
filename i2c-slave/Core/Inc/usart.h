@@ -66,8 +66,10 @@
 /*			Uart modle enable																								*/
 #define HAL_UART_MODULE_ENABLED
 
-void 		MX_USART2_UART_Init(void);
-extern void		Error_Handler(void);
+void 								MX_USART2_UART_Init(void);
+extern void					Error_Handler(void);
+extern uint8_t 			uart_rx_cnt;									
+extern char  				UART_Rx_Buffer[0xFF];
 
 
 #ifdef __cplusplus

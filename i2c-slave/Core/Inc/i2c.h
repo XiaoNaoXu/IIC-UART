@@ -292,13 +292,14 @@ void		 I2C_Master_Stop(void);
 
 //#define I2C_GPIO_EXTI_Falling_Callback(GPIO_Pin)
 
+
 #define I2C_GPIO_EXTI_IRQHandler(GPIO_Pin)	 {if (__HAL_GPIO_EXTI_GET_RISING_IT(GPIO_Pin) != 0x00u){\
 																								 __HAL_GPIO_EXTI_CLEAR_RISING_IT(GPIO_Pin);\
 																								 HAL_GPIO_EXTI_Rising_Callback(GPIO_Pin);}\
-																						 else if (__HAL_GPIO_EXTI_GET_FALLING_IT(GPIO_Pin) != 0x00u){\
+																							else if (__HAL_GPIO_EXTI_GET_FALLING_IT(GPIO_Pin) != 0x00u){\
 																								 __HAL_GPIO_EXTI_CLEAR_FALLING_IT(GPIO_Pin);\
 																								 HAL_GPIO_EXTI_Falling_Callback(GPIO_Pin);}\
-																						 }
+																							}
 
 
 extern I2C_TYPE  		I2C_buff[DEFAULT_BUFF_SIZE];

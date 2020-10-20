@@ -274,6 +274,7 @@ void I2C_Master_SendAck(void){
 	delay_us(I2C_PD);
 	I2C_SCL_1();
 	delay_us(I2C_PD);
+	I2C_SCL_0();
 	I2C_SDA_1();
 }
 

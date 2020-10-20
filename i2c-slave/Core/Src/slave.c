@@ -170,18 +170,18 @@ void Slave_SCL_EXTI_Falling_Callback()
 		if(bit_location <= BIT_LENGTH){
 			SEND_HIGHEST_BIT(a_bit_value);
 			a_bit_value <<= 1U;
-			if(bit_location == BIT_LENGTH){
-				I2C_SCL_FallingDisable_RisingEnable();
-				return;
-			}
+//			if(bit_location == BIT_LENGTH){
+//			}
 		}
 		else if(bit_location == BIT_LENGTH + 1){
-			if(sent_count == 1){
+			if(sent_count == 0){
 				I2C_Slave_SendAck();
 				bit_location = 0;
+				a_bit_value = I2C_buff[sent_count++];
 			}
 			else{
 				I2C_SDA_1();
+				I2C_SCL_FallingDisable_RisingEnable();
 			}
 		}
 	}
@@ -229,7 +229,6 @@ void Slave_SCL_EXTI_Rising_Callback()
 				else if((a_bit_value & (I2C_ADDRESS + I2C_READ)) == a_bit_value){
 					I2C_SCL_FallingEnable_RisingDisable();
 					option = write;
-					a_bit_value = I2C_buff[sent_count++];
 				}
 				else{
 					bit_location = 0;
@@ -248,7 +247,11 @@ void Slave_SCL_EXTI_Rising_Callback()
 		if(bit_location <= BIT_LENGTH){
 			a_bit_value <<= 1U;
 			a_bit_value |= I2C_SDA_READ();
-			
+			if(bit_location == 1){
+				I2C_SCL_0();
+				delay_us(3*I2C_PD);
+				I2C_SCL_1();
+			}
 			if(bit_location == BIT_LENGTH){
 				/*       Store this byte and wait acknowledge              */
 				/*       How to store first byte                           */
