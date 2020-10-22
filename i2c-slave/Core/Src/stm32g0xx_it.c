@@ -37,14 +37,49 @@ void DMA1_Channel2_3_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 void EXTI4_15_IRQHandler(void)
 {
-	if(running_state == MASTER){
-		I2C_GPIO_EXTI_IRQHandler(I2C_SCL_PIN);
+	
+	if (__HAL_GPIO_EXTI_GET_RISING_IT(I2C_SCL_PIN) != 0x00u){
+		__HAL_GPIO_EXTI_CLEAR_RISING_IT(I2C_SCL_PIN);
+		
+		if(running_state == MASTER){
+			Master_EXTI_Rising_Callback();
+		}
+		else{
+			Slave_SCL_EXTI_Rising_Callback();
+		}
 	}
-	else{
-		I2C_GPIO_EXTI_IRQHandler(I2C_SDA_PIN);
-		I2C_GPIO_EXTI_IRQHandler(I2C_SCL_PIN);
+	else if (__HAL_GPIO_EXTI_GET_FALLING_IT(I2C_SCL_PIN) != 0x00u){
+		__HAL_GPIO_EXTI_CLEAR_FALLING_IT(I2C_SCL_PIN);
+		
+		if(running_state == MASTER){
+			Master_EXTI_Falling_Callback();
+		}
+		else{
+			Slave_SCL_EXTI_Falling_Callback();
+		}
 	}
 	
+	
+	else if (__HAL_GPIO_EXTI_GET_RISING_IT(I2C_SDA_PIN) != 0x00u){
+		__HAL_GPIO_EXTI_CLEAR_RISING_IT(I2C_SDA_PIN);
+		
+		if(running_state == MASTER){
+			Master_EXTI_Rising_Callback();
+		}
+		else{
+			Slave_SDA_EXTI_Rising_Callback();
+		}
+	}
+	else if (__HAL_GPIO_EXTI_GET_FALLING_IT(I2C_SDA_PIN) != 0x00u){
+		__HAL_GPIO_EXTI_CLEAR_FALLING_IT(I2C_SDA_PIN);
+		
+		if(running_state == MASTER){
+			Master_EXTI_Falling_Callback();
+		}
+		else{
+			Slave_SDA_EXTI_Falling_Callback();
+		}
+	}
 	
 }
 
@@ -71,3 +106,15 @@ void USART2_IRQHandler(void)
 	//HAL_UART_Receive_IT(&huart2, (uint8_t *)&Rx_Byte, UART_RECEIVE_BYTE_NUMBER);
   
 }
+
+/**
+	*	@biref This function handles TIM3
+	*
+	*/
+void TIM3_IRQHandler(void){
+	if(I2C_SCL_READ()){
+		I2C_Bus_state = I2C_BUS_IDLE;
+		HAL_TIM_Base_Stop_IT(&tim3);
+	}
+}
+

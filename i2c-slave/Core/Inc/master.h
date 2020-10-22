@@ -22,7 +22,8 @@
 
 
 void		 master_start(void);
-void 		 Master_EXTI_Rising_Callback(u16);
-void		 Master_EXTI_Falling_Callback(u16);
+void 		 Master_EXTI_Rising_Callback(void);
+void		 Master_EXTI_Falling_Callback(void);
+extern 		TIM_HandleTypeDef tim3;
 
 #endif

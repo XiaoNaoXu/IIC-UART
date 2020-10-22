@@ -482,6 +482,16 @@ void I2C_GPIO_Init(void){
 	GPIO_InitTypeDef GPIO_InitStruct = {0};																	 
 	
 	/*Configure I2C GPIO pins : SDA - PC4,  SCL -- PC5  */
+  GPIO_InitStruct.Pin		 = 	I2C_SCL_PIN;
+  GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD | GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull	 = 	GPIO_NOPULL;
+	GPIO_InitStruct.Speed  =  GPIO_SPEED_FREQ_MEDIUM;
+  HAL_GPIO_Init(I2C_SCL_PORT, &GPIO_InitStruct);														// Init SDA
+	I2C_SCL_Falling_Rising_Disable();
+	I2C_SCL_1();																															//SET SCL = high level
+	
+	
+	/*Configure I2C GPIO pins : SDA - PC4,  SCL -- PC5  */
   GPIO_InitStruct.Pin		 = 	I2C_SDA_PIN;
   GPIO_InitStruct.Mode	 = 	GPIO_MODE_OUTPUT_OD | GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull	 = 	GPIO_NOPULL;
@@ -489,7 +499,8 @@ void I2C_GPIO_Init(void){
   HAL_GPIO_Init(I2C_SDA_PORT, &GPIO_InitStruct);														// Init SDA
 	I2C_SDA_Falling_Rising_Disable();																					// Disable SDA EXTI Falling and Rising
 	I2C_SDA_1();																															// SET SDA = high level
-
+	
+	
 	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 5, 0);																//Set Priority
   HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);																				//Enable EXTI 4-15
 }
@@ -536,22 +547,22 @@ I2C_TYPE I2C_To_UART(I2C_TYPE *I2C_ptr){
 	__IO I2C_TYPE i = 0, temp, rx = 0, div = '1';
 	__IO I2C_TYPE data_len = I2C_ptr[START_ADDR], reg = I2C_ptr[BASE_ADDR];
 
-	memset(UART_Rx_Buffer,0x00,sizeof(UART_Rx_Buffer));
+	memset(UART_Tx_Buffer,0x00, UART_RX_BUFF_SIZE);
 
 	if((reg & LED_DURATION) == LED_DURATION || (reg & LED_FREQUENCY) == LED_FREQUENCY){
 		for(i = 1; i < data_len; ++i){
 			if(i%2 == 0){
-				UART_Rx_Buffer[rx++] = I2C_ptr[BASE_ADDR + i];
-				UART_Rx_Buffer[rx++] = '\n';
+				UART_Tx_Buffer[rx++] = I2C_ptr[BASE_ADDR + i];
+				UART_Tx_Buffer[rx++] = '\n';
 			}
 			else{
 				if((reg & LED_DURATION) == LED_DURATION){
-					memcpy(UART_Rx_Buffer, DURA, strlen(DURA));
+					memcpy(UART_Tx_Buffer, DURA, strlen(DURA));
 					rx += strlen(DURA);
 					reg &= ~LED_DURATION;
 				}
 				else if((reg & LED_FREQUENCY) == LED_FREQUENCY){
-					memcpy(UART_Rx_Buffer + rx, FREQ, strlen(FREQ));
+					memcpy(UART_Tx_Buffer + rx, FREQ, strlen(FREQ));
 					rx += strlen(FREQ);
 					reg &= ~LED_FREQUENCY;
 				}
@@ -559,7 +570,7 @@ I2C_TYPE I2C_To_UART(I2C_TYPE *I2C_ptr){
 				div = 100;
 				while(temp){
 					if(temp/div > 0){
-						UART_Rx_Buffer[rx++] = temp / div + 0x30;
+						UART_Tx_Buffer[rx++] = temp / div + 0x30;
 					}
 					temp %= div;
 					div /= 10;
@@ -570,11 +581,11 @@ I2C_TYPE I2C_To_UART(I2C_TYPE *I2C_ptr){
 	else if(reg == RUNNING_STATE){
 		if(I2C_ptr[RUNNING_STATE_OFFSET] == MASTER){
 			rx += strlen(RUNSTAT_MASTER);
-			memcpy(UART_Rx_Buffer, RUNSTAT_MASTER, strlen(RUNSTAT_MASTER));
+			memcpy(UART_Tx_Buffer, RUNSTAT_MASTER, strlen(RUNSTAT_MASTER));
 		}
 		else if(I2C_ptr[RUNNING_STATE_OFFSET] == SLAVE){
 			rx += strlen(RUNSTAT_SLAVE);
-			memcpy(UART_Rx_Buffer, RUNSTAT_SLAVE, strlen(RUNSTAT_SLAVE));
+			memcpy(UART_Tx_Buffer, RUNSTAT_SLAVE, strlen(RUNSTAT_SLAVE));
 		}
 	}
 	return rx;

@@ -9,6 +9,7 @@
 "i2c-slave\master.o"
 "i2c-slave\usart.o"
 "i2c-slave\dma.o"
+"i2c-slave\tim.o"
 "i2c-slave\stm32g0xx_hal_gpio.o"
 "i2c-slave\stm32g0xx_hal_tim.o"
 "i2c-slave\stm32g0xx_hal_tim_ex.o"

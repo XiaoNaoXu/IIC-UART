@@ -9,27 +9,27 @@
 
 
 
+UART_HandleTypeDef 		huart2;
+DMA_HandleTypeDef 		dma_uart2_rx;
+DMA_HandleTypeDef 		dma_uart2_tx;
 
-UART_HandleTypeDef huart2;
-DMA_HandleTypeDef dma_uart2_rx;
-DMA_HandleTypeDef dma_uart2_tx;
+
 
 /* USART2 init function */
-
-void MX_USART2_UART_Init(void)
+void USART2_UART_Init(void)
 {
-
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+	/* 		USART2 init  																								*/
+  huart2.Instance 										= USART2;
+  huart2.Init.BaudRate 								= 115200;
+  huart2.Init.WordLength 							= UART_WORDLENGTH_8B;
+  huart2.Init.StopBits 								= UART_STOPBITS_1;
+  huart2.Init.Parity 									= UART_PARITY_NONE;
+  huart2.Init.Mode 										= UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl								= UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling 						= UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling 					= UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.Init.ClockPrescaler 					= UART_PRESCALER_DIV1;
+  huart2.AdvancedInit.AdvFeatureInit 	= UART_ADVFEATURE_NO_INIT;
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();
@@ -39,21 +39,10 @@ void MX_USART2_UART_Init(void)
 	HAL_NVIC_SetPriority(USART2_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(USART2_IRQn);
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
-	
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&huart2) != HAL_OK)
-  {
-    Error_Handler();
-  }
 
 }
+
+
 
 /**USART2 GPIO Configuration
 PA2     ------> USART2_TX
@@ -71,39 +60,44 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 	
     __HAL_RCC_GPIOA_CLK_ENABLE();													 /* GPIOC clock enable */
     
-    GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
+    GPIO_InitStruct.Pin 				= GPIO_PIN_2|GPIO_PIN_3;
+    GPIO_InitStruct.Mode 				= GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull 				= GPIO_NOPULL;
+    GPIO_InitStruct.Speed 			= GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate 	= GPIO_AF1_USART2;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-			
 		
-		dma_uart2_rx.Instance = DMA1_Channel1;
-		dma_uart2_rx.Init.Request = DMA_REQUEST_USART2_RX;
-		dma_uart2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-		dma_uart2_rx.Init.MemInc = DMA_MINC_ENABLE;
-		dma_uart2_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-		dma_uart2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-		dma_uart2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-		dma_uart2_rx.Init.Mode = DMA_NORMAL;
-		dma_uart2_rx.Init.Priority = DMA_PRIORITY_LOW;
+		
+		/*		DMA channel1 init and link with UART2 rx		*/
+		dma_uart2_rx.Instance 									= DMA1_Channel1;
+		dma_uart2_rx.Init.Request 							= DMA_REQUEST_USART2_RX;
+		dma_uart2_rx.Init.Direction 						= DMA_PERIPH_TO_MEMORY;
+		dma_uart2_rx.Init.MemInc 								= DMA_MINC_ENABLE;
+		dma_uart2_rx.Init.PeriphInc 						= DMA_PINC_DISABLE;
+		dma_uart2_rx.Init.PeriphDataAlignment 	= DMA_PDATAALIGN_BYTE;
+		dma_uart2_rx.Init.MemDataAlignment 			= DMA_MDATAALIGN_BYTE;
+		dma_uart2_rx.Init.Mode 									= DMA_NORMAL;
+		dma_uart2_rx.Init.Priority							= DMA_PRIORITY_LOW;
 		HAL_DMA_Init(&dma_uart2_rx);
 		__HAL_LINKDMA(uartHandle, hdmarx, dma_uart2_rx);
 		
-		dma_uart2_tx.Instance = DMA1_Channel2;
-		dma_uart2_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-		dma_uart2_tx.Init.Request = DMA_REQUEST_USART2_TX;
-		dma_uart2_tx.Init.PeriphInc = DMA_PINC_DISABLE;
-		dma_uart2_tx.Init.MemInc = DMA_MINC_ENABLE;
-		dma_uart2_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-		dma_uart2_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-		dma_uart2_tx.Init.Mode = DMA_NORMAL;
+		
+		/*		DMA channel2 init and link with UART2 tx		*/
+		dma_uart2_tx.Instance 									= DMA1_Channel2;
+		dma_uart2_tx.Init.Direction 						= DMA_MEMORY_TO_PERIPH;
+		dma_uart2_tx.Init.Request 							= DMA_REQUEST_USART2_TX;
+		dma_uart2_tx.Init.PeriphInc 						= DMA_PINC_DISABLE;
+		dma_uart2_tx.Init.MemInc 								= DMA_MINC_ENABLE;
+		dma_uart2_tx.Init.PeriphDataAlignment 	= DMA_PDATAALIGN_BYTE;
+		dma_uart2_tx.Init.MemDataAlignment 			= DMA_MDATAALIGN_BYTE;
+		dma_uart2_tx.Init.Mode 									= DMA_NORMAL;
 		dma_uart2_tx.Init.Priority = DMA_PRIORITY_LOW;
 		HAL_DMA_Init(&dma_uart2_tx);
 		__HAL_LINKDMA(uartHandle, hdmatx, dma_uart2_tx);
   }
 }
+
+
 
 /**USART2 GPIO Configuration
 PA2     ------> USART2_TX

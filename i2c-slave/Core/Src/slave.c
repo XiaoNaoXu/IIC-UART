@@ -7,16 +7,16 @@
 #include "slave.h"
 
 
-#define receive_buff sent_buff    														// Receive and send use the same array
+#define receive_buff sent_buff    																		// Receive and send use the same array
 
-__IO I2C_TYPE    bit_location = 0U;        													//Records the location of the bits received
-__IO I2C_TYPE    a_bit_value = 0U;																	//Store a full byte received
-__IO I2C_TYPE    receive_cnt = 0;																		//The number that has been sent
-__IO I2C_TYPE    receive_len = 3;															   		//The number when need to send
-__IO I2C_TYPE    sent_count = 0;												      				//The number that has been received
-__IO u32  			 led_frequency = 0;									        				//The frequency of the led
-__IO u32   			 led_duration = 0;										        			//The duration of the led
-Option     			 option = ret;												      				//Control read/write state
+__IO I2C_TYPE    bit_location 	= 0U;        													//Records the location of the bits received
+__IO I2C_TYPE    a_bit_value 		= 0U;																	//Store a full byte received
+__IO I2C_TYPE    receive_cnt 		= 0U;																	//The number that has been sent
+__IO I2C_TYPE    receive_len 		= 3U;															   	//The number when need to send
+__IO I2C_TYPE    sent_count 		= 0U;												      		//The number that has been received
+__IO u32  			 led_frequency 	= 0U;									        				//The frequency of the led
+__IO u32   			 led_duration 	= 0U;										        			//The duration of the led
+Option     			 option 				= ret;												      	//Control read/write state
 
 I2C_TYPE         sent_buff[DEFAULT_BUFF_SIZE] = {I2C_PARA_LENGTH, LED_DURATION_FREQUENCY, 1, I2C_S, 1, I2C_S};	   	//Send array/buff
 
@@ -36,10 +36,11 @@ void slave_start(){
   {
 		if(I2C_DATA_REG == I2C_DATA_OK){
 			param_assert();
+			I2C_DATA_REG = NO_I2C_DATA;
 		}
 		
 		if(led_duration){
-			LED(led_duration);
+			LED_LightUP(led_duration);
 		}
 		if(led_frequency){
 			delay_us(led_frequency);
@@ -53,12 +54,12 @@ void slave_start(){
   * @retval None
   */
 void flag_reset(){
-	option 					= 	ret;
-	bit_location 		= 	0U;
-	receive_cnt 		= 	0U;
-	a_bit_value	  	= 	0U;
-	receive_len 		= 	3U;
-	sent_count 			= 	0U;
+	option 					= ret;
+	bit_location 		= 0U;
+	receive_cnt 		= 0U;
+	a_bit_value	  	= 0U;
+	receive_len 		= 3U;
+	sent_count 			= 0U;
 }
 
 
@@ -170,8 +171,6 @@ void Slave_SCL_EXTI_Falling_Callback()
 		if(bit_location <= BIT_LENGTH){
 			SEND_HIGHEST_BIT(a_bit_value);
 			a_bit_value <<= 1U;
-//			if(bit_location == BIT_LENGTH){
-//			}
 		}
 		else if(bit_location == BIT_LENGTH + 1){
 			if(sent_count == 0){
@@ -215,7 +214,6 @@ void Slave_SCL_EXTI_Falling_Callback()
 void Slave_SCL_EXTI_Rising_Callback()
 {
 	/*receive first bit : its address and read/write bit.  */
-	//LED(0);
 	if(option == ret){
 		bit_location++;
 		if(bit_location <= BIT_LENGTH){

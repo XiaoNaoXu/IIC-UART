@@ -31,6 +31,8 @@ i2c-slave\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash.h
 i2c-slave\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h
 i2c-slave\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr.h
 i2c-slave\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h
+i2c-slave\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim.h
+i2c-slave\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim_ex.h
 i2c-slave\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart.h
 i2c-slave\main.o: ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h
 i2c-slave\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

@@ -101,9 +101,10 @@ extern I2C_TYPE 				I2C_Bus_state;
 
 
 /*      LED Control                                  			  */
-#define LED_ON HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET)        						// LED4 UP, PA5 = high level
-#define LED_OFF HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET)     						// LED4 DOWN, PA5 = low level
-
+//#define LED_ON HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET)        						// LED4 UP, PA5 = high level
+//#define LED_OFF HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET)     						// LED4 DOWN, PA5 = low level
+#define LED_ON 	LED_GREEN_GPIO_Port->BSRR = LED_GREEN_Pin        																							// LED4 UP, PA5 = high level
+#define LED_OFF LED_GREEN_GPIO_Port->BRR 	= LED_GREEN_Pin        														     						// LED4 DOWN, PA5 = low level
 
 
 
@@ -121,6 +122,8 @@ extern I2C_TYPE 				I2C_Bus_state;
 /*        Define LED GPIO															*/
 #define LED_GREEN_Pin               GPIO_PIN_5            
 #define LED_GREEN_GPIO_Port         GPIOA
+
+#define LED_LightUP(TIME) 					{LED_ON; delay_us(TIME); LED_OFF;}
 
 /*        LED control																  */
 void		  LED(u32);
@@ -262,10 +265,11 @@ void		 I2C_Master_Stop(void);
 
 
 /*      Define the rate and unit of time of I2C        */
-#define I2C_PD                          ((I2C_TYPE)0x06)	  	 // A pulse width
+#define I2C_PD                          ((I2C_TYPE)0x04)	  	 // A pulse width
 #define I2C_S 				    						  ((I2C_TYPE)0x73)       // A second
 #define I2C_MS 				    							((I2C_TYPE)0x6D)       // A millisecond
 #define I2C_US 													((I2C_TYPE)0x75)       // A microsecond
+#define I2C_BUS_TIMEOUT									((I2C_TYPE)4*I2C_PD)
 
 
 /*******Define length and size                     						   				*/

@@ -33,8 +33,11 @@ u32 		String_To_Hex_Of_Data(char *, u32);
 /*			MCU Initial																															*/
 void		Error_Handler(void);
 void 		SystemClock_Config(void);
-void 		MX_DMA_Init(void);
+void 		DMA_Init(void);
+void 		TIM3_Init(void);
 I2C_TYPE 			UART_Process_Param(UART_HandleTypeDef *);
+
+extern TIM_HandleTypeDef tim3;
 
 #ifdef __cplusplus
 }

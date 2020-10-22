@@ -47,6 +47,7 @@
 #define MASTER_NO_LED 											 "\nMaster no LED.\n"
 #define SLAVE_ERR_NO_READ 									 "\nSlave no permissions to read other device information.\n"
 #define BUS_BUSY                             "\nThe bus is in a busy state.\n"
+#define BUS_IDLE                             "\nThe bus is in a idle state.\n"
 #define PARA_LENGTH_ERR											 "\nParameter more than 255 bytes.\n"
 #define DURA 																 "\nDuration: "
 #define FREQ 																 "\nFrequency: "
@@ -66,10 +67,11 @@
 /*			Uart modle enable																								*/
 #define HAL_UART_MODULE_ENABLED
 
-void 								MX_USART2_UART_Init(void);
+void 								USART2_UART_Init(void);
 extern void					Error_Handler(void);
 extern uint8_t 			uart_rx_cnt;									
-extern char  				UART_Rx_Buffer[0xFF];
+extern char  				UART_Rx_Buffer[];
+extern char  				UART_Tx_Buffer[];
 
 
 #ifdef __cplusplus

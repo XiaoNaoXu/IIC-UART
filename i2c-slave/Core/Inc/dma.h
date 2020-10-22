@@ -2,5 +2,5 @@
 
 
 
-void MX_DMA_Init(void);
+void DMA_Init(void);
 
